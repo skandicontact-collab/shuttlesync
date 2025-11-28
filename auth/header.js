@@ -1,12 +1,13 @@
 /*
    ShuttleSync Universal Header + Sidebar
-   Handles:
+   Features:
    - Session load
    - Role-based menus
    - Sync status
    - Logout
    - Theme toggle
-   - Mobile sidebar
+   - Mobile slide sidebar
+   - Desktop fixed sidebar
 */
 
 // ------- CONFIG -------
@@ -15,20 +16,19 @@ const VERIFY_URL = "YOUR_MAKE_VERIFY_WEBHOOK";
 // ------- LOAD SESSION -------
 const ss = JSON.parse(localStorage.getItem("skSession") || "{}");
 
-// ------- BUILD HTML STRUCTURE -------
+// ------- INSERT HTML STRUCTURE -------
 document.body.insertAdjacentHTML("afterbegin", `
 <div id="ss-topbar">
     <button class="topbar-btn" id="ss-menu-btn">☰</button>
-    <div style="font-weight:600">ShuttleSync</div>
+    <div class="brand">ShuttleSync</div>
     <button class="topbar-btn" id="ss-theme-toggle">🌓</button>
 </div>
 
 <div id="ss-sidebar" class="collapsed">
-
     <div class="ss-logo">ShuttleSync</div>
 
     <div class="ss-user">
-        <img src="${ss.avatar || 'https://ui-avatars.com/api/?name=' + ss.fullName}" />
+        <img src="${ss.avatar || "https://ui-avatars.com/api/?name="+ss.fullName}" />
         <div class="ss-user-info">
             <div class="name">${ss.fullName || "Unknown"}</div>
             <div class="role">${ss.role || "—"}</div>
@@ -47,7 +47,7 @@ document.body.insertAdjacentHTML("afterbegin", `
 <div id="ss-content"></div>
 `);
 
-// ------- SIDEBAR MENUS BY ROLE -------
+// ------- ROLE MENUS -------
 const menus = {
     "Destination": [
         ["Home Dashboard", "/destination/home/checkInOut.html"],
@@ -73,38 +73,36 @@ const menus = {
     ]
 };
 
-// FALLBACK MENU
 const activeMenu = menus[ss.role] || [["Dashboard", "/intra/dashboard.html"]];
-
 const navEl = document.getElementById("ss-nav");
 
 activeMenu.forEach(([label, link])=>{
     const btn = document.createElement("button");
     btn.textContent = label;
-    btn.onclick = ()=> window.location.href = link;
+    btn.onclick = () => window.location.href = link;
     navEl.appendChild(btn);
 });
 
 // ------- SIDEBAR TOGGLE -------
-document.getElementById("ss-menu-btn").onclick = ()=>{
-    const bar = document.getElementById("ss-sidebar");
-    bar.classList.toggle("collapsed");
+document.getElementById("ss-menu-btn").onclick = () => {
+    document.body.classList.toggle("sidebar-collapsed");
+    document.getElementById("ss-sidebar").classList.toggle("collapsed");
 };
 
 // ------- LOGOUT -------
-document.getElementById("ss-logout").onclick = ()=>{
+document.getElementById("ss-logout").onclick = () => {
     localStorage.removeItem("skSession");
-    window.location.href = "/shuttlesync"; // Wix login page
+    window.location.href = "/shuttlesync";
 };
 
 // ------- THEME MODE -------
-function applyTheme(){
+function applyTheme() {
     const theme = localStorage.getItem("ss-theme") || "dark";
     document.documentElement.setAttribute("data-theme", theme);
 }
 applyTheme();
 
-function toggleTheme(){
+function toggleTheme() {
     const current = localStorage.getItem("ss-theme") || "dark";
     const next = current === "dark" ? "light" : "dark";
     localStorage.setItem("ss-theme", next);
@@ -117,22 +115,19 @@ document.getElementById("ss-theme-toggle-2").onclick = toggleTheme;
 // ------- SESSION VALIDATION -------
 async function validate(){
     if(!ss.sessionToken){
-        failStatus();
+        failStatus(); 
         return;
     }
 
-    try{
+    try {
         const res = await fetch(VERIFY_URL, {
             method:"POST",
             headers:{ "Content-Type":"application/json" },
             body:JSON.stringify({ token:ss.sessionToken })
         }).then(r=>r.json());
 
-        if(res.valid){
-            okStatus();
-        } else {
-            failStatus();
-        }
+        if(res.valid) okStatus();
+        else failStatus();
 
     } catch(e){
         failStatus();
@@ -140,13 +135,11 @@ async function validate(){
 }
 
 function okStatus(){
-    const dot = document.getElementById("ss-status");
-    dot.style.background = "#27d47c";
+    document.getElementById("ss-status").style.background = "#27d47c";
 }
 function failStatus(){
-    const dot = document.getElementById("ss-status");
-    dot.style.background = "#e84545";
+    document.getElementById("ss-status").style.background = "#e84545";
 }
 
 validate();
-setInterval(validate, 30000); // every 30s
+setInterval(validate, 30000);
