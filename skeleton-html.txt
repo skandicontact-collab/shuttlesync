@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>{{PAGE_TITLE}}</title>
+
+<link rel="stylesheet" href="/auth/header.css"/>
+<script src="/auth/sessionManager.js"></script>
+<script src="/auth/header.js" defer></script>
+
+<style>
+/* Page-specific styling only */
+.page-title{
+  font-size:28px;
+  font-weight:700;
+  margin-bottom:16px;
+}
+.card{
+  background:var(--sk-card);
+  padding:20px;
+  border-radius:14px;
+  margin-bottom:22px;
+}
+.table{
+  width:100%;
+  border-collapse:collapse;
+}
+.table th, .table td{
+  padding:10px 14px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+</style>
+</head>
+
+<body>
+<div id="ss-page-container">
+
+    <div class="page-title">{{PAGE_TITLE}}</div>
+
+    <!-- PAGE CONTENT BEGINS HERE -->
+    {{CONTENT_BLOCK}}
+    <!-- PAGE CONTENT ENDS HERE -->
+
+</div>
+</body>
+</html>
