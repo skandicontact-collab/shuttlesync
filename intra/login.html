@@ -1,1 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ShuttleSync Login</title>
 
+<style>
+/* ROOT COLORS */
+:root{
+  --sk-blue:#022e64;
+  --sk-blue-soft:#083a7e;
+  --sk-ink:#051a33;
+  --sk-accent:#5FC7CF;
+  --sk-bg:#020b1a;
+  --sk-card:#071225;
+  --sk-text:#f6f7fb;
+  --radius:16px;
+  --blur:18px;
+}
+
+/* GLOBAL */
+html, body {
+  margin:0;
+  height:100%;
+  overflow:hidden;
+  font-family: "Montserrat", sans-serif;
+  background:#000;
+  color:var(--sk-text);
+}
+
+/* VIDEO BACKGROUND */
+.video-bg{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  z-index:0;
+  filter:brightness(0.45);
+}
+
+/* SPLASH LOADING */
+#splash{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(8px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  z-index:20;
+  animation:fadeOut 1s ease 2.2s forwards;
+}
+
+@keyframes fadeOut{
+  to{opacity:0; visibility:hidden;}
+}
+
+.loader{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  border:4px solid rgba(255,255,255,0.2);
+  border-top:4px solid var(--sk-accent);
+  animation:spin 0.9s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg);}
+}
+  
+.login-wrapper{
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%, -50%);
+  width:380px;
+  padding:32px;
+  background:rgba(10,20,40,0.55);
+  border-radius:var(--radius);
+  backdrop-filter:blur(var(--blur));
+  box-shadow:0 0 40px rgba(0,0,0,0.3);
+}
+
+.login-title{
+  font-size:26px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+input{
+  width:100%;
+  padding:12px 14px;
+  margin-top:12px;
+  border-radius:var(--radius);
+  border:1px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.05);
+  color:var(--sk-text);
+}
+
+button{
+  width:100%;
+  padding:14px;
+  margin-top:18px;
+  border-radius:var(--radius);
+  background:var(--sk-accent);
+  color:#001722;
+  font-weight:700;
+  border:none;
+  cursor:pointer;
+  transition:0.25s;
+}
+button:hover{background:#7fe7ef;}
+.magic-link{
+  margin-top:14px;
+  text-align:center;
+  font-size:14px;
+  color:var(--sk-accent);
+  cursor:pointer;
+}
+  
+#twofa {
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(6px);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:30;
+}
+.twofa-box{
+  width:340px;
+  padding:28px;
+  background:var(--sk-card);
+  border-radius:var(--radius);
+  text-align:center;
+}
+.twofa-input{
+  margin-top:20px;
+}
+  
+  </style>
+</head>
+
+<body>
+
+<!-- VIDEO BACKGROUND -->
+<video class="video-bg" autoplay muted loop playsinline>
+  <source src="https://video.wixstatic.com/video/564bce_a3dfdf0b8c9a45aa94463ef6ee6af34a/1080p/mp4/file.mp4" type="video/mp4">
+</video>
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <div class="loader"></div>
+  <p style="margin-top:18px;font-size:15px;color:#9ab;">Loading ShuttleSync...</p>
+</div>
+
+<div class="login-wrapper">
+
+  <div class="login-title">ShuttleSync Login</div>
+  <div style="margin-bottom:20px;color:#9ab;">
+    Sign in with your SK-ID to access the employee portal.
+  </div>
+
+  <input id="skid" maxlength="6" placeholder="SK-ID (e.g. AB1234)" />
+  <input id="pw" type="password" placeholder="Password" />
+
+  <button class="login-btn" onclick="startLogin()">Sign in</button>
+
+  <a class="magic-link" onclick="sendMagicLink()">Send me a magic link instead</a>
+  
+<!-- TWO FACTOR POPUP -->
+<div id="twofa" style="display:none;">
+  <div class="twofa-box">
+    <h2>Two-factor Authentication</h2>
+    <p>An email has been sent to you with the 6-digit verification code.</p>
+    <input id="code" class="twofa-input" type="text" maxlength="6" placeholder="******">
+    <button onclick="submitCode()">Verify</button>
+  </div>
+</div>
+
+  
+<script>
+// Regex SK-ID validator
+function validateSKID(id){
+  return /^[A-Z]{2}\d{4}$/.test(id);
+}
+
+// LOGIN
+function startLogin(){
+  const id = skid.value.trim().toUpperCase();
+
+  if(!validateSKID(id)){
+    alert("Invalid SK-ID format.");
+    return;
+  }
+
+  fetch("YOUR_MAKE_LOGIN_WEBHOOK_URL", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({
+      skid:id,
+      password:pw.value
+    })
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(res.status==="2fa_required"){
+      document.getElementById("twofa").style.display="flex";
+
+    }
+    else if(res.status==="success"){
+      window.location.href="dashboard.html";
+    }
+    else alert("Login failed.");
+  });
+}
+
+// MAGIC LINK
+function sendMagicLink(){
+  const id = skid.value.trim().toUpperCase();
+  if(!validateSKID(id)) return alert("Enter valid SK-ID first.");
+
+  fetch("YOUR_MAGIC_LINK_WEBHOOK", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ skid:id })
+  });
+
+  alert("A login link has been sent to your email.");
+}
+
+// SUBMIT 2FA
+function submitCode(){
+  fetch("YOUR_MAKE_2FA_VERIFY_WEBHOOK", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({
+      skid: skid.value.toUpperCase(),
+      code: code.value
+    })
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(res.status==="success"){
+      window.location.href = "/dashboard"; 
+    }
+    else alert("Incorrect code.");
+  });
+}
+  $w.onMessage((event) => {
+  if(event.data.type === "loginSuccess"){
+    wixLocation.to("/dashboard");  
+  }
+});
+
+</script>
+
+</body>
+</html>
