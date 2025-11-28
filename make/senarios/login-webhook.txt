@@ -1,0 +1,56 @@
+Scenario 1: Login
+Webhook module: [login-webhook]
+
+Input:
+{
+  "skid": "AB1234",
+  "password": "xxxxxx"
+}
+
+Steps:
+  1. Search Employees table
+  2. Compare bcrypt hash
+  3. If incorrect:
+      - increment Failed Attempts
+      - if >5 → lock account 15 min
+      - return { status:"fail" }
+  4. If correct:
+      - Reset failed attempts
+      - Create new Session entry in Sessions table:
+        * token: random 64-char string
+        * expiry: now+24 hours
+        * record user-agent + IP
+
+Output:
+{
+  "status": "success",
+  "token": "{{token}}",
+  "skid": "{{skid}}",
+  "role": "{{role}}",
+  "name": "{{firstName}} {{lastName}}",
+  "expires": "{{expires}}"
+}
+
+Scenario 2: Session Verification
+Webhook: [verify-session[
+
+Input:
+{
+  "token": "XYZ..."
+}
+
+Steps:
+  1. Find Session record
+  2. Ensure:
+        - Status = Active
+        - Expires > now
+
+Output:
+{ "status": "valid" }
+or
+{ "status": "invalid" }
+
+Scenario 3: 2FA or Magic Link (optional)
+
+Webhook: [send-2fa]
+Webhook: [verify-2fa]
