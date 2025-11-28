@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ShuttleSync • Demo Module (Designed UI)</title>
+<style>
+/* -------------------------------------------------------
+   GLOBAL DESIGN SYSTEM 
+------------------------------------------------------- */
+
+/* --- LIGHT THEME (DEFAULT, MOVED TO :ROOT) --- */
+:root {
+  --sk-blue:#022e64; 
+  --sk-accent:#5FC7CF; /* Neon Cyan */
+  --sk-accent-soft:#8df2ff;
+  --sk-ink:#051a33;
+  --sk-bg:#0d1526; 
+  --sk-card:#071225;
+  --sk-card-soft:#0b1730;
+  --sk-border:#122445;
+  --sk-text:#eef3ff;
+  --sk-muted:#8ea2c9;
+  --sk-text-dim: #a3b4d9; 
+  --radius-md:12px;
+
+  --sk-bg-primary: #0d1526; 
+  --sk-card-back-1: rgba(18,31,52,0.97);
+  --sk-card-back-2: rgba(10,20,35,0.97);
+  --sk-glass: rgba(9,17,34,0.82);
+  --sk-border-soft: rgba(148,163,184,0.45);
+  --sk-accent-hover: rgba(95,199,207,0.18); 
+  --shadow:0 24px 70px rgba(0,0,0,0.9);
+  
+  /* DARK THEME LOGO URL */
+  --sk-logo-image: url('https://static.wixstatic.com/media/564bce_61d749bee89941b1b05af62844700faa~mv2.png');
+  
+  
+}
+
+/* --- DARK THEME (Optional, use data-theme="light" on <html>) --- */
+html[data-theme='light']{
+  --sk-bg: #f2eeee;
+  --sk-blue: #022E64;
+  --sk-card:#ffffff;
+  --sk-card-soft:#5FC7CF;
+  --sk-border:#5FC7CF;
+  --sk-text:#022e64;
+  --sk-text-dim:#444;
+  --sk-text-title:#000;
+  --sk-accent:#5FC7CF;
+  --sk-accent-hover:#022e64;
+  --sk-ink:#5FC7CF; 
+  --sk-bg-primary: #f4f4f6; /* Used for button text contrast */
+  --shadow:0 0 20px rgba(0,0,0,0.1);
+
+  /* Light theme variables for glass/blur effects (less dramatic) */
+  --sk-glass: rgba(255,255,255,0.85);
+  --sk-border-soft: rgba(95, 199, 207, 0.5);
+  
+  /* LIGHT THEME LOGO URL */
+  --sk-logo-image: url('https://static.wixstatic.com/media/564bce_e3752ae80a944be284917a4f43066d92~mv2.png');
+}
+
+body {
+  margin:0;
+  padding:0;
+  background:var(--sk-bg); 
+  color:var(--sk-text);
+  font-family:"Montserrat", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x:hidden;
+  transition: background-color 0.3s, color 0.3s; 
+}
+
+/* Loader */
+#ss-loader {
+  position:fixed;
+  inset:0;
+  background:var(--sk-bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999999;
+  transition:opacity .3s;
+}
+#ss-loader.hide { opacity:0; pointer-events:none; }
+#ss-loader .spinner {
+  width:40px; height:40px;
+  border:4px solid var(--sk-border);
+  border-top-color:var(--sk-accent);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg);} }
+
+/* -------------------------------------------------------
+   TOP BAR
+------------------------------------------------------- */
+#ss-topbar {
+  position:fixed;
+  top:0; left:0;
+  width:100%;
+  box-sizing:border-box;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 24px; 
+  z-index:9999;
+  /* Updated background for light theme glass look */
+  background: var(--sk-bf);
+  color: var(--sk-text);
+  border-bottom: 1px solid var(--sk-border-soft); 
+  box-shadow:0  4px 10px var(--sk-accent);
+  backdrop-filter: blur(18px);
+}
+/* Specific Dark mode header BG override for the gradient look */
+html[data-theme='dark'] #ss-topbar {
+   background: linear-gradient(135deg, rgba(2, 46, 100, 0.85), rgba(4, 21, 45, 0.95));
+}
+
+
+.topbar-btn {
+  background:var(--sk-bg);
+  border:1px solid var(--sk-blue);
+  box-shadow:0 0 10px var(--sk-accent);
+  border-radius:12px;
+  color:var(--sk-accent); 
+  font-size:24px; 
+  cursor:pointer;
+  padding: 4px; 
+  transition: color 0.4s ease, background-color 0.4s ease;
+}
+.topbar-btn:hover {
+  background:var(--sk-blue);
+  color:var(--sk-glass);
+  box-shadow:0 0 30px var(--sk-accent);
+  transform: translateY(-1px) scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+.ss-title {
+    font-weight: 600; 
+    font-size: 16px;
+    letter-spacing: 0.05em;
+    padding-bottom:10px;
+    border-bottom: 2px solid var(--sk-accent);
+    
+}
+
+/* -------------------------------------------------------
+   SIDEBAR
+------------------------------------------------------- */
+#ss-sidebar {
+  position:fixed;
+  top:64px; 
+  left:0;
+  width:280px; 
+  height:calc(100vh - 64px);
+  background: var(--sk-glass); 
+  border-right:1px solid var(--sk-border-soft);
+  padding:24px; 
+  display:flex;
+  flex-direction:column;
+  gap:30px; 
+  transform:translateX(0);
+  transition:transform .25s;
+  z-index:9998;
+  box-shadow: 0 4px 10px var(--sk-accent);
+  backdrop-filter: blur(14px);
+}
+#ss-sidebar.collapsed {
+  transform:translateX(-280px); 
+}
+
+.ss-logo {
+  font-size:20px;
+  font-weight:600;
+  color:var(--sk-accent); 
+}
+/* Dark mode specific glow on logo */
+html[data-theme='light'] .ss-logo::before {
+    filter: drop-shadow(0 0 10px var(--sk-accent)); 
+}
+.body-logo-placeholder {
+    display:block; 
+    width: 100%;
+    max-width:230px; /* Adjust size as needed */
+    height: 80px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--sk-accent);
+    padding-bottom:20px;
+    position:relative
+    overflow:visible;
+    background-image: var(--sk-logo-image); /* Uses the dynamic logo URL */
+    background-size: contain;
+    background-repeat: no-repeat;
+    /* Optional: Add glow effect if in dark mode */
+    filter: drop-shadow(0 0 20px var(--sk-accent));
+
+}
+
+.ss-user {
+  display:flex;
+  gap:12px; 
+  align-items:center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--sk-border-soft);
+}
+.ss-user img {
+  width:46px; 
+  height:46px;
+  border-radius:50%; 
+  border: 2px solid var(--sk-accent);
+  box-shadow:0 1px 10px var(--sk-blue);
+}
+.ss-user-info .name {
+  font-size:15px;
+  font-weight: 600; 
+}
+.ss-user-info .role {
+  font-size:12px;
+  color:var(--sk-text-dim);
+}
+.ss-status {
+  width:10px;height:10px;
+  background:#22c55e; 
+  box-shadow: 0 0 8px #22c55e;
+  border-radius:50%;
+  margin-left:auto;
+}
+
+#ss-nav button {
+  width:100%;
+  padding:12px; 
+  background:var(--sk-bg); /* Use page background color */
+  border:1px solid var(--sk-blue);
+  text-align:left;
+  color:var(--sk-text);
+  font-size:15px;
+  font-weight:600;
+  border-radius:8px;
+  cursor:pointer;
+  transition: box-shadow 0.2s ease, background-color 0.4s ease;
+  margin-bottom: 13px; 
+  box-shadow: 0 3px 7px var(--sk-accent);
+}
+#ss-nav button:hover {
+  background:var(--sk-glass);  
+  color:var(--sk-accent);
+  box-shadow:0 2px 30px var(--sk-accent);
+  transform: translateY(-1px) scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+.ss-footer {
+  margin-top:auto;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--sk-border-soft);
+}
+.ss-footer button{
+  padding:10px 12px;
+  background:var(--sk-bg);
+  border:1px solid var(--sk-blue);
+  border-radius:8px;
+  box-shadow: 0 2px 6px var(--sk-accent);
+  color:var(--sk-text);
+  cursor:pointer;
+}
+.ss-footer button:hover {
+  background:var(--sk-blue);  
+  color: var(--sk-glass);
+  box-shadow: 0 4px 15px var(--sk-accent);
+  transform: translateY(-1px) scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+/* -------------------------------------------------------
+   PAGE CONTENT
+------------------------------------------------------- */
+#ss-content {
+  margin-top:64px; 
+  margin-left:280px; 
+  padding:32px; 
+  transition:margin-left .3s;
+}
+body.sidebar-open #ss-content {
+  margin-left:280px;
+}
+body.sidebar-collapsed #ss-content {
+  margin-left:0;
+}
+
+/* -------------------------------------------------------
+   DEMO MODULE UI
+------------------------------------------------------- */
+.module-section {
+  background:var(--sk-card);
+  border:1px solid var(--sk-border-soft); 
+  padding:32px; 
+  border-radius:6px; 
+  box-shadow: 0 3px 12px var(--sk-blue);
+  backdrop-filter: blur(10px);
+}
+
+.module-title {
+  font-size:24px; 
+  font-weight: 700;
+  margin-bottom:24px; 
+  color:var(--sk-accent);
+}
+
+.table {
+  width:100%;
+  border-collapse:collapse;
+}
+.table th {
+  text-align:left;
+  font-size:13px;
+  font-weight: 600; 
+  color:var(--sk-text-dim);
+  border-bottom:1px solid var(--sk-border-soft);
+  padding-bottom:10px; 
+  padding-top: 10px;
+}
+.table td {
+  padding:14px 0; 
+  border-bottom:1px solid var(--sk-border-soft);
+  font-size: 14px;
+}
+
+/* Buttons */
+.btn {
+  padding:10px 18px; 
+  background:var(--sk-bg);
+  color:var(--sk-text);
+  border:1px solid var(--sk-blue);
+  border-radius:6px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight: 600;
+  box-shadow: 0 3px 7px var(--sk-accent);
+  transition: box-shadow 0.2s ease, background-color 0.4s ease;
+}
+
+.btn:hover { 
+  background:var(--sk-glass); 
+  color:var(--sk-accent);
+  box-shadow:0 2 30px var(--sk-accent);
+  transform: translateY(-1px) scale(1.05);
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 30px var(--sk-accent);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Loader -->
+
+
+
+<!-- TOP BAR -->
+<header id="ss-topbar">
+  <button id="ss-menu-btn" class="topbar-btn">☰</button>
+  <div class="ss-title">Demo Module</div>
+  <button id="ss-theme-toggle" class="topbar-btn">☀︎☽</button>
+</header>
+
+<!-- SIDEBAR -->
+<aside id="ss-sidebar">
+  <div class="ss-content">
+      <div class="body-logo-placeholder"></div>
+
+  <div class="ss-user">
+    <img src="ui-avatars.com"/>
+    <div class="ss-user-info">
+      <div class="name">Demo User</div>
+      <div class="role">Destination</div>
+    </div>
+    <div id="ss-status" class="ss-status"></div>
+  </div>
+
+  <nav id="ss-nav">
+    <button>Home</button>
+    <button>Flights</button>
+    <button>Passengers</button>
+    <button>Tours</button>
+  </nav>
+
+  <footer class="ss-footer">
+    <button id="ss-logout">Logout</button>
+    <button id="ss-theme-toggle-2">☀☽  Theme</button>
+  </footer>
+</aside>
+
+<!-- PAGE CONTENT -->
+<main id="ss-content">
+  <div id="ss-page-container">
+
+    <!-- DEMO MODULE -->
+    <div class="module-section">
+      <div class="module-title">Flight Overview (Demo)</div>
+
+      <!-- Static demo data -->
+      <table class="table">
+        <tr>
+          <th>Flight</th>
+          <th>Status</th>
+          <th>ETA</th>
+          <th></th>
+        </tr>
+        <tr>
+          <td>SK123</td>
+          <td>On Time</td>
+          <td>14:22</td>
+          <td><button class="btn">Details</button></td>
+        </tr>
+        <tr>
+          <td>DK455</td>
+          <td>Delayed</td>
+          <td>15:40</td>
+          <td><button class="btn">Details</button></td>
+        </tr>
+      </table>
+
+    </div>
+  </div>
+</main>
+
+<script>
+/* -------------------------------------------------------
+   THEME ENGINE
+------------------------------------------------------- */
+function applyTheme(){
+  // Check local storage, default to "light" if not set
+  const theme = localStorage.getItem("ss-theme") || "light"; 
+  document.documentElement.dataset.theme = theme;
+}
+applyTheme();
+
+function toggleTheme(){
+  const newTheme = (localStorage.getItem("ss-theme") === "dark") ? "light" : "dark";
+  localStorage.setItem("ss-theme", newTheme);
+  applyTheme();
+}
+document.getElementById("ss-theme-toggle").onclick = toggleTheme;
+document.getElementById("ss-theme-toggle-2").onclick = toggleTheme;
+
+/* -------------------------------------------------------
+   SIDEBAR TOGGLE
+------------------------------------------------------- */
+const sidebar = document.getElementById("ss-sidebar");
+document.getElementById("ss-menu-btn").onclick = () => {
+  const collapsed = sidebar.classList.toggle("collapsed");
+  document.body.classList.toggle("sidebar-collapsed", collapsed);
+  document.body.classList.remove("sidebar-open");
+};
+
+/* Close on outside click */
+document.addEventListener("click", e => {
+  if(!sidebar.contains(e.target) &amp;&amp; !e.target.closest("#ss-menu-btn")){
+    sidebar.classList.add("collapsed");
+    document.body.classList.add("sidebar-collapsed");
+  }
+});
+
+/* -------------------------------------------------------
+   LOADER SIMULATION
+------------------------------------------------------- */
+window.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    document.getElementById("ss-loader").classList.add("hide");
+  }, 300);
+});
+
+</script>
+
+</body>
+</html>
