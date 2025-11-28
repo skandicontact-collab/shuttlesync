@@ -1,100 +1,152 @@
-// ===============================
-// ShuttleSync Header Component
-// ===============================
+/*
+   ShuttleSync Universal Header + Sidebar
+   Handles:
+   - Session load
+   - Role-based menus
+   - Sync status
+   - Logout
+   - Theme toggle
+   - Mobile sidebar
+*/
 
-async function loadSession() {
-    const raw = localStorage.getItem("skSession");
-    if (!raw) return null;
+// ------- CONFIG -------
+const VERIFY_URL = "YOUR_MAKE_VERIFY_WEBHOOK";
 
-    try { return JSON.parse(raw); }
-    catch { return null; }
-}
+// ------- LOAD SESSION -------
+const ss = JSON.parse(localStorage.getItem("skSession") || "{}");
 
-// Validate token with Make.com
-async function validateSession(session) {
-    const res = await fetch("YOUR_MAKE_TOKEN_VERIFY_WEBHOOK", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: session.sessionToken })
-    }).then(r => r.json());
+// ------- BUILD HTML STRUCTURE -------
+document.body.insertAdjacentHTML("afterbegin", `
+<div id="ss-topbar">
+    <button class="topbar-btn" id="ss-menu-btn">☰</button>
+    <div style="font-weight:600">ShuttleSync</div>
+    <button class="topbar-btn" id="ss-theme-toggle">🌓</button>
+</div>
 
-    return res.valid === true;
-}
+<div id="ss-sidebar" class="collapsed">
 
-// Render header
-async function renderHeader() {
-    const header = document.getElementById("ss-header");
-    if (!header) return;
+    <div class="ss-logo">ShuttleSync</div>
 
-    const session = await loadSession();
-    if (!session) {
-        header.innerHTML = `<div class="ss-header-error">Not logged in</div>`;
-        return;
-    }
-
-    const ok = await validateSession(session);
-    if (!ok) {
-        localStorage.removeItem("skSession");
-        header.innerHTML = `<div class="ss-header-error">Session expired</div>`;
-        return;
-    }
-
-    const { skid, fullName, role } = session;
-
-    header.innerHTML = `
-        <div class="ss-header-left">
-            <img src="https://skandi-static/logo.png" class="ss-logo" />
-            <span class="ss-title">ShuttleSync</span>
+    <div class="ss-user">
+        <img src="${ss.avatar || 'https://ui-avatars.com/api/?name=' + ss.fullName}" />
+        <div class="ss-user-info">
+            <div class="name">${ss.fullName || "Unknown"}</div>
+            <div class="role">${ss.role || "—"}</div>
         </div>
+        <div id="ss-status" class="ss-status"></div>
+    </div>
 
-        <div class="ss-header-center">
-            ${buildRoleMenu(role)}
-        </div>
+    <div class="ss-nav" id="ss-nav"></div>
 
-        <div class="ss-header-right">
-            <div class="ss-user-info">
-                <div class="ss-user-name">${fullName}</div>
-                <div class="ss-user-skip">${skid}</div>
-                <div class="ss-user-role">${role}</div>
-            </div>
-            <button class="ss-logout" onclick="logout()">Logout</button>
-        </div>
-    `;
-}
+    <div class="ss-footer">
+        <button id="ss-logout">Logout</button>
+        <button id="ss-theme-toggle-2">🌓 Theme</button>
+    </div>
+</div>
 
-function buildRoleMenu(role) {
-    const baseMenu = `
-        <a href="../intra/dashboard.html" target="_parent">Intra</a>
-        <a href="../travels/manageBooking.html" target="_parent">Travels</a>
-        <a href="../uniform/index.html" target="_parent">Uniform</a>
-    `;
+<div id="ss-content"></div>
+`);
 
-    const destinationMenu = `
-        <a href="../destination/torGad.html" target="_parent">Destination</a>
-        <a href="../destination/mail.html" target="_parent">Mail</a>
-        <a href="../destination/ptt.html" target="_parent">PTT</a>
-    `;
+// ------- SIDEBAR MENUS BY ROLE -------
+const menus = {
+    "Destination": [
+        ["Home Dashboard", "/destination/home/checkInOut.html"],
+        ["Flights", "/destination/airport/flightList.html"],
+        ["Passengers", "/destination/paxCI/welcomeMeetings.html"],
+        ["Transfers", "/destination/transfers/busAssignments.html"],
+        ["Tours", "/destination/tours/productList.html"],
+        ["Guest Service", "/destination/guestService/hotlineChat.html"]
+    ],
+    "Operations": [
+        ["Crew Planning", "/ops/crewPlanning.html"],
+        ["Uniform Center", "/uniform/index.html"],
+        ["Internal", "/intra/dashboard.html"]
+    ],
+    "Manager": [
+        ["Manager Panel", "/destination/managerPanel/dutySchedule.html"],
+        ["Reports", "/destination/home/reporting.html"],
+        ["All Modules", "/intra/dashboard.html"]
+    ],
+    "Admin": [
+        ["System Admin", "/intra/dashboard.html"],
+        ["User Directory", "/intra/profile.html"]
+    ]
+};
 
-    const opsMenu = `
-        <a href="../ops/crewPlanning.html" target="_parent">Ops</a>
-    `;
+// FALLBACK MENU
+const activeMenu = menus[ss.role] || [["Dashboard", "/intra/dashboard.html"]];
 
-    let output = baseMenu;
+const navEl = document.getElementById("ss-nav");
 
-    if (role === "Destination" || role === "Manager")
-        output += destinationMenu;
+activeMenu.forEach(([label, link])=>{
+    const btn = document.createElement("button");
+    btn.textContent = label;
+    btn.onclick = ()=> window.location.href = link;
+    navEl.appendChild(btn);
+});
 
-    if (role === "Ops" || role === "Manager")
-        output += opsMenu;
+// ------- SIDEBAR TOGGLE -------
+document.getElementById("ss-menu-btn").onclick = ()=>{
+    const bar = document.getElementById("ss-sidebar");
+    bar.classList.toggle("collapsed");
+};
 
-    return output;
-}
-
-// Logout
-function logout() {
+// ------- LOGOUT -------
+document.getElementById("ss-logout").onclick = ()=>{
     localStorage.removeItem("skSession");
-    window.parent.postMessage({ type: "logout" }, "*");
+    window.location.href = "/shuttlesync"; // Wix login page
+};
+
+// ------- THEME MODE -------
+function applyTheme(){
+    const theme = localStorage.getItem("ss-theme") || "dark";
+    document.documentElement.setAttribute("data-theme", theme);
+}
+applyTheme();
+
+function toggleTheme(){
+    const current = localStorage.getItem("ss-theme") || "dark";
+    const next = current === "dark" ? "light" : "dark";
+    localStorage.setItem("ss-theme", next);
+    applyTheme();
 }
 
-// Auto-load
-document.addEventListener("DOMContentLoaded", renderHeader);
+document.getElementById("ss-theme-toggle").onclick = toggleTheme;
+document.getElementById("ss-theme-toggle-2").onclick = toggleTheme;
+
+// ------- SESSION VALIDATION -------
+async function validate(){
+    if(!ss.sessionToken){
+        failStatus();
+        return;
+    }
+
+    try{
+        const res = await fetch(VERIFY_URL, {
+            method:"POST",
+            headers:{ "Content-Type":"application/json" },
+            body:JSON.stringify({ token:ss.sessionToken })
+        }).then(r=>r.json());
+
+        if(res.valid){
+            okStatus();
+        } else {
+            failStatus();
+        }
+
+    } catch(e){
+        failStatus();
+    }
+}
+
+function okStatus(){
+    const dot = document.getElementById("ss-status");
+    dot.style.background = "#27d47c";
+}
+function failStatus(){
+    const dot = document.getElementById("ss-status");
+    dot.style.background = "#e84545";
+}
+
+validate();
+setInterval(validate, 30000); // every 30s
