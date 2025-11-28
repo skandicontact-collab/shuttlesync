@@ -1,1 +1,15 @@
+| Field           | Type             | Required          | Description                                             |
+| --------------- | ---------------- | ----------------- | ------------------------------------------------------- |
+| SK-ID           | Single line text | ✔                 | Primary key (AB1234)                                    |
+| First Name      | text             | ✔                 |                                                         |
+| Last Name       | text             | ✔                 |                                                         |
+| Email           | email            | ✔                 | used for magic links + 2FA                              |
+| PasswordHash    | text             | ✔                 | hashed password (bcrypt)                                |
+| Role            | Single Select    | ✔                 | INTRA / OPS / DESTINATION / TOR-GAD / TOR-GAS / UNIFORM |
+| Base            | Single Select    | optional          |                                                         |
+| Department      | text             | optional          |                                                         |
+| Status          | single select    | Active / Inactive |                                                         |
+| Last Login      | datetime         |                   |                                                         |
+| Failed Attempts | number           |                   |                                                         |
+| Locked Until    | datetime         |                   |                                                         |
 
