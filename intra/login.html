@@ -6,7 +6,10 @@
 <title>ShuttleSync Login</title>
 
 <style>
-/* ROOT COLORS */
+/* ISOLATE FROM WIX */
+html, body { all: initial; font-family: Montserrat, sans-serif; }
+
+/* RE-DECLARE ROOT */
 :root{
   --sk-blue:#022e64;
   --sk-blue-soft:#083a7e;
@@ -19,17 +22,16 @@
   --blur:18px;
 }
 
-/* GLOBAL */
 html, body {
   margin:0;
   height:100%;
   overflow:hidden;
-  font-family: "Montserrat", sans-serif;
   background:#000;
   color:var(--sk-text);
+  font-family:"Montserrat", sans-serif !important;
 }
 
-/* VIDEO BACKGROUND */
+/* VIDEO BG */
 .video-bg{
   position:fixed;
   top:0; left:0;
@@ -39,7 +41,7 @@ html, body {
   filter:brightness(0.45);
 }
 
-/* SPLASH LOADING */
+/* SPLASH */
 #splash{
   position:fixed;
   top:0; left:0;
@@ -53,11 +55,9 @@ html, body {
   z-index:20;
   animation:fadeOut 1s ease 2.2s forwards;
 }
-
 @keyframes fadeOut{
   to{opacity:0; visibility:hidden;}
 }
-
 .loader{
   width:52px;
   height:52px;
@@ -66,11 +66,11 @@ html, body {
   border-top:4px solid var(--sk-accent);
   animation:spin 0.9s linear infinite;
 }
-
 @keyframes spin{
   to{transform:rotate(360deg);}
 }
-  
+
+/* LOGIN CARD */
 .login-wrapper{
   position:absolute;
   top:50%; left:50%;
@@ -112,6 +112,7 @@ button{
   transition:0.25s;
 }
 button:hover{background:#7fe7ef;}
+
 .magic-link{
   margin-top:14px;
   text-align:center;
@@ -119,7 +120,8 @@ button:hover{background:#7fe7ef;}
   color:var(--sk-accent);
   cursor:pointer;
 }
-  
+
+/* 2FA BOX */
 #twofa {
   position:fixed;
   top:0; left:0;
@@ -138,11 +140,8 @@ button:hover{background:#7fe7ef;}
   border-radius:var(--radius);
   text-align:center;
 }
-.twofa-input{
-  margin-top:20px;
-}
-  
-  </style>
+.twofa-input{ margin-top:20px; }
+</style>
 </head>
 
 <body>
@@ -152,12 +151,13 @@ button:hover{background:#7fe7ef;}
   <source src="https://video.wixstatic.com/video/564bce_a3dfdf0b8c9a45aa94463ef6ee6af34a/1080p/mp4/file.mp4" type="video/mp4">
 </video>
 
-<!-- SPLASH SCREEN -->
+<!-- SPLASH -->
 <div id="splash">
   <div class="loader"></div>
   <p style="margin-top:18px;font-size:15px;color:#9ab;">Loading ShuttleSync...</p>
 </div>
 
+<!-- LOGIN CARD -->
 <div class="login-wrapper">
 
   <div class="login-title">ShuttleSync Login</div>
@@ -168,54 +168,46 @@ button:hover{background:#7fe7ef;}
   <input id="skid" maxlength="6" placeholder="SK-ID (e.g. AB1234)" />
   <input id="pw" type="password" placeholder="Password" />
 
-  <button class="login-btn" onclick="startLogin()">Sign in</button>
-
+  <button onclick="startLogin()">Sign in</button>
   <a class="magic-link" onclick="sendMagicLink()">Send me a magic link instead</a>
-  
-<!-- TWO FACTOR POPUP -->
-<div id="twofa" style="display:none;">
+
+</div>
+
+<!-- 2FA POPUP -->
+<div id="twofa">
   <div class="twofa-box">
     <h2>Two-factor Authentication</h2>
-    <p>An email has been sent to you with the 6-digit verification code.</p>
+    <p>A verification code has been sent to your email.</p>
     <input id="code" class="twofa-input" type="text" maxlength="6" placeholder="******">
     <button onclick="submitCode()">Verify</button>
   </div>
 </div>
 
-  
 <script>
-// Regex SK-ID validator
-function validateSKID(id){
-  return /^[A-Z]{2}\d{4}$/.test(id);
-}
+// Validate SK-ID
+function validateSKID(id){ return /^[A-Z]{2}\d{4}$/.test(id); }
 
 // LOGIN
 function startLogin(){
   const id = skid.value.trim().toUpperCase();
-
-  if(!validateSKID(id)){
-    alert("Invalid SK-ID format.");
-    return;
-  }
+  if(!validateSKID(id)) return alert("Invalid SK-ID format.");
 
   fetch("YOUR_MAKE_LOGIN_WEBHOOK_URL", {
     method:"POST",
     headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({
-      skid:id,
-      password:pw.value
-    })
+    body:JSON.stringify({ skid:id, password:pw.value })
   })
   .then(r=>r.json())
   .then(res=>{
     if(res.status==="2fa_required"){
       document.getElementById("twofa").style.display="flex";
-
-    }
+    } 
     else if(res.status==="success"){
-      window.location.href="dashboard.html";
+      window.parent.postMessage({ type:"loginSuccess" }, "*");
     }
-    else alert("Login failed.");
+    else{
+      alert("Login failed.");
+    }
   });
 }
 
@@ -230,10 +222,10 @@ function sendMagicLink(){
     body:JSON.stringify({ skid:id })
   });
 
-  alert("A login link has been sent to your email.");
+  alert("Magic link sent.");
 }
 
-// SUBMIT 2FA
+// 2FA
 function submitCode(){
   fetch("YOUR_MAKE_2FA_VERIFY_WEBHOOK", {
     method:"POST",
@@ -246,17 +238,12 @@ function submitCode(){
   .then(r=>r.json())
   .then(res=>{
     if(res.status==="success"){
-      window.location.href = "/dashboard"; 
+      window.parent.postMessage({ type:"loginSuccess" }, "*");
+    } else {
+      alert("Incorrect code.");
     }
-    else alert("Incorrect code.");
   });
 }
-  $w.onMessage((event) => {
-  if(event.data.type === "loginSuccess"){
-    wixLocation.to("/dashboard");  
-  }
-});
-
 </script>
 
 </body>
