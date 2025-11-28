@@ -1,1 +1,10 @@
+| Field      | Type              | Description                         |
+| ---------- | ----------------- | ----------------------------------- |
+| Token      | text              | primary key (64 char random string) |
+| SK-ID      | link to Employees |                                     |
+| IP         | text              |                                     |
+| User Agent | text              |                                     |
+| Created    | datetime          |                                     |
+| Expires    | datetime          | +24h                                |
+| Status     | Active / Expired  |                                     |
 
