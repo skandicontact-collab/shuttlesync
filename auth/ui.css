@@ -1,0 +1,84 @@
+/* Root theme from global header */
+:root {
+    --surface: rgba(255,255,255,0.08);
+    --surface-strong: rgba(255,255,255,0.14);
+    --border: rgba(255,255,255,0.12);
+    --shadow: rgba(0,0,0,0.35);
+    --radius: 14px;
+}
+
+/* Page container (inside #ss-content) */
+.ss-page {
+    padding: 24px;
+    color: var(--sk-text);
+    animation: fade 0.3s ease;
+}
+
+@keyframes fade {
+    from { opacity:0; transform: translateY(6px); }
+    to { opacity:1; transform: translateY(0); }
+}
+
+.ss-page-header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.ss-page-header .subtitle {
+    margin-top: 4px;
+    color: #9ab;
+    font-size: 15px;
+}
+
+/* Grid layout */
+.ss-grid {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+}
+
+/* Modern Glass Card */
+.ss-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 4px 16px var(--shadow);
+    transition: 0.25s;
+}
+
+.ss-card:hover {
+    background: var(--surface-strong);
+    transform: translateY(-2px);
+}
+
+.ss-card h2 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.card-content {
+    font-size: 15px;
+}
+
+/* Tables */
+.ss-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.ss-table th, .ss-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.ss-table th {
+    text-align: left;
+    color: #bbb;
+    font-weight: 500;
+}
