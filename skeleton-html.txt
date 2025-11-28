@@ -1,47 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>{{PAGE_TITLE}}</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ShuttleSync – MODULE NAME</title>
 
-<link rel="stylesheet" href="/auth/header.css"/>
-<script src="/auth/sessionManager.js"></script>
-<script src="/auth/header.js" defer></script>
+<!-- Global Header + Session -->
+<link rel="stylesheet" href="../../auth/header.css" />
+<script src="../../auth/sessionManager.js"></script>
+<script src="../../auth/header.js" defer></script>
 
-<style>
-/* Page-specific styling only */
-.page-title{
-  font-size:28px;
-  font-weight:700;
-  margin-bottom:16px;
-}
-.card{
-  background:var(--sk-card);
-  padding:20px;
-  border-radius:14px;
-  margin-bottom:22px;
-}
-.table{
-  width:100%;
-  border-collapse:collapse;
-}
-.table th, .table td{
-  padding:10px 14px;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-}
-</style>
+<!-- Page UI -->
+<link rel="stylesheet" href="ui.css" />
+<script src="ui.js" defer></script>
 </head>
 
 <body>
-<div id="ss-page-container">
 
-    <div class="page-title">{{PAGE_TITLE}}</div>
+<!-- Page Container (inside global layout) -->
+<div class="ss-page">
 
-    <!-- PAGE CONTENT BEGINS HERE -->
-    {{CONTENT_BLOCK}}
-    <!-- PAGE CONTENT ENDS HERE -->
+    <!-- Page Title -->
+    <div class="ss-page-header">
+        <h1>MODULE NAME</h1>
+        <p class="subtitle">Short description of the module</p>
+    </div>
 
+    <!-- Main Content Wrapper -->
+    <div class="ss-grid">
+
+        <!-- Card Example -->
+        <div class="ss-card">
+            <h2>Card Title</h2>
+            <div class="card-content">
+                Content / table / status blocks here
+            </div>
+        </div>
+
+        <div class="ss-card">
+            <h2>Another Panel</h2>
+            <div class="card-content">
+                More UI elements
+            </div>
+        </div>
+
+    </div>
 </div>
+
 </body>
 </html>
