@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>My Roster – ShuttleSync</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+/* ===========================
+   DARK-SPACE NEON DESIGN
+=========================== */
+:root{
+  --sk-bg:#020b1a;
+  --sk-card:#071225;
+  --sk-panel:#0a1630;
+  --sk-border:#142544;
+  --sk-blue:#022e64;
+  --sk-accent:#5FC7CF;
+  --sk-text:#f1f4ff;
+  --sk-warn:#e3b341;
+  --sk-bad:#c03b3b;
+  --sk-good:#28c98b;
+  --radius:18px;
+}
+
+body{
+  background:var(--sk-bg);
+  font-family:"Montserrat",sans-serif;
+  padding:26px;
+  color:var(--sk-text);
+}
+
+/* GRID WRAPPER */
+#roster {
+  display:flex;
+  gap:24px;
+}
+
+/* LEFT PANEL – MONTH SELECTOR */
+#leftPanel{
+  width:250px;
+  background:var(--sk-card);
+  border-radius:var(--radius);
+  padding:20px;
+  border:1px solid var(--sk-border);
+}
+
+#monthSelect{
+  width:100%;
+  padding:12px;
+  background:var(--sk-panel);
+  border:1px solid var(--sk-border);
+  color:var(--sk-text);
+  border-radius:var(--radius);
+}
+
+/* STATUS LEGEND */
+.legend-item{
+  padding:10px 0;
+  font-size:14px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.badge{
+  display:inline-block;
+  padding:2px 10px;
+  border-radius:50px;
+  font-size:12px;
+  margin-left:8px;
+}
+.badge.ok{background:var(--sk-good);}
+.badge.warn{background:var(--sk-warn);}
+.badge.bad{background:var(--sk-bad);}
+
+/* RIGHT PANEL – ROSTER GRID */
+#gridWrap{
+  flex:1;
+  background:var(--sk-card);
+  border-radius:var(--radius);
+  padding:20px;
+  border:1px solid var(--sk-border);
+  overflow-x:auto;
+}
+
+/* ROSTER TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th{
+  padding:12px;
+  font-size:12px;
+  background:var(--sk-panel);
+  border-bottom:1px solid var(--sk-border);
+  text-align:left;
+}
+td{
+  padding:16px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  vertical-align:top;
+}
+
+/* PAIRING BOX */
+.pairing{
+  background:rgba(95,199,207,0.08);
+  border-left:3px solid var(--sk-accent);
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:var(--radius);
+}
+
+.p-leg{
+  font-size:12px;
+  color:#9ab6d8;
+  padding-left:10px;
+  margin-top:6px;
+  border-left:1px solid rgba(255,255,255,0.1);
+}
+
+/* QUICK STATUS TAG */
+.statusTag{
+  font-size:12px;
+  padding:3px 8px;
+  border-radius:6px;
+  margin-left:8px;
+}
+.status-ok{background:var(--sk-good);}
+.status-warn{background:var(--sk-warn);}
+.status-bad{background:var(--sk-bad);}
+
+/* OPEN TIME */
+.opentime {
+  background: rgba(0, 204, 255, 0.1);
+  border-left:3px solid var(--sk-accent);
+  padding:10px;
+  border-radius:var(--radius);
+  margin-top:6px;
+}
+.reserve {
+  background: rgba(255,255,255,0.05);
+  padding:10px;
+  border-radius:var(--radius);
+  margin-top:6px;
+  border-left:3px solid var(--sk-border);
+}
+
+/* TRIP TRADE BUTTON */
+.tradeBtn {
+  background: var(--sk-accent);
+  padding:8px 12px;
+  border-radius:8px;
+  color:#00101a;
+  cursor:pointer;
+  font-weight:600;
+  display:inline-block;
+  margin-top:10px;
+}
+.tradeBtn:hover{opacity:0.85;}
+</style>
+</head>
+
+<body>
+
+<div id="roster">
+
+  <!-- LEFT PANEL -->
+  <div id="leftPanel">
+    <h3>My Roster</h3><br>
+
+    <label>Month</label>
+    <select id="monthSelect" onchange="loadRoster()">
+      <option value="2025-01">January 2025</option>
+      <option value="2025-02">February 2025</option>
+      <option value="2025-03">March 2025</option>
+    </select>
+
+    <br><br>
+    <h4>Legend</h4>
+
+    <div class="legend-item">Legal <span class="badge ok">OK</span></div>
+    <div class="legend-item">Warning <span class="badge warn">WARN</span></div>
+    <div class="legend-item">Illegal <span class="badge bad">ILLEGAL</span></div>
+
+    <br>
+    <h4>Weekly Hours</h4>
+    <div id="weeklyHours" style="margin-top:8px;color:#8eb;">—</div>
+  </div>
+
+
+  <!-- ROSTER GRID -->
+  <div id="gridWrap">
+    <table id="rosterTable">
+      <thead>
+        <tr>
+          <th style="width:50px;">Day</th>
+          <th>Duty / Pairings</th>
+          <th>Rest</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="rosterBody">
+        <tr><td colspan="4" style="padding:40px;text-align:center;color:#789;">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+
+<script>
+/* ==================================================
+   LOAD ROSTER FROM AIRTABLE VIA MAKE WEBHOOK
+================================================== */
+
+function loadRoster(){
+  const month = document.getElementById("monthSelect").value;
+
+  fetch("YOUR_AIRTABLE_WEBHOOK_GET_ROSTER", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({
+      skid: sessionStorage.getItem("SKID"),
+      month: month
+    })
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    buildRosterTable(data);
+  });
+}
+
+
+/* ==================================================
+   BUILD ROSTER TABLE
+================================================== */
+function buildRosterTable(data){
+  const body = document.getElementById("rosterBody");
+  body.innerHTML="";
+
+  let weeklyTotal = 0;
+
+  data.days.forEach(day=>{
+    const tr=document.createElement("tr");
+
+    /* DAY */
+    let tdDay=document.createElement("td");
+    tdDay.textContent=day.day;
+    tr.appendChild(tdDay);
+
+    /* PAIRINGS */
+    let tdPair=document.createElement("td");
+
+    if(day.pairings.length>0){
+      day.pairings.forEach(p=>{
+        const div=document.createElement("div");
+        div.className="pairing";
+
+        div.innerHTML = `
+          <div><b>${p.code}</b> – ${p.start} → ${p.end}</div>
+          <div style="margin-top:4px;font-size:13px;">Layover: ${p.layover || "—"}</div>
+        `;
+
+        p.legs.forEach(l=>{
+          const leg=document.createElement("div");
+          leg.className="p-leg";
+          leg.textContent=`${l.flight} • ${l.dep} → ${l.arr} (${l.duration})`;
+          div.appendChild(leg);
+        });
+
+        const trade=document.createElement("div");
+        trade.className="tradeBtn";
+        trade.textContent="Request Trip-Trade";
+        trade.onclick=()=>requestTrade(p.code);
+        div.appendChild(trade);
+
+        tdPair.appendChild(div);
+      });
+    }
+
+    if(day.opentime){
+      const ot=document.createElement("div");
+      ot.className="opentime";
+      ot.textContent=`Open Time: ${day.opentime}`;
+      tdPair.appendChild(ot);
+    }
+
+    if(day.reserve){
+      const res=document.createElement("div");
+      res.className="reserve";
+      res.textContent=`Reserve Day`;
+      tdPair.appendChild(res);
+    }
+
+    tr.appendChild(tdPair);
+
+    /* REST */
+    let tdRest=document.createElement("td");
+    tdRest.textContent=day.rest || "—";
+    tr.appendChild(tdRest);
+
+    /* STATUS */
+    let tdStatus=document.createElement("td");
+
+    let s=document.createElement("span");
+    s.className="statusTag status-"+day.status;
+    s.textContent=day.status.toUpperCase();
+    tdStatus.appendChild(s);
+
+    tr.appendChild(tdStatus);
+
+    weeklyTotal += Number(day.dutyHours || 0);
+
+    body.appendChild(tr);
+  });
+
+  document.getElementById("weeklyHours").textContent = weeklyTotal + " hrs";
+}
+
+
+/* ==================================================
+   TRIP TRADE
+================================================== */
+function requestTrade(pairingCode){
+  fetch("YOUR_AIRTABLE_WEBHOOK_TRIPTRADE", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({
+      skid: sessionStorage.getItem("SKID"),
+      pairing: pairingCode
+    })
+  });
+
+  alert("Trip-trade request submitted.");
+}
+
+/* Initial load */
+loadRoster();
+</script>
+
+</body>
+</html>
+<title>ShuttleSync — My Roster</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+<style>
+/* ----------------------------------------------------
+   SHUTTLESYNC DARK-SPACE NEON UI
+---------------------------------------------------- */
+:root{
+  --sk-blue:#022e64;
+  --sk-blue-soft:#083a7e;
+  --sk-ink:#051a33;
+  --sk-accent:#5FC7CF;
+  --sk-orange:#fe5700;
+  --sk-bg:#020b1a;
+  --sk-card:#071225;
+  --sk-card-soft:#0a1630;
+  --sk-border:#122445;
+  --sk-text:#f6f7fb;
+  --sk-muted:#8ea2c9;
+
+  --ok:#107e3e;
+  --warn:#e3b130;
+  --illegal:#9b1c1c;
+
+  --radius:18px;
+  --shadow:0 14px 40px rgba(0,0,0,0.55);
+  --trans:0.25s ease;
+}
+
+*{
+  margin:0; padding:0;
+  box-sizing:border-box;
+  font-family:"Montserrat",sans-serif;
+}
+
+body{
+  background:radial-gradient(circle at top, #13254a 0%, #020b1a 55%, #000 100%);
+  color:var(--sk-text);
+  min-height:100vh;
+  padding:30px;
+}
+
+/* Page wrapper */
+#rosterApp{
+  max-width:1200px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+}
+
+#loader{
+  text-align:center;
+  margin-top:60px;
+  font-size:18px;
+  opacity:.7;
+}
+
+/* Header */
+#rosterHeader{
+  background:rgba(7,18,37,0.75);
+  border:1px solid var(--sk-border);
+  padding:28px;
+  border-radius:var(--radius);
+  backdrop-filter:blur(16px);
+  box-shadow:var(--shadow);
+  display:none;
+}
+
+#rosterHeader h1{
+  font-size:32px;
+  margin-bottom:6px;
+  font-weight:700;
+}
+
+#rosterMonth{
+  opacity:.75;
+  font-size:16px;
+}
+
+/* Day grid */
+#rosterGrid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:18px;
+  display:none;
+}
+
+.dayBox{
+  background:rgba(10,22,48,0.75);
+  border:1px solid var(--sk-border);
+  border-radius:var(--radius);
+  padding:14px;
+  min-height:160px;
+  backdrop-filter:blur(14px);
+  position:relative;
+  box-shadow:var(--shadow);
+}
+
+.dayNum{
+  font-size:18px;
+  font-weight:600;
+  margin-bottom:8px;
+  opacity:.9;
+}
+
+.rosterItem{
+  margin-top:6px;
+  background:rgba(255,255,255,0.05);
+  border-left:4px solid var(--sk-accent);
+  padding:10px;
+  border-radius:12px;
+}
+
+.rosterType{
+  font-size:14px;
+  opacity:.85;
+}
+
+.flightLeg{
+  font-size:14px;
+  margin-top:4px;
+  padding-left:6px;
+  border-left:2px solid var(--sk-accent);
+  opacity:.85;
+}
+
+/* legality tag */
+.legality{
+  margin-top:8px;
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:12px;
+  font-size:12px;
+  font-weight:600;
+  color:#fff;
+}
+
+.legal-ok{ background:var(--ok); }
+.legal-warn{ background:var(--warn); }
+.legal-illegal{ background:var(--illegal); }
+
+/* Summary panel */
+#summaryPanel{
+  display:none;
+  background:rgba(7,18,37,0.8);
+  padding:28px;
+  border:1px solid var(--sk-border);
+  border-radius:var(--radius);
+  backdrop-filter:blur(18px);
+  box-shadow:var(--shadow);
+}
+
+#summaryPanel h2{
+  font-size:24px;
+  font-weight:600;
+  margin-bottom:20px;
+}
+
+.summaryItem{
+  margin-bottom:12px;
+  font-size:16px;
+  opacity:.85;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="rosterApp">
+
+  <div id="loader">Loading roster…</div>
+
+  <!-- Header -->
+  <div id="rosterHeader">
+    <h1>My Roster</h1>
+    <div id="rosterMonth"></div>
+  </div>
+
+  <!-- ROSTER GRID -->
+  <div id="rosterGrid"></div>
+
+  <!-- SUMMARY PANEL -->
+  <div id="summaryPanel">
+    <h2>Monthly Summary</h2>
+    <div class="summaryItem" id="sumDuty"></div>
+    <div class="summaryItem" id="sumFlights"></div>
+    <div class="summaryItem" id="sumRest"></div>
+    <div class="summaryItem" id="sumWarnings"></div>
+  </div>
+
+</div>
+
+<script>
+/* ----------------------------------------------------
+   WIX → HTML PostMessage Listener
+---------------------------------------------------- */
+window.addEventListener("message", (event) => {
+    if(!event.data) return;
+
+    if(event.data.type === "loadRoster"){
+        loadRoster(event.data.employeeId, event.data.month);
+    }
+});
+
+/* ----------------------------------------------------
+   LOAD ROSTER FROM AIRTABLE
+   TABLE NEEDED: ROSTER
+---------------------------------------------------- */
+
+async function loadRoster(empID, monthStr){
+  document.getElementById("loader").style.display="block";
+
+  try{
+    const url =
+      "https://api.airtable.com/v0/YOUR_BASE_ID/ROSTER?filterByFormula=" +
+      encodeURIComponent(`AND({Employee ID}='${empID}', {Month}='${monthStr}')`);
+
+    const res = await fetch(url,{
+      headers:{ Authorization:"Bearer YOUR_API_KEY" }
+    });
+
+    const data = await res.json();
+
+    if(!data.records || data.records.length===0){
+      document.getElementById("loader").innerHTML="No roster found.";
+      return;
+    }
+
+    const roster = data.records[0].fields;
+
+    /* ------------------------------------------
+       Build calendar
+    ------------------------------------------ */
+    const days = roster["Days"];
+    const grid = document.getElementById("rosterGrid");
+    grid.innerHTML = "";
+
+    days.forEach(day => {
+      const box = document.createElement("div");
+      box.className = "dayBox";
+
+      box.innerHTML = `
+        <div class="dayNum">${day.date}</div>
+      `;
+
+      if(day.items && day.items.length > 0){
+        day.items.forEach(item => {
+          const r = document.createElement("div");
+          r.className = "rosterItem";
+
+          let flightLegsHTML = "";
+          if(item.flightLegs){
+            item.flightLegs.forEach(leg => {
+              flightLegsHTML += `<div class="flightLeg">${leg}</div>`;
+            });
+          }
+
+          /* legality */
+          let legClass = "legal-ok";
+          let legText = "OK";
+          if(item.legality === "WARN"){ legClass="legal-warn"; legText="Warning"; }
+          if(item.legality === "ILLEGAL"){ legClass="legal-illegal"; legText="Illegal"; }
+
+          r.innerHTML = `
+            <div class="rosterType">${item.type}</div>
+            ${flightLegsHTML}
+            <div class="legality ${legClass}">${legText}</div>
+          `;
+          box.appendChild(r);
+        });
+      }
+
+      grid.appendChild(box);
+    });
+
+    /* ------------------------------------------
+       Summary
+    ------------------------------------------ */
+    document.getElementById("sumDuty").textContent = "Total Duty Hours: " + (roster["Total Duty"] || "0");
+    document.getElementById("sumFlights").textContent = "Flight Sectors: " + (roster["Flight Legs"] || "0");
+    document.getElementById("sumRest").textContent = "Rest Violations: " + (roster["Rest Violations"] || "0");
+    document.getElementById("sumWarnings").textContent = "Legality Warnings: " + (roster["Warnings"] || "0");
+
+    /* SHOW UI */
+    document.getElementById("loader").style.display="none";
+    document.getElementById("rosterHeader").style.display="block";
+    document.getElementById("rosterGrid").style.display="grid";
+    document.getElementById("summaryPanel").style.display="block";
+
+    document.getElementById("rosterMonth").textContent = monthStr;
+
+  }catch(err){
+    document.getElementById("loader").innerHTML="Error loading roster.";
+  }
+}
+
+</script>
+
+</body>
+</html>
