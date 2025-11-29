@@ -1,192 +1,88 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>ShuttleSync — SKANDI Group</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>ShuttleSync • Internal Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Fonts -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Global Styles -->
-  <link rel="stylesheet" href="/styles/shuttlesync-global.css" />
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="/styles/shuttlesync-global.css">
 
   <style>
-    /* =============================
-       FULLSCREEN VIDEO BACKGROUND
-    ============================== */
-    .video-bg {
-      position: fixed;
-      inset: 0;
+    /* Homepage-specific styles */
+    #hero-wrap {
+      position: relative;
+      height: calc(var(--vh, 1vh) * 100);
       width: 100%;
-      height: 100%;
       overflow: hidden;
-      z-index: -1;
     }
 
-    .video-bg video {
+    #hero-wrap video {
+      position: absolute;
+      top: 0; left: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: brightness(0.78);
+      z-index: -1;
+      filter: brightness(0.55);
     }
 
-    html[data-theme='dark'] .video-bg video {
-      filter: brightness(0.45) saturate(1.1);
-    }
-
-    /* =============================
-       PAGE WRAPPER
-    ============================== */
-    .home-wrapper {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    #hero-content {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
       text-align: center;
-      padding: 20px;
+      color: var(--sk-text);
+      width: 90%;
+      max-width: 600px;
     }
 
-    /* =============================
-       LOGIN CARD
-    ============================== */
-    .home-card {
-      background: var(--sk-glass);
-      padding: 40px 50px;
-      border-radius: 18px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-      backdrop-filter: blur(14px);
-      border: 1px solid var(--sk-border-soft);
-      max-width: 440px;
-      width: 100%;
-      animation: fadeIn 0.6s ease;
-    }
-
-    .home-title {
-      font-size: 28px;
+    #hero-title {
+      font-size: 34px;
       font-weight: 700;
-      margin-bottom: 10px;
-      color: var(--sk-accent);
-      text-shadow: 0 0 8px rgba(95,199,207,0.3);
+      margin-bottom: 20px;
+      color: var(--sk-card-soft);
+      text-shadow: 0 0 14px var(--sk-blue);
     }
 
-    .home-subtitle {
-      font-size: 14px;
-      margin-bottom: 30px;
-      color: var(--sk-text-dim);
-    }
-
-    .home-btn {
-      padding: 14px 22px;
-      background: var(--sk-blue);
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      transition: 0.3s;
-      box-shadow: 0 4px 14px rgba(95,199,207,0.5);
-    }
-
-    .home-btn:hover {
+    #enter-btn {
+      padding: 14px 26px;
       background: var(--sk-accent);
-      color: var(--sk-blue);
-      transform: translateY(-2px) scale(1.03);
-      box-shadow: 0 0 25px var(--sk-accent);
+      color: #000;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 18px var(--sk-accent);
+      transition: 0.25s;
+    }
+    #enter-btn:hover {
+      background: var(--sk-blue);
+      color: #fff;
+      box-shadow: 0 0 30px var(--sk-accent);
+      transform: scale(1.04);
     }
 
-    /* =============================
-       LEGAL FOOTER
-    ============================== */
-    .legal-footer {
-      margin-top: 60px;
-      font-size: 11px;
-      opacity: 0.75;
-      color: var(--sk-text-dim);
-      max-width: 720px;
-      line-height: 1.5;
+    footer {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
       text-align: center;
-      padding: 0 20px;
-      animation: fadeIn 0.9s ease;
+      font-size: 12px;
+      color: var(--sk-text-dim);
     }
-
-    /* ------------------------------
-       ANIMATIONS
-    --------------------------------*/
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-  /* ============================================
-   MOBILE RESPONSIVE ENHANCEMENTS
-============================================ */
-@media (max-width: 900px) {
-
-  /* Resize card for smaller screens */
-  .home-card {
-    padding: 28px 24px;
-    max-width: 92%;
-    margin-top: 20px;
-    border-radius: 14px;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.35);
-  }
-
-  .home-title {
-    font-size: 22px;
-  }
-
-  .home-subtitle {
-    font-size: 13px;
-    margin-bottom: 22px;
-  }
-
-  .home-btn {
-    padding: 12px 18px;
-    font-size: 15px;
-    border-radius: 6px;
-  }
-
-  .legal-footer {
-    font-size: 10px;
-    margin-top: 30px;
-    max-width: 95%;
-    line-height: 1.35;
-  }
-
-  /* Video brightness correction on mobile */
-  .video-bg video {
-    object-fit: cover;
-    filter: brightness(0.68);
-  }
-  html[data-theme='dark'] .video-bg video {
-    filter: brightness(0.40) saturate(1.2);
-  }
-
-  /* Prevent zoom-in on click for iOS */
-  input, button {
-    font-size: 16px !important;
-  }
-}
-
-/* ====== Extra small screens (iPhone Mini etc.) ====== */
-@media (max-width: 480px) {
-  .home-card {
-    padding: 24px 18px;
-  }
-  .home-title { font-size: 20px; }
-  .home-subtitle { font-size: 12px; }
-}
   </style>
 </head>
 
 <body>
 
+<!-- Auto-redirect if already logged in -->
 <script>
   (function() {
     try {
@@ -196,56 +92,41 @@
       const session = JSON.parse(raw);
       if (!session) return;
 
-      // Optional validation
-      if (session.email && session.redirect) {
-        window.location.replace(session.redirect);
-      } else {
-        window.location.replace("/apps/dashboard");
-      }
+      window.location.replace("/apps/dashboard");
     } catch (e) {
       console.warn("Session redirect skipped:", e);
     }
   })();
 </script>
-  
-  <!-- VIDEO BACKGROUND -->
-  <div class="video-bg">
-    <video autoplay muted loop playsinline>
-      <source src="/assets/mp4/background.mp4" type="video/mp4" />
-    </video>
+
+<div id="hero-wrap">
+  <video autoplay muted loop playsinline>
+    <source src="/assets/mp4/background.mp4" type="video/mp4">
+  </video>
+
+  <div id="hero-content">
+    <div id="hero-title">ShuttleSync Employee Portal</div>
+
+    <button id="enter-btn" onclick="location.href='/apps/login'">
+      Go to Log-In →
+    </button>
   </div>
 
-  <!-- CONTENT -->
-  <div class="home-wrapper">
+  <footer>
+    © 2025 SKANDI Group. Internal company system.  
+    Access restricted. All activity logged.  
+    Sweden / United States compliance – GDPR & US Employee Data Act.
+  </footer>
+</div>
 
-    <div class="home-card">
-      <div class="home-title">Welcome to ShuttleSync</div>
-      <div class="home-subtitle">SKANDI Group’s internal employee portal</div>
-
-      <button class="home-btn" onclick="location.href='/apps/login'">
-        Go to Log-In →
-      </button>
-    </div>
-
-    <div class="legal-footer">
-      ShuttleSync is an internal system belonging to SKANDI Group AB (Sweden)
-      and SKANDI Group LLC (United States). Unauthorized access is strictly
-      prohibited. All usage may be logged and monitored in accordance with the
-      Swedish Data Protection Act (Dataskyddsförordningen), GDPR, the US
-      Computer Fraud and Abuse Act (CFAA), and SKANDI internal IT security
-      policies. By accessing this portal, you confirm your authorization and
-      agree to confidentiality and acceptable use guidelines.
-    </div>
-
-  </div>
-  
 <script>
-  // Fix 100vh on mobile
-  function setVh() {
-    document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+  // Fix mobile 100vh height on iOS
+  function updateVH() {
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
   }
-  setVh();
-  window.addEventListener('resize', setVh);
+  window.addEventListener('resize', updateVH);
+  updateVH();
 </script>
+
 </body>
 </html>
