@@ -1,3 +1,75 @@
+/* ============================================
+   MOBILE RESPONSIVE ENHANCEMENTS — LOGIN APP
+============================================ */
+@media (max-width: 900px) {
+
+  /* Collapse sidebar fully */
+  #ss-sidebar {
+    transform: translateX(-280px);
+    width: 0;
+    padding: 0;
+    opacity: 0;
+  }
+
+  body.sidebar-collapsed #ss-content {
+    margin-left: 0;
+  }
+
+  /* Login card scaled for mobile */
+  .login-card {
+    max-width: 92%;
+    margin: 40px auto;
+    padding: 24px 20px !important;
+    border-radius: 14px;
+  }
+
+  .login-title {
+    font-size: 22px;
+  }
+
+  .login-subtitle {
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  /* Inputs and buttons must not trigger zoom on iOS */
+  input, button {
+    font-size: 16px !important;
+  }
+
+  .login-form input[type="email"] {
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+
+  .login-btn {
+    padding: 14px 18px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+
+  /* Status text spacing */
+  .login-status {
+    font-size: 12px;
+    margin-top: 10px;
+  }
+
+  /* Footer tweak */
+  .login-footer-note {
+    font-size: 10px;
+    margin-top: 20px;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .login-card {
+    margin-top: 80px;
+    padding: 20px 16px !important;
+  }
+  .login-title { font-size: 20px; }
+  .login-subtitle { font-size: 12px; }
+}
 /* Center the login card nicely in the content area on large screens */
 .login-card {
   max-width: 420px;
