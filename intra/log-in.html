@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ShuttleSync Intra • Login</title>
+
+<!-- GLOBAL AUTH + UI -->
+<link rel="stylesheet" href="../auth/header.css" />
+<link rel="stylesheet" href="../auth/ui.css" />
+<script src="../auth/sessionManager.js"></script>
+<script src="../auth/ui.js" defer></script>
+
+<style>
+/* ROOT */
+:root {
+    --sk-blue:#022e64;
+    --sk-blue-soft:#083a7e;
+    --sk-ink:#051a33;
+    --sk-accent:#5FC7CF;
+    --sk-bg:#020b1a;
+    --sk-card:#071225;
+    --sk-text:#f6f7fb;
+    --radius:16px;
+}
+
+/* PAGE */
+html,body{
+    margin:0;
+    padding:0;
+    background:#000;
+    height:100%;
+    overflow:hidden;
+    font-family:"Montserrat",sans-serif;
+    color:var(--sk-text);
+}
+
+/* VIDEO BG */
+.bg-video{
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    object-fit:cover;
+    filter:brightness(0.4);
+    z-index:-1;
+}
+
+/* LOGIN WRAPPER */
+#login-wrapper{
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:380px;
+    background:rgba(0,0,0,0.55);
+    padding:40px;
+    border-radius:var(--radius);
+    backdrop-filter:blur(14px);
+    box-shadow:0 0 40px rgba(0,0,0,0.6);
+}
+
+/* TITLE */
+#login-wrapper h1{
+    margin:0 0 20px 0;
+    text-align:center;
+    font-size:26px;
+    letter-spacing:1px;
+}
+
+/* INPUTS */
+.login-input{
+    width:100%;
+    margin:10px 0;
+    padding:14px 16px;
+    border:none;
+    border-radius:var(--radius);
+    background:#0b1a33;
+    color:var(--sk-text);
+    font-size:15px;
+}
+.login-input:focus{
+    outline:2px solid var(--sk-accent);
+}
+
+/* BUTTON */
+#login-btn{
+    width:100%;
+    margin-top:22px;
+    background:var(--sk-blue-soft);
+    border:none;
+    color:white;
+    padding:14px;
+    border-radius:var(--radius);
+    font-size:16px;
+    cursor:pointer;
+}
+#login-btn:hover{
+    background:var(--sk-blue);
+}
+
+/* ERROR */
+#error-box{
+    margin-top:15px;
+    padding:10px;
+    background:#e84545;
+    color:white;
+    font-size:14px;
+    border-radius:var(--radius);
+    display:none;
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<video autoplay muted loop class="bg-video">
+    <source src="../assets/videos/bg.mp4" type="video/mp4" />
+</video>
+
+<div id="login-wrapper">
+    <h1>ShuttleSync Intra</h1>
+
+    <input id="skid" class="login-input" placeholder="SK-ID" />
+    <input id="pw" type="password" class="login-input" placeholder="Password" />
+
+    <button id="login-btn">Log In</button>
+
+    <div id="error-box"></div>
+</div>
+
+<script>
+/* LOGIN ACTION */
+document.getElementById("login-btn").onclick = async () => {
+    const skid = document.getElementById("skid").value.trim();
+    const pw = document.getElementById("pw").value.trim();
+
+    if(!skid || !pw){
+        showError("Missing SK-ID or password");
+        return;
+    }
+
+    // CALL MAKE LOGIN WEBHOOK
+    const res = await fetch("YOUR_LOGIN_WEBHOOK_URL", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({ skid, pw })
+    });
+
+    const data = await res.json();
+
+    if(!data || data.status !== "ok"){
+        showError("Invalid login");
+        return;
+    }
+
+    // SAVE SESSION
+    ShuttleSyncAuth.saveSession({
+        fullName:data.fullName,
+        role:data.role,
+        avatar:data.avatar,
+        token:data.token,
+        skid:data.skid
+    });
+
+    // REDIRECT BASED ON ROLE MAP
+    const route = {
+        "Destination": "/destination/home/checkInOut.html",
+        "Operations": "/ops/opsDashboard.html",
+        "Manager": "/destination/managerPanel/dutySchedule.html",
+        "Admin": "/intra/dashboard.html"
+    }[data.role] || "/intra/dashboard.html";
+
+    window.location.href = route;
+};
+
+/* ERROR */
+function showError(msg){
+    const el = document.getElementById("error-box");
+    el.innerText = msg;
+    el.style.display = "block";
+}
+</script>
+
+</body>
+</html>
