@@ -34,7 +34,94 @@
     html[data-theme='dark'] .video-bg video {
       filter: brightness(0.45) saturate(1.1);
     }
-/* ============================================
+
+    /* =============================
+       PAGE WRAPPER
+    ============================== */
+    .home-wrapper {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    /* =============================
+       LOGIN CARD
+    ============================== */
+    .home-card {
+      background: var(--sk-glass);
+      padding: 40px 50px;
+      border-radius: 18px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--sk-border-soft);
+      max-width: 440px;
+      width: 100%;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .home-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--sk-accent);
+      text-shadow: 0 0 8px rgba(95,199,207,0.3);
+    }
+
+    .home-subtitle {
+      font-size: 14px;
+      margin-bottom: 30px;
+      color: var(--sk-text-dim);
+    }
+
+    .home-btn {
+      padding: 14px 22px;
+      background: var(--sk-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.3s;
+      box-shadow: 0 4px 14px rgba(95,199,207,0.5);
+    }
+
+    .home-btn:hover {
+      background: var(--sk-accent);
+      color: var(--sk-blue);
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 0 25px var(--sk-accent);
+    }
+
+    /* =============================
+       LEGAL FOOTER
+    ============================== */
+    .legal-footer {
+      margin-top: 60px;
+      font-size: 11px;
+      opacity: 0.75;
+      color: var(--sk-text-dim);
+      max-width: 720px;
+      line-height: 1.5;
+      text-align: center;
+      padding: 0 20px;
+      animation: fadeIn 0.9s ease;
+    }
+
+    /* ------------------------------
+       ANIMATIONS
+    --------------------------------*/
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  /* ============================================
    MOBILE RESPONSIVE ENHANCEMENTS
 ============================================ */
 @media (max-width: 900px) {
@@ -83,6 +170,7 @@
   input, button {
     font-size: 16px !important;
   }
+}
 
 /* ====== Extra small screens (iPhone Mini etc.) ====== */
 @media (max-width: 480px) {
@@ -92,101 +180,11 @@
   .home-title { font-size: 20px; }
   .home-subtitle { font-size: 12px; }
 }
-    /* =============================
-       PAGE WRAPPER
-    ============================== */
-    .home-wrapper {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px;
-    }
-
-    /* =============================
-       LOGIN CARD
-    ============================== */
-    .home-card {
-      background: var(--sk-glass);
-      font-family: 'montserrat', sans-serif;
-      padding: 40px 50px;
-      border-radius: 18px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-      backdrop-filter: blur(14px);
-      border: 1px solid var(--sk-border-soft);
-      max-width: 440px;
-      width: 100%;
-      animation: fadeIn 0.6s ease;
-    }
-
-    .home-title {
-      font-size: 28px;
-      font-weight: 700;
-      font-family: 'montserrat', sans-serif;
-      margin-bottom: 10px;
-      color: var(--sk-accent);
-      text-shadow: 0 0 8px rgba(95,199,207,0.3);
-    }
-
-    .home-subtitle {
-      font-size: 14px;
-      font-family: 'montserrat', sans-serif;
-      margin-bottom: 30px;
-      color: var(--sk-text-dim);
-    }
-
-    .home-btn {
-      padding: 14px 22px;
-      background: var(--sk-blue);
-      font-family: 'montserrat', sans-serif;
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      transition: 0.3s;
-      box-shadow: 0 4px 14px rgba(95,199,207,0.5);
-    }
-
-    .home-btn:hover {
-      background: var(--sk-accent);
-      color: var(--sk-blue);
-      transform: translateY(-2px) scale(1.03);
-      box-shadow: 0 0 25px var(--sk-accent);
-    }
-
-    /* =============================
-       LEGAL FOOTER
-    ============================== */
-    .legal-footer {
-      margin-top: 60px;
-      font-size: 11px;
-      opacity: 0.75;
-      color: var(--sk-text-dim);
-      max-width: 720px;
-      line-height: 1.5;
-      text-align: center;
-      padding: 0 20px;
-      animation: fadeIn 0.9s ease;
-      font-family: 'montserrat', sans-serif;
-    }
-
-    /* ------------------------------
-       ANIMATIONS
-    --------------------------------*/
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
   </style>
 </head>
 
 <body>
+
 <script>
   (function() {
     try {
@@ -207,6 +205,7 @@
     }
   })();
 </script>
+  
   <!-- VIDEO BACKGROUND -->
   <div class="video-bg">
     <video autoplay muted loop playsinline>
