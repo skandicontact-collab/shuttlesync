@@ -9,8 +9,32 @@
    GLOBAL DESIGN SYSTEM 
 ------------------------------------------------------- */
 
-/* --- LIGHT THEME (DEFAULT, MOVED TO :ROOT) --- */
+/* --- LIGHT THEME (DEFAULT, LIGHT MOVED TO :ROOT) --- */
 :root {
+  --sk-bg: #f2eeee;
+  --sk-blue: #022E64;
+  --sk-card:#ffffff;
+  --sk-card-soft:#5FC7CF;
+  --sk-border:#5FC7CF;
+  --sk-text:#022e64;
+  --sk-text-dim:#444;
+  --sk-text-title:#000;
+  --sk-accent:#5FC7CF;
+  --sk-accent-hover:#022e64;
+  --sk-ink:#5FC7CF; 
+  --sk-bg-primary: #f4f4f6; /* Used for button text contrast */
+  --shadow:0 0 20px rgba(0,0,0,0.1);
+
+  /* Light theme variables for glass/blur effects (less dramatic) */
+  --sk-glass: rgba(255,255,255,0.85);
+  --sk-border-soft: rgba(95, 199, 207, 0.5);
+
+   /* LIGHT THEME LOGO URL */
+ --sk-logo-image: url('https://static.wixstatic.com/media/564bce_e3752ae80a944be284917a4f43066d92~mv2.png');
+
+ /* --- DARK THEME (Optional, use data-theme="dark" on <html>) --- */
+ html[data-theme='light']{
+
   --sk-blue:#022e64; 
   --sk-accent:#5FC7CF; /* Neon Cyan */
   --sk-accent-soft:#8df2ff;
@@ -34,32 +58,6 @@
   
   /* DARK THEME LOGO URL */
   --sk-logo-image: url('https://static.wixstatic.com/media/564bce_61d749bee89941b1b05af62844700faa~mv2.png');
-  
-  
-}
-
-/* --- DARK THEME (Optional, use data-theme="light" on <html>) --- */
-html[data-theme='light']{
-  --sk-bg: #f2eeee;
-  --sk-blue: #022E64;
-  --sk-card:#ffffff;
-  --sk-card-soft:#5FC7CF;
-  --sk-border:#5FC7CF;
-  --sk-text:#022e64;
-  --sk-text-dim:#444;
-  --sk-text-title:#000;
-  --sk-accent:#5FC7CF;
-  --sk-accent-hover:#022e64;
-  --sk-ink:#5FC7CF; 
-  --sk-bg-primary: #f4f4f6; /* Used for button text contrast */
-  --shadow:0 0 20px rgba(0,0,0,0.1);
-
-  /* Light theme variables for glass/blur effects (less dramatic) */
-  --sk-glass: rgba(255,255,255,0.85);
-  --sk-border-soft: rgba(95, 199, 207, 0.5);
-  
-  /* LIGHT THEME LOGO URL */
-  --sk-logo-image: url('https://static.wixstatic.com/media/564bce_e3752ae80a944be284917a4f43066d92~mv2.png');
 }
 
 body {
@@ -107,7 +105,6 @@ body {
   justify-content:space-between;
   padding:0 24px; 
   z-index:9999;
-  /* Updated background for light theme glass look */
   background: var(--sk-bf);
   color: var(--sk-text);
   border-bottom: 1px solid var(--sk-border-soft); 
@@ -115,7 +112,7 @@ body {
   backdrop-filter: blur(18px);
 }
 /* Specific Dark mode header BG override for the gradient look */
-html[data-theme='dark'] #ss-topbar {
+html[data-theme='light'] #ss-topbar {
    background: linear-gradient(135deg, rgba(2, 46, 100, 0.85), rgba(4, 21, 45, 0.95));
 }
 
@@ -178,8 +175,8 @@ html[data-theme='dark'] #ss-topbar {
   font-weight:600;
   color:var(--sk-accent); 
 }
-/* Dark mode specific glow on logo */
-html[data-theme='light'] .ss-logo::before {
+/* Light mode specific glow on logo */
+html[data-theme='dark'] .ss-logo::before {
     filter: drop-shadow(0 0 10px var(--sk-accent)); 
 }
 .body-logo-placeholder {
