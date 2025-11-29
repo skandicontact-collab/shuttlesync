@@ -27,7 +27,7 @@
   --sk-glass: rgba(255,255,255,0.85);
   --sk-border-soft: rgba(95, 199, 207, 0.5);
 
-  --sk-logo-image: url('https://static.wixstatic.com/media/564bce_e3752ae80a944be284917a4f43066d92~mv2.png');
+  --sk-logo-image: url('assets/logos/ShuttleSync-Menu-Background.png');
 
   /* For iOS mobile height fix */
   --vh: 1vh;
@@ -56,7 +56,7 @@ html[data-theme='dark'] {
   --sk-accent-hover: rgba(95,199,207,0.18); 
   --shadow:0 24px 70px rgba(0,0,0,0.9);
 
-  --sk-logo-image: url('https://static.wixstatic.com/media/564bce_61d749bee89941b1b05af62844700faa~mv2.png');
+  --sk-logo-image: href="https://static.wixstatic.com/media/564bce_61d749bee89941b1b05af62844700faa~mv2.png";
 }
 
 /* ------------------------------
