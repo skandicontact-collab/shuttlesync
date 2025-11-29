@@ -1,4 +1,19 @@
-SKANDI TRAVELS — DOCUMENT SYSTEM MAP
+SKANDI TRAVELS — FILE NAMING & STORAGE CONVENTION STANDARD
+(Integrated with Data Field System)
+
+Always use:
+- ALL CAPS for core identifiers (SKANDI, PNR)
+- Underscores `_` for spaces
+- Date format: YYYYMMDD (international standard)
+- No special characters (å, ä, ö → A, A, O)
+- PassengerLastName = lead passenger surname only
+- Destination = primary destination city or region
+────────────────────────────
+1. CORE NAMING PATTERN
+────────────────────────────
+Each file name follows this pattern:
+
+SKANDI_[DocumentType]_[PNR]_[PassengerLastName]_[Destination]_[YYYYMMDD]
 
 CUSTOMER-FACING (AUTO-GENERATED)
 1. Booking Confirmation / eTicket [auto-fill: (PNR) (Passenger Name) (Departure Date) (Return Date) (Flights) (Hotels) (Transfers) (Total Price) (Payment Status)]
@@ -42,3 +57,26 @@ STYLE SYSTEM (applies to all)
 - Colors: Deep Baltic Blue #022E64, Drift Sand #E0CFAE, Turquoise #5FC7CF.
 - Format: A4 portrait, editable DOCX + auto-PDF export.
 - QR code (auto-fill): links to (PNR lookup URL) on confirmations/itineraries.
+
+────────────────────────────
+2. DOCUMENT STORAGE FOLDERS
+────────────────────────────
+Main folder: /SKANDI_TRAVELS/Documents/
+Subfolders by category:
+
+/Documents/Confirmations/
+/Documents/eTickets/
+/Documents/HotelVouchers/
+/Documents/TransferVouchers/
+/Documents/TourVouchers/
+/Documents/Itineraries/
+/Documents/Invoices/
+/Documents/Refunds/
+/Documents/Operations/
+/Documents/Contracts/
+/Documents/Insurance/
+/Documents/Brochures/
+/Documents/Archive/
+
+Naming example:
+*/Documents/Confirmations/SKANDI_Confirmation_PNR12345_HIGBERG_ORLANDO_20250612.pdf*
