@@ -80,3 +80,18 @@ Subfolders by category:
 
 Naming example:
 */Documents/Confirmations/SKANDI_Confirmation_PNR12345_HIGBERG_ORLANDO_20250612.pdf*
+
+
+────────────────────────────
+FIELD LINKING REFERENCE
+────────────────────────────
+When auto-generating document names, your booking engine uses:
+
+FileName = "SKANDI_" + {{DocumentType}} + "_" + {{PNR}} + "_" + {{PassengerLastName}} + "_" + {{Destination}} + "_" + {{DocumentDate|format:YYYYMMDD}}
+
+Where:
+{{DocumentType}} = Confirmation / eTicket / Voucher / Invoice etc.
+{{PNR}} = booking reference
+{{PassengerLastName}} = lead passenger surname
+{{Destination}} = main travel destination
+{{DocumentDate}} = system-generated date
