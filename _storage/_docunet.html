@@ -1,0 +1,2836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ShuttleSync – DocuNet Library</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SKANDI / ShuttleSync Dark-Space Neon DocuNet -->
+  <style>
+    :root {
+      --sk-bg-deep: #020617;
+      --sk-bg-mid: #02142f;
+      --sk-bg-soft: #031327;
+      --sk-blue: #022e64;
+      --sk-accent: #5FC7CF;
+      --sk-accent-soft: rgba(95,199,207,0.35);
+      --sk-orange: #fe5700;
+      --sk-text-main: #e5f1ff;
+      --sk-text-muted: #a3b4d9;
+      --sk-border-subtle: rgba(148,163,184,0.4);
+      --sk-glass: rgba(5,17,32,0.9);
+      --sk-radius-lg: 18px;
+      --sk-radius-md: 14px;
+      --sk-shadow-soft: 0 18px 45px rgba(0,0,0,0.8);
+      --sk-shadow-strong: 0 24px 70px rgba(0,0,0,0.95);
+      --sk-transition-fast: 0.18s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Montserrat", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top left, #0b335e 0, transparent 45%),
+        radial-gradient(circle at bottom right, #04152f 0, transparent 50%),
+        linear-gradient(135deg, #000000 0%, #020617 45%, #000814 100%);
+      color: var(--sk-text-main);
+      min-height: 100vh;
+    }
+
+    #ss-docunet-app {
+      padding: 24px;
+    }
+
+    @media (max-width: 768px) {
+      #ss-docunet-app {
+        padding: 14px;
+      }
+    }
+
+    /* TOP BAR */
+    .dn-topbar {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(2, 46, 100, 0.92), rgba(4, 21, 45, 0.97));
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: 20px;
+      border: 1px solid var(--sk-accent-soft);
+      box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 0.9),
+        0 18px 45px rgba(0, 0, 0, 0.7),
+        0 0 22px rgba(95,199,207,0.25);
+      backdrop-filter: blur(18px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .dn-top-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .dn-top-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      opacity: 0.96;
+    }
+
+    .dn-top-sub {
+      font-size: 12px;
+      color: var(--sk-text-muted);
+    }
+
+    .dn-top-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .dn-search-wrap {
+      position: relative;
+      min-width: 220px;
+      max-width: 320px;
+      flex: 1;
+    }
+
+    .dn-search-input {
+      width: 100%;
+      padding: 8px 32px 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.92), rgba(15,23,42,0.98));
+      color: var(--sk-text-main);
+      font-size: 13px;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .dn-search-input::placeholder {
+      color: rgba(148,163,184,0.9);
+    }
+
+    .dn-search-input:focus {
+      border-color: var(--sk-accent);
+      box-shadow:
+        0 0 0 1px rgba(95,199,207,0.25),
+        0 0 16px rgba(95,199,207,0.45);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.96), rgba(15,23,42,1));
+    }
+
+    .dn-search-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--sk-text-muted);
+      pointer-events: none;
+    }
+
+    .dn-pill-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.85), rgba(15,23,42,0.98));
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: var(--sk-text-muted);
+      transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+    }
+
+    .dn-pill-toggle.active {
+      border-color: rgba(95,199,207,0.8);
+      color: var(--sk-accent);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.9),
+        0 0 16px rgba(95,199,207,0.6);
+      text-shadow: 0 0 10px rgba(95,199,207,0.7);
+    }
+
+    .dn-pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--sk-accent);
+      box-shadow: 0 0 10px rgba(95,199,207,0.9);
+    }
+
+    /* LAYOUT */
+    .dn-layout {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 18px;
+      min-height: 650px;
+    }
+
+    @media (max-width: 900px) {
+      .dn-layout {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    /* SIDEBAR */
+    .dn-sidebar {
+      background: var(--sk-glass);
+      border-radius: var(--sk-radius-lg);
+      border: 1px solid var(--sk-border-subtle);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.9),
+        0 22px 55px rgba(0,0,0,0.85);
+      padding: 18px 16px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dn-sidebar::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top left, rgba(95,199,207,0.15), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(37,99,235,0.12), transparent 60%);
+      opacity: 0.6;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .dn-sidebar-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .dn-sidebar-title {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--sk-text-muted);
+      margin-bottom: 10px;
+    }
+
+    .dn-category-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .dn-category-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.8), rgba(3,7,18,0.95));
+      border: 1px solid rgba(15,23,42,0.95);
+      color: var(--sk-text-muted);
+      font-size: 12px;
+      transition:
+        background var(--sk-transition-fast),
+        border-color var(--sk-transition-fast),
+        transform var(--sk-transition-fast),
+        box-shadow var(--sk-transition-fast),
+        color var(--sk-transition-fast);
+    }
+
+    .dn-category-item:hover {
+      border-color: rgba(95,199,207,0.7);
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow:
+        0 14px 32px rgba(0,0,0,0.9),
+        0 0 18px rgba(95,199,207,0.4);
+    }
+
+    .dn-category-item.active {
+      border-color: rgba(95,199,207,0.9);
+      color: #ffffff;
+      background: radial-gradient(circle at top left, rgba(95,199,207,0.18), rgba(3,7,18,0.98));
+      box-shadow:
+        0 18px 38px rgba(0,0,0,0.95),
+        0 0 22px rgba(95,199,207,0.55);
+      text-shadow: 0 0 10px rgba(95,199,207,0.7);
+    }
+
+    .dn-category-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .dn-category-name {
+      font-weight: 500;
+      font-size: 12px;
+    }
+
+    .dn-category-sub {
+      font-size: 11px;
+      color: var(--sk-text-muted);
+    }
+
+    .dn-category-count {
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(148,163,184,0.7);
+      color: var(--sk-accent);
+      min-width: 30px;
+      text-align: center;
+    }
+
+    /* MAIN PANEL */
+    .dn-main {
+      position: relative;
+      border-radius: 22px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.9), rgba(3,7,18,0.98));
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,1),
+        var(--sk-shadow-strong);
+      padding: 18px 18px 18px 20px;
+      overflow: hidden;
+    }
+
+    .dn-main::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(95,199,207,0.18), transparent 60%),
+        radial-gradient(circle at bottom left, rgba(37,99,235,0.16), transparent 65%);
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .dn-main-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .dn-main-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .dn-main-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .dn-main-sub {
+      font-size: 12px;
+      color: var(--sk-text-muted);
+    }
+
+    .dn-main-badge {
+      align-self: flex-start;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.7);
+      color: var(--sk-accent);
+    }
+
+    /* DOC LIST */
+    .dn-doc-list {
+      margin-top: 8px;
+      border-radius: 16px;
+      border: 1px solid rgba(15,23,42,0.95);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.94), rgba(2,6,23,1));
+      box-shadow:
+        inset 0 0 0 1px rgba(15,23,42,0.9),
+        0 14px 32px rgba(0,0,0,0.9);
+      max-height: 580px;
+      overflow-y: auto;
+    }
+
+    .dn-doc-row {
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.3fr) auto;
+      gap: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(15,23,42,0.9);
+      transition: background var(--sk-transition-fast), box-shadow var(--sk-transition-fast), transform var(--sk-transition-fast);
+    }
+
+    .dn-doc-row:last-child {
+      border-bottom: none;
+    }
+
+    .dn-doc-row:hover {
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.96), rgba(2,6,23,1));
+      box-shadow: 0 10px 26px rgba(0,0,0,0.85);
+      transform: translateY(-1px);
+    }
+
+    .dn-doc-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .dn-doc-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #f9fafb;
+    }
+
+    .dn-doc-meta {
+      font-size: 11px;
+      color: var(--sk-text-muted);
+    }
+
+    .dn-doc-type-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .dn-pill {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: rgba(15,23,42,0.96);
+      color: var(--sk-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .dn-pill.type-customer {
+      border-color: rgba(56,189,248,0.7);
+      color: #7dd3fc;
+    }
+
+    .dn-pill.type-internal {
+      border-color: rgba(129,140,248,0.7);
+      color: #a5b4fc;
+    }
+
+    .dn-pill.type-partner {
+      border-color: rgba(251,146,60,0.7);
+      color: #fed7aa;
+    }
+
+    .dn-pill.type-admin {
+      border-color: rgba(52,211,153,0.7);
+      color: #a7f3d0;
+    }
+
+    .dn-doc-updated {
+      font-size: 11px;
+      color: var(--sk-text-muted);
+      text-align: left;
+    }
+
+    .dn-doc-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+      font-size: 14px;
+      min-width: 80px;
+    }
+
+    .dn-star {
+      cursor: pointer;
+      transition: transform .12s ease, text-shadow .12s ease;
+    }
+
+    .dn-star:hover {
+      transform: translateY(-1px) scale(1.06);
+      text-shadow: 0 0 10px rgba(252,211,77,0.9);
+    }
+
+    .dn-star.active {
+      color: #facc15;
+      text-shadow: 0 0 12px rgba(250,204,21,0.95);
+    }
+
+    .dn-open-icon {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .dn-empty {
+      padding: 18px 16px;
+      font-size: 13px;
+      color: var(--sk-text-muted);
+      text-align: center;
+    }
+
+    /* MODAL VIEWER */
+    .dn-modal {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(3,7,18,0.98));
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      backdrop-filter: blur(20px);
+    }
+
+    .dn-modal.open {
+      display: flex;
+    }
+
+    .dn-modal-box {
+      width: 920px;
+      max-width: 96%;
+      max-height: 90vh;
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.96), rgba(2,6,23,1));
+      border-radius: 22px;
+      border: 1px solid rgba(148,163,184,0.7);
+      box-shadow:
+        0 24px 70px rgba(0,0,0,0.98),
+        0 0 0 1px rgba(15,23,42,1),
+        0 0 26px rgba(95,199,207,0.5);
+      padding: 18px 20px 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      animation: dn-modal-pop .25s ease;
+    }
+
+    @keyframes dn-modal-pop {
+      from { opacity: 0; transform: translateY(10px) scale(.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .dn-modal-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .dn-modal-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .dn-modal-title {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .dn-modal-meta {
+      font-size: 11px;
+      color: var(--sk-text-muted);
+    }
+
+    .dn-modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .dn-icon-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.96);
+      color: var(--sk-text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease, transform .15s ease;
+    }
+
+    .dn-icon-button:hover {
+      border-color: rgba(95,199,207,0.9);
+      color: var(--sk-accent);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.9),
+        0 0 18px rgba(95,199,207,0.5);
+      transform: translateY(-1px);
+    }
+
+    .dn-icon-button.primary {
+      background: linear-gradient(135deg, var(--sk-accent), #7ff4ff);
+      color: #020617;
+      border-color: rgba(95,199,207,0.9);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.9),
+        0 14px 32px rgba(0,0,0,0.9),
+        0 0 20px rgba(95,199,207,0.7);
+    }
+
+    .dn-icon-button.primary:hover {
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,1),
+        0 18px 40px rgba(0,0,0,0.98),
+        0 0 26px rgba(127,244,255,0.9);
+    }
+
+    .dn-modal-close {
+      position: absolute;
+      top: 10px;
+      right: 13px;
+      font-size: 18px;
+      cursor: pointer;
+      color: var(--sk-text-muted);
+      transition: color .15s ease, transform .15s ease, text-shadow .15s ease;
+    }
+
+    .dn-modal-close:hover {
+      color: #ffffff;
+      transform: translateY(-1px);
+      text-shadow: 0 0 10px rgba(95,199,207,0.7);
+    }
+
+    .dn-doc-scroll {
+      margin-top: 4px;
+      padding: 10px 12px 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(15,23,42,0.95);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.98), rgba(2,6,23,1));
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* TEMPLATE CONTENT (pseudo-SAS layout) */
+    .doc-template {
+      max-width: 780px;
+      margin: 0 auto;
+      background: #020617;
+      border-radius: 16px;
+      border: 1px solid rgba(30,64,175,0.6);
+      box-shadow:
+        0 14px 36px rgba(0,0,0,0.9),
+        inset 0 0 0 1px rgba(15,23,42,0.95);
+      padding: 18px 18px 18px;
+      color: #e5f1ff;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(30,64,175,0.7);
+    }
+
+    .doc-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .doc-brand-name {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .doc-brand-sub {
+      font-size: 11px;
+      color: var(--sk-text-muted);
+    }
+
+    .doc-ref-box {
+      text-align: right;
+      font-size: 11px;
+      color: var(--sk-text-muted);
+    }
+
+    .doc-title-block {
+      margin-bottom: 10px;
+    }
+
+    .doc-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .doc-subtitle {
+      font-size: 11px;
+      color: var(--sk-text-muted);
+    }
+
+    .doc-meta-grid {
+      margin-top: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(30,64,175,0.8);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.96), rgba(15,23,42,1));
+      padding: 8px 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 6px 10px;
+      font-size: 11px;
+    }
+
+    .doc-meta-label {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--sk-text-muted);
+      font-size: 10px;
+    }
+
+    .doc-meta-value {
+      font-size: 11px;
+    }
+
+    .doc-section {
+      margin-top: 12px;
+    }
+
+    .doc-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+      color: #bfdbfe;
+    }
+
+    .doc-text {
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .doc-list {
+      margin-left: 16px;
+      margin-bottom: 6px;
+    }
+
+    .doc-list li {
+      margin-bottom: 2px;
+    }
+
+    .doc-footer {
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(148,163,184,0.6);
+      font-size: 10px;
+      color: var(--sk-text-muted);
+    }
+
+    .doc-highlight {
+      font-weight: 600;
+      color: #fbbf24;
+    }
+
+    /* SCROLLBAR */
+    .dn-doc-list::-webkit-scrollbar,
+    .dn-doc-scroll::-webkit-scrollbar {
+      width: 7px;
+    }
+    .dn-doc-list::-webkit-scrollbar-track,
+    .dn-doc-scroll::-webkit-scrollbar-track {
+      background: rgba(15,23,42,0.9);
+      border-radius: 999px;
+    }
+    .dn-doc-list::-webkit-scrollbar-thumb,
+    .dn-doc-scroll::-webkit-scrollbar-thumb {
+      background: rgba(55,65,81,0.9);
+      border-radius: 999px;
+    }
+    .dn-doc-list::-webkit-scrollbar-thumb:hover,
+    .dn-doc-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(75,85,99,1);
+    }
+
+    /* SMALL SCREENS MODAL */
+    @media (max-width: 768px) {
+      .dn-modal-box {
+        padding: 14px;
+      }
+      .doc-template {
+        padding: 12px;
+      }
+      .dn-doc-row {
+        grid-template-columns: minmax(0, 2.5fr) minmax(0, 1.5fr);
+        grid-template-rows: auto auto;
+        grid-auto-flow: row;
+      }
+      .dn-doc-actions {
+        grid-column: span 2;
+        justify-content: flex-start;
+        padding-top: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div id="ss-docunet-app">
+  <div class="dn-topbar">
+    <div class="dn-top-left">
+      <div class="dn-top-title">DocuNet Library</div>
+      <div class="dn-top-sub" id="dn-top-sub">
+        Passenger booking &amp; service · Manuals, vouchers &amp; operational PDFs
+      </div>
+    </div>
+    <div class="dn-top-right">
+      <div class="dn-search-wrap">
+        <input id="dn-search" class="dn-search-input"
+               placeholder="Search by document name or content…" />
+        <span class="dn-search-icon">🔍</span>
+      </div>
+      <button type="button" id="dn-fav-toggle" class="dn-pill-toggle" aria-pressed="false">
+        <span class="dn-pill-dot"></span>
+        ⭐ Favorites
+      </button>
+    </div>
+  </div>
+
+  <div class="dn-layout">
+    <!-- SIDEBAR -->
+    <aside class="dn-sidebar">
+      <div class="dn-sidebar-inner">
+        <div class="dn-sidebar-title">Categories</div>
+        <ul class="dn-category-list" id="dn-category-list">
+          <!-- Populated by JS -->
+        </ul>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dn-main">
+      <div class="dn-main-inner">
+        <div class="dn-main-header">
+          <div>
+            <div class="dn-main-title" id="dn-main-title">Passenger Booking &amp; Service</div>
+            <div class="dn-main-sub" id="dn-main-sub">
+              Customer-facing auto-generated documents and vouchers
+            </div>
+          </div>
+          <div class="dn-main-badge" id="dn-main-badge">27 documents</div>
+        </div>
+
+        <div class="dn-doc-list" id="dn-doc-list">
+          <!-- Rows injected here -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL VIEWER -->
+  <div class="dn-modal" id="dn-modal">
+    <div class="dn-modal-box">
+      <div class="dn-modal-close" id="dn-modal-close">✕</div>
+
+      <div class="dn-modal-header">
+        <div class="dn-modal-title-block">
+          <div class="dn-modal-title" id="dn-modal-title">Document Title</div>
+          <div class="dn-modal-meta" id="dn-modal-meta">
+            DOC-ID · Version · Category
+          </div>
+        </div>
+        <div class="dn-modal-actions">
+          <button type="button" class="dn-icon-button" id="dn-modal-fav-btn">
+            <span id="dn-modal-fav-star">⭐</span> Favorite
+          </button>
+          <button type="button" class="dn-icon-button primary" id="dn-modal-print">
+            🖨 Print / Save PDF
+          </button>
+          <button type="button" class="dn-icon-button" id="dn-modal-download">
+            ⬇ Download
+          </button>
+          <button type="button" class="dn-icon-button" id="dn-modal-email">
+            ✉️ Email
+          </button>
+        </div>
+      </div>
+
+      <div class="dn-doc-scroll">
+        <div id="dn-doc-body"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DOCUNET – DATA MODEL
+   Categories & 27 document templates with placeholders
+============================================================ */
+
+const DOCUNET_CATEGORIES = [
+  {
+    id: "passenger",
+    name: "Passenger Booking & Service",
+    description: "Customer-facing auto-generated documents & vouchers",
+    typeLabel: "Customer-facing",
+  },
+  {
+    id: "internal",
+    name: "Internal / Operational",
+    description: "Daily operations, manifests & incident forms",
+    typeLabel: "Internal",
+  },
+  {
+    id: "partner",
+    name: "Partner & Supplier",
+    description: "Contracts, agreements & invoice templates",
+    typeLabel: "Partner",
+  },
+  {
+    id: "admin",
+    name: "Admin & Support",
+    description: "PNR records, client summaries & support docs",
+    typeLabel: "Admin",
+  }
+];
+
+const DOCUNET_DOCS = [
+  /* -----------------------------
+     CUSTOMER-FACING (1–11)
+  ----------------------------- */
+  {
+    id: "CUST-01",
+    categoryId: "passenger",
+    type: "customer",
+    title: "Booking Confirmation / eTicket",
+    code: "DOC-CUST-01",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(PNR)", "(Passenger Name)", "(Departure Date)", "(Return Date)", "(Flights)", "(Hotels)", "(Transfers)", "(Total Price)", "(Payment Status)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI TRAVELS</div>
+            <div class="doc-brand-sub">Booking Confirmation / eTicket</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>PNR:</strong> (PNR)</div>
+            <div>Issued: (Issue Date)</div>
+          </div>
+        </div>
+        <div class="doc-title-block">
+          <div class="doc-title">Booking Confirmation / eTicket</div>
+          <div class="doc-subtitle">
+            This document confirms your SKANDI package booking and serves as your official eTicket.
+          </div>
+        </div>
+        <div class="doc-meta-grid">
+          <div>
+            <div class="doc-meta-label">Passenger</div>
+            <div class="doc-meta-value">(Passenger Name)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Departure Date</div>
+            <div class="doc-meta-value">(Departure Date)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Return Date</div>
+            <div class="doc-meta-value">(Return Date)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Total Price</div>
+            <div class="doc-meta-value">(Total Price)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Payment Status</div>
+            <div class="doc-meta-value doc-highlight">(Payment Status)</div>
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Included Services</div>
+          <p class="doc-text">
+            Your booking includes the following confirmed components:
+          </p>
+          <ul class="doc-list">
+            <li><strong>Flights:</strong> (Flights)</li>
+            <li><strong>Hotel(s):</strong> (Hotels)</li>
+            <li><strong>Transfers:</strong> (Transfers)</li>
+          </ul>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Important information</div>
+          <p class="doc-text">
+            Please bring a valid passport and any required visas for travel. Some destinations have
+            specific entry requirements; refer to the SKANDI Travel Information Pack for details.
+          </p>
+          <p class="doc-text">
+            Any changes or corrections should be requested immediately. Name and date changes may be
+            subject to airline and supplier rules and fees.
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          This eTicket is issued by SKANDI Group under current booking terms &amp; conditions.
+          For assistance, contact your SKANDI Service Team with reference to (PNR).
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "CUST-02",
+    categoryId: "passenger",
+    type: "customer",
+    title: "Flight eTicket",
+    code: "DOC-CUST-02",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(PNR)", "(Passenger Name)", "(Flight Number)", "(Date)", "(Airline)", "(Class)", "(Baggage Allowance)", "(Check-in Time)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI TRAVELS</div>
+            <div class="doc-brand-sub">Flight eTicket</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>PNR:</strong> (PNR)</div>
+            <div><strong>Flight:</strong> (Flight Number)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Flight eTicket</div>
+          <div class="doc-subtitle">
+            Electronic ticket for your scheduled flight sector.
+          </div>
+        </div>
+
+        <div class="doc-meta-grid">
+          <div>
+            <div class="doc-meta-label">Passenger</div>
+            <div class="doc-meta-value">(Passenger Name)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Flight Number</div>
+            <div class="doc-meta-value">(Flight Number)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Date</div>
+            <div class="doc-meta-value">(Date)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Airline</div>
+            <div class="doc-meta-value">(Airline)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Class</div>
+            <div class="doc-meta-value">(Class)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Baggage</div>
+            <div class="doc-meta-value">(Baggage Allowance)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Check-in Time</div>
+            <div class="doc-meta-value doc-highlight">(Check-in Time)</div>
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Check-in &amp; boarding</div>
+          <p class="doc-text">
+            Please arrive at the airport in good time for check-in and security. Check-in closes at
+            (Check-in Time) local time. Boarding gate closes approximately 20–30 minutes before departure.
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          Boarding is subject to airline conditions of carriage, passport and visa control, and any
+          applicable health requirements. Keep this eTicket available (digital or printed) when requested.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "CUST-03",
+    categoryId: "passenger",
+    type: "customer",
+    title: "Hotel Voucher",
+    code: "DOC-CUST-03",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(PNR)", "(Guest Name)", "(Hotel Name)", "(Address)", "(Room Type)", "(Board Basis)", "(Check-in Date)", "(Check-out Date)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI TRAVELS</div>
+            <div class="doc-brand-sub">Hotel Accommodation Voucher</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>PNR:</strong> (PNR)</div>
+            <div>Voucher Ref: (Voucher No.)</div>
+          </div>
+        </div>
+        <div class="doc-title-block">
+          <div class="doc-title">Hotel Voucher</div>
+          <div class="doc-subtitle">
+            Present this voucher at check-in as proof of prepaid accommodation.
+          </div>
+        </div>
+
+        <div class="doc-meta-grid">
+          <div>
+            <div class="doc-meta-label">Guest Name</div>
+            <div class="doc-meta-value">(Guest Name)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Hotel</div>
+            <div class="doc-meta-value">(Hotel Name)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Address</div>
+            <div class="doc-meta-value">(Address)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Room Type</div>
+            <div class="doc-meta-value">(Room Type)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Board Basis</div>
+            <div class="doc-meta-value">(Board Basis)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Check-in Date</div>
+            <div class="doc-meta-value">(Check-in Date)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Check-out Date</div>
+            <div class="doc-meta-value">(Check-out Date)</div>
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Notes to hotel</div>
+          <p class="doc-text">
+            This booking is made through SKANDI Group. Any additional charges such as minibar, room
+            service or local taxes not included in the package should be settled directly by the guest.
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          For any problems at check-in, please contact the SKANDI Destination Hotline with reference to (PNR).
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "CUST-04",
+    categoryId: "passenger",
+    type: "customer",
+    title: "Transfer Voucher",
+    code: "DOC-CUST-04",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(PNR)", "(Passenger Name)", "(Pick-up Time)", "(Pick-up Location)", "(Driver/Company Name)", "(Contact Number)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI TRAVELS</div>
+            <div class="doc-brand-sub">Transfer Voucher</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>PNR:</strong> (PNR)</div>
+            <div>Voucher Ref: (Voucher No.)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Transfer Voucher</div>
+          <div class="doc-subtitle">
+            Airport / hotel transfer service confirmation.
+          </div>
+        </div>
+
+        <div class="doc-meta-grid">
+          <div>
+            <div class="doc-meta-label">Passenger</div>
+            <div class="doc-meta-value">(Passenger Name)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Pick-up Time</div>
+            <div class="doc-meta-value">(Pick-up Time)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Pick-up Location</div>
+            <div class="doc-meta-value">(Pick-up Location)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Provider</div>
+            <div class="doc-meta-value">(Driver/Company Name)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Contact Phone</div>
+            <div class="doc-meta-value">(Contact Number)</div>
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Instructions</div>
+          <p class="doc-text">
+            Please be ready at the pick-up location at least 10 minutes before the confirmed time.
+            Look for staff or vehicle marked with SKANDI or the local partner name.
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          Delays or no-shows may be charged by the provider. For assistance, call the SKANDI Destination Hotline.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "CUST-05",
+    categoryId: "passenger",
+    type: "customer",
+    title: "Tour / Excursion Voucher",
+    code: "DOC-CUST-05",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(PNR)", "(Passenger Name)", "(Tour Name)", "(Date)", "(Meeting Point)", "(Start Time)", "(Guide Name)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI TRAVELS</div>
+            <div class="doc-brand-sub">Tour / Excursion Voucher</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>PNR:</strong> (PNR)</div>
+            <div>Voucher Ref: (Voucher No.)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Tour / Excursion Voucher</div>
+          <div class="doc-subtitle">
+            Present to your SKANDI guide or local provider at the meeting point.
+          </div>
+        </div>
+
+        <div class="doc-meta-grid">
+          <div>
+            <div class="doc-meta-label">Passenger</div>
+            <div class="doc-meta-value">(Passenger Name)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Tour Name</div>
+            <div class="doc-meta-value">(Tour Name)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Date</div>
+            <div class="doc-meta-value">(Date)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Meeting Point</div>
+            <div class="doc-meta-value">(Meeting Point)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Start Time</div>
+            <div class="doc-meta-value">(Start Time)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Guide</div>
+            <div class="doc-meta-value">(Guide Name)</div>
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Important</div>
+          <p class="doc-text">
+            Please arrive at the meeting point 10–15 minutes before departure. If you are more than
+            a few minutes late, the tour cannot be delayed and no refund is usually possible.
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          Local safety and participation requirements may apply. Ask your SKANDI guide if you have questions.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "CUST-06",
+    categoryId: "passenger",
+    type: "customer",
+    title: "Full Travel Itinerary",
+    code: "DOC-CUST-06",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(PNR)", "(Passenger Name)", "(All Booked Components)", "(Dates)", "(Times)", "(Emergency Contact)", "(Guide Assigned)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI TRAVELS</div>
+            <div class="doc-brand-sub">Full Travel Itinerary</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>PNR:</strong> (PNR)</div>
+            <div>Guide: (Guide Assigned)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Full Travel Itinerary</div>
+          <div class="doc-subtitle">
+            Overview of all booked services, times and emergency contacts.
+          </div>
+        </div>
+
+        <div class="doc-meta-grid">
+          <div>
+            <div class="doc-meta-label">Passenger</div>
+            <div class="doc-meta-value">(Passenger Name)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Emergency Contact</div>
+            <div class="doc-meta-value">(Emergency Contact)</div>
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Booked components</div>
+          <p class="doc-text">
+            (All Booked Components) – flights, hotel(s), transfers, excursions and any additional services,
+            with respective (Dates) and (Times).
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          This itinerary is for your reference only; final times are always as shown on airline, hotel
+          or local provider confirmations. Keep this with your passport during travel.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "CUST-07",
+    categoryId: "passenger",
+    type: "customer",
+    title: "Travel Information Pack",
+    code: "DOC-CUST-07",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(PNR)", "(Passenger Name)", "(Destination)", "(Airline)", "(Flight Number)", "(Hotel Name)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI TRAVELS</div>
+            <div class="doc-brand-sub">Travel Information Pack</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>PNR:</strong> (PNR)</div>
+            <div>Destination: (Destination)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Travel Information Pack</div>
+          <div class="doc-subtitle">
+            Practical information for your SKANDI trip to (Destination).
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Flight information</div>
+          <p class="doc-text">
+            Airline: (Airline) · Flight Number: (Flight Number).
+          </p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Accommodation</div>
+          <p class="doc-text">
+            Your main hotel is (Hotel Name). Full address and details are available in your Hotel Voucher.
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          This pack may include destination tips, local contact details and emergency numbers as
+          configured in SKANDI ShuttleSync.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "CUST-08",
+    categoryId: "passenger",
+    type: "customer",
+    title: "Travel Insurance Confirmation",
+    code: "DOC-CUST-08",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(PNR)", "(Passenger Name)", "(Policy Number)", "(Coverage Type)", "(Emergency Number)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI TRAVELS</div>
+            <div class="doc-brand-sub">Travel Insurance Confirmation</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>PNR:</strong> (PNR)</div>
+            <div>Policy No: (Policy Number)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Travel Insurance Confirmation</div>
+          <div class="doc-subtitle">
+            Confirmation of your travel insurance purchased via SKANDI.
+          </div>
+        </div>
+
+        <div class="doc-meta-grid">
+          <div>
+            <div class="doc-meta-label">Passenger</div>
+            <div class="doc-meta-value">(Passenger Name)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Policy Number</div>
+            <div class="doc-meta-value">(Policy Number)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Coverage Type</div>
+            <div class="doc-meta-value">(Coverage Type)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Emergency Assistance</div>
+            <div class="doc-meta-value doc-highlight">(Emergency Number)</div>
+          </div>
+        </div>
+
+        <div class="doc-footer">
+          For claims and medical assistance, always contact the insurance provider directly using the
+          emergency number above and quote (Policy Number).
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "CUST-09",
+    categoryId: "passenger",
+    type: "customer",
+    title: "Payment Receipt / Invoice",
+    code: "DOC-CUST-09",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(Invoice No.)", "(PNR)", "(Passenger Name)", "(Services)", "(Total Amount)", "(Taxes)", "(Paid Amount)", "(Balance)", "(Payment Method)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI GROUP</div>
+            <div class="doc-brand-sub">Payment Receipt / Invoice</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>Invoice:</strong> (Invoice No.)</div>
+            <div><strong>PNR:</strong> (PNR)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Payment Receipt / Invoice</div>
+          <div class="doc-subtitle">
+            Itemised summary of your SKANDI travel purchase.
+          </div>
+        </div>
+
+        <div class="doc-meta-grid">
+          <div>
+            <div class="doc-meta-label">Passenger / Client</div>
+            <div class="doc-meta-value">(Passenger Name)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Services</div>
+            <div class="doc-meta-value">(Services)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Total Amount</div>
+            <div class="doc-meta-value">(Total Amount)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Taxes / Fees</div>
+            <div class="doc-meta-value">(Taxes)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Paid</div>
+            <div class="doc-meta-value">(Paid Amount)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Balance</div>
+            <div class="doc-meta-value doc-highlight">(Balance)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Payment Method</div>
+            <div class="doc-meta-value">(Payment Method)</div>
+          </div>
+        </div>
+
+        <div class="doc-footer">
+          This invoice is issued by SKANDI Group according to current terms &amp; conditions. Please
+          retain for your records and travel insurance documentation.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "CUST-10",
+    categoryId: "passenger",
+    type: "customer",
+    title: "Cancellation / Refund Confirmation",
+    code: "DOC-CUST-10",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(PNR)", "(Passenger Name)", "(Cancelled Services)", "(Refund Amount)", "(Refund Date)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI GROUP</div>
+            <div class="doc-brand-sub">Cancellation / Refund Confirmation</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>PNR:</strong> (PNR)</div>
+            <div>Date: (Refund Date)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Cancellation / Refund Confirmation</div>
+          <div class="doc-subtitle">
+            Summary of cancelled services and any applicable refund.
+          </div>
+        </div>
+
+        <div class="doc-meta-grid">
+          <div>
+            <div class="doc-meta-label">Passenger / Client</div>
+            <div class="doc-meta-value">(Passenger Name)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Cancelled Services</div>
+            <div class="doc-meta-value">(Cancelled Services)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Refund Amount</div>
+            <div class="doc-meta-value doc-highlight">(Refund Amount)</div>
+          </div>
+        </div>
+
+        <div class="doc-footer">
+          Refunds are processed according to airline, hotel and supplier rules as well as SKANDI booking
+          terms. Bank processing times may apply after (Refund Date).
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "CUST-11",
+    categoryId: "passenger",
+    type: "customer",
+    title: "Post-Trip Feedback Form",
+    code: "DOC-CUST-11",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(PNR)", "(Passenger Name)", "(Destination)", "(Return Date)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI TRAVELS</div>
+            <div class="doc-brand-sub">Post-Trip Feedback</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>PNR:</strong> (PNR)</div>
+            <div>Destination: (Destination)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Post-Trip Feedback</div>
+          <div class="doc-subtitle">
+            We value your feedback from your SKANDI trip completed on (Return Date).
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">How was your trip?</div>
+          <p class="doc-text">
+            Passenger: (Passenger Name)
+          </p>
+          <p class="doc-text">
+            Please rate and comment on your overall experience, flights, hotel, transfers, excursions
+            and SKANDI service.
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          Feedback forms can be submitted online or handed to your SKANDI guide. Thank you for helping us
+          improve our service.
+        </div>
+      </div>
+    `
+  },
+
+  /* -----------------------------
+     INTERNAL / OPERATIONAL 12–18
+  ----------------------------- */
+  {
+    id: "INT-12",
+    categoryId: "internal",
+    type: "internal",
+    title: "Passenger Manifest",
+    code: "DOC-INT-12",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(PNR)", "(Passenger Names)", "(Flight No.)", "(Date)", "(Guide Name)", "(Notes)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI OPERATIONS</div>
+            <div class="doc-brand-sub">Passenger Manifest</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>Flight:</strong> (Flight No.)</div>
+            <div>Date: (Date)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Passenger Manifest</div>
+          <div class="doc-subtitle">
+            Internal manifest for SKANDI destination teams and guides.
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Guide &amp; remarks</div>
+          <p class="doc-text">
+            Guide assigned: (Guide Name) · Notes: (Notes)
+          </p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Passengers</div>
+          <p class="doc-text">
+            (Passenger Names) – generated line by line from ShuttleSync / Airtable.
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          For internal use only. Passenger data must be handled in line with SKANDI data protection policy.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "INT-13",
+    categoryId: "internal",
+    type: "internal",
+    title: "Rooming List",
+    code: "DOC-INT-13",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(Hotel Name)", "(PNR)", "(Passenger Names)", "(Room Types)", "(Dates)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI OPERATIONS</div>
+            <div class="doc-brand-sub">Rooming List</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>Hotel:</strong> (Hotel Name)</div>
+            <div>Dates: (Dates)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Rooming List</div>
+          <div class="doc-subtitle">
+            Distribution of passengers across rooms for (Hotel Name).
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Room allocation</div>
+          <p class="doc-text">
+            (Passenger Names) · (Room Types) – structured by room no / category.
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          Used by SKANDI and the hotel for room allocation. Keep in line with GDPR and local privacy laws.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "INT-14",
+    categoryId: "internal",
+    type: "internal",
+    title: "Transfer List",
+    code: "DOC-INT-14",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(Date)", "(Flight Arrival)", "(Bus No.)", "(Driver)", "(Guide)", "(Passengers)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI OPERATIONS</div>
+            <div class="doc-brand-sub">Transfer List</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>Date:</strong> (Date)</div>
+            <div><strong>Flight arrival:</strong> (Flight Arrival)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Transfer List</div>
+          <div class="doc-subtitle">
+            Operational list for each transfer departure, per bus / vehicle.
+          </div>
+        </div>
+
+        <div class="doc-meta-grid">
+          <div>
+            <div class="doc-meta-label">Bus / Vehicle</div>
+            <div class="doc-meta-value">(Bus No.)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Driver</div>
+            <div class="doc-meta-value">(Driver)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Guide</div>
+            <div class="doc-meta-value">(Guide)</div>
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Passengers</div>
+          <p class="doc-text">
+            (Passengers) – line-by-line manifest grouped by bus / pick-up.
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          Used at the destination for safe loading and drop-off. Always update in case of no-shows or changes.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "INT-15",
+    categoryId: "internal",
+    type: "internal",
+    title: "Excursion Attendance Sheet",
+    code: "DOC-INT-15",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(Tour Name)", "(Date)", "(Passengers)", "(Guide)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI OPERATIONS</div>
+            <div class="doc-brand-sub">Excursion Attendance Sheet</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>Tour:</strong> (Tour Name)</div>
+            <div>Date: (Date)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Excursion Attendance Sheet</div>
+          <div class="doc-subtitle">
+            To be used by the guide to confirm all participants at departure and return.
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Guide</div>
+          <p class="doc-text">
+            Guide: (Guide)
+          </p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Passenger list</div>
+          <p class="doc-text">
+            (Passengers) – with fields for signature / tick at departure and return.
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          The attendance sheet is archived according to SKANDI safety and quality procedures.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "INT-16",
+    categoryId: "internal",
+    type: "internal",
+    title: "Daily Operations Sheet",
+    code: "DOC-INT-16",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(Date)", "(Arrivals)", "(Departures)", "(Guides Assigned)", "(Buses)", "(Alerts)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI DESTINATION OPS</div>
+            <div class="doc-brand-sub">Daily Operations Sheet</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>Date:</strong> (Date)</div>
+            <div>Base: (Base Name)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Daily Operations Sheet</div>
+          <div class="doc-subtitle">
+            Overview of all arrivals, departures, guides and buses for the day.
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Arrivals &amp; departures</div>
+          <p class="doc-text">
+            Arrivals: (Arrivals) · Departures: (Departures)
+          </p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Staffing &amp; buses</div>
+          <p class="doc-text">
+            Guides assigned: (Guides Assigned) · Buses / vehicles: (Buses)
+          </p>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Alerts &amp; notes</div>
+          <p class="doc-text">
+            (Alerts) – disruptions, delays, capacity changes or safety notes.
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          The daily sheet is used by the destination management and hotline to coordinate operations.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "INT-17",
+    categoryId: "internal",
+    type: "internal",
+    title: "Incident Report Form",
+    code: "DOC-INT-17",
+    version: "v1.0",
+    auto: false,
+    updated: "2025-01-10",
+    placeholders: [],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI SAFETY</div>
+            <div class="doc-brand-sub">Incident Report Form</div>
+          </div>
+          <div class="doc-ref-box">
+            <div>Form ID: SAF-IR-01</div>
+            <div>Version: 1.0</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Incident Report Form</div>
+          <div class="doc-subtitle">
+            To be completed by guides / staff following any guest, safety or operational incident.
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Incident details</div>
+          <ul class="doc-list">
+            <li>Date / time of incident:</li>
+            <li>Location (hotel / excursion / transfer / other):</li>
+            <li>Persons involved (guest, staff, third parties):</li>
+            <li>Description of incident:</li>
+            <li>Immediate actions taken:</li>
+            <li>Any injuries or medical treatment:</li>
+          </ul>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Follow-up</div>
+          <ul class="doc-list">
+            <li>Who was informed (destination manager, hotline, insurer, etc.):</li>
+            <li>Recommended preventive actions:</li>
+            <li>Signature and date:</li>
+          </ul>
+        </div>
+
+        <div class="doc-footer">
+          This form is part of SKANDI Safety Management System. Completed forms are filed in ShuttleSync
+          and may be shared with insurers and authorities where required.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "INT-18",
+    categoryId: "internal",
+    type: "internal",
+    title: "Guide Handbook",
+    code: "DOC-INT-18",
+    version: "v1.0",
+    auto: false,
+    updated: "2025-01-10",
+    placeholders: [],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI TRAINING</div>
+            <div class="doc-brand-sub">Guide Handbook</div>
+          </div>
+          <div class="doc-ref-box">
+            <div>Manual ID: GD-HBK-01</div>
+            <div>Version: 1.0</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Guide Handbook</div>
+          <div class="doc-subtitle">
+            Overview of SKANDI guest experience, service and safety standards for guides.
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Contents</div>
+          <ul class="doc-list">
+            <li>SKANDI brand and guest promise</li>
+            <li>Standard welcome meetings and excursions</li>
+            <li>Service recovery and complaint handling</li>
+            <li>Safety and emergency procedures (summary – full reference in Safety Manuals)</li>
+          </ul>
+        </div>
+
+        <div class="doc-footer">
+          This handbook is a static training manual; the current version is always accessible in DocuNet.
+        </div>
+      </div>
+    `
+  },
+
+  /* -----------------------------
+     PARTNER / SUPPLIER 19–23
+  ----------------------------- */
+  {
+    id: "PART-19",
+    categoryId: "partner",
+    type: "partner",
+    title: "Hotel Contract Summary",
+    code: "DOC-PART-19",
+    version: "v1.0",
+    auto: false,
+    updated: "2025-01-10",
+    placeholders: [],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI PRODUCT</div>
+            <div class="doc-brand-sub">Hotel Contract Summary</div>
+          </div>
+          <div class="doc-ref-box">
+            <div>Template ID: HTL-CS-01</div>
+            <div>Version: 1.0</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Hotel Contract Summary</div>
+          <div class="doc-subtitle">
+            Internal summary of key commercial terms for each hotel contract.
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Key fields</div>
+          <ul class="doc-list">
+            <li>Hotel name, address and contact details</li>
+            <li>Season dates and allotment</li>
+            <li>Rates, board basis and supplements</li>
+            <li>Release periods and stop sales</li>
+            <li>Payment terms and invoice address</li>
+          </ul>
+        </div>
+
+        <div class="doc-footer">
+          This summary does not replace the signed contract; always refer to the full legal document.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "PART-20",
+    categoryId: "partner",
+    type: "partner",
+    title: "Transport Provider Agreement",
+    code: "DOC-PART-20",
+    version: "v1.0",
+    auto: false,
+    updated: "2025-01-10",
+    placeholders: [],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI PRODUCT</div>
+            <div class="doc-brand-sub">Transport Provider Agreement</div>
+          </div>
+          <div class="doc-ref-box">
+            <div>Template ID: TRN-AGR-01</div>
+            <div>Version: 1.0</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Transport Provider Agreement</div>
+          <div class="doc-subtitle">
+            Template for contracts with bus, coach and transfer suppliers.
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Main clauses</div>
+          <ul class="doc-list">
+            <li>Scope of services</li>
+            <li>Safety and vehicle standards</li>
+            <li>Driver conduct and language requirements</li>
+            <li>Pricing, cancellations and compensation rules</li>
+            <li>Insurance and liability</li>
+          </ul>
+        </div>
+
+        <div class="doc-footer">
+          Editable in Word / PDF; final signed copy should be uploaded as a separate document to DocuNet.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "PART-21",
+    categoryId: "partner",
+    type: "partner",
+    title: "Excursion Provider Agreement",
+    code: "DOC-PART-21",
+    version: "v1.0",
+    auto: false,
+    updated: "2025-01-10",
+    placeholders: [],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI PRODUCT</div>
+            <div class="doc-brand-sub">Excursion Provider Agreement</div>
+          </div>
+          <div class="doc-ref-box">
+            <div>Template ID: EXC-AGR-01</div>
+            <div>Version: 1.0</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Excursion Provider Agreement</div>
+          <div class="doc-subtitle">
+            Contract template for local activity and excursion partners.
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Key areas</div>
+          <ul class="doc-list">
+            <li>Tour description and inclusions</li>
+            <li>Capacity, departures and cut-off times</li>
+            <li>Safety standards and equipment</li>
+            <li>Pricing, commission and cancellation rules</li>
+            <li>Insurance, liability and force majeure</li>
+          </ul>
+        </div>
+
+        <div class="doc-footer">
+          Final signed agreements should be archived and referenced in ShuttleSync product database.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "PART-22",
+    categoryId: "partner",
+    type: "partner",
+    title: "Vendor Invoice Template",
+    code: "DOC-PART-22",
+    version: "v1.0",
+    auto: false,
+    updated: "2025-01-10",
+    placeholders: [],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI FINANCE</div>
+            <div class="doc-brand-sub">Vendor Invoice Template</div>
+          </div>
+          <div class="doc-ref-box">
+            <div>Template ID: FIN-VND-INV-01</div>
+            <div>Version: 1.0</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Vendor Invoice Template</div>
+          <div class="doc-subtitle">
+            Standard layout for invoices issued to SKANDI by suppliers.
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Required fields</div>
+          <ul class="doc-list">
+            <li>Supplier name, address and VAT / tax ID</li>
+            <li>Invoice date and number</li>
+            <li>Service period or date</li>
+            <li>Description of services</li>
+            <li>Net amount, tax and total</li>
+            <li>Payment terms and bank details</li>
+          </ul>
+        </div>
+
+        <div class="doc-footer">
+          Vendors should be instructed to use this layout where possible for easier reconciliation.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "PART-23",
+    categoryId: "partner",
+    type: "partner",
+    title: "Credit Authorization Form",
+    code: "DOC-PART-23",
+    version: "v1.0",
+    auto: false,
+    updated: "2025-01-10",
+    placeholders: [],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI FINANCE</div>
+            <div class="doc-brand-sub">Credit Authorization Form</div>
+          </div>
+          <div class="doc-ref-box">
+            <div>Template ID: FIN-CRD-01</div>
+            <div>Version: 1.0</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Credit Authorization Form</div>
+          <div class="doc-subtitle">
+            Manual, signature-based authorization for card or account charges.
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Sections</div>
+          <ul class="doc-list">
+            <li>Cardholder / client details</li>
+            <li>Amount and currency</li>
+            <li>Service or PNR reference</li>
+            <li>Authorization statement</li>
+            <li>Signature and date</li>
+          </ul>
+        </div>
+
+        <div class="doc-footer">
+          Completed forms must be stored securely according to SKANDI payment security procedures.
+        </div>
+      </div>
+    `
+  },
+
+  /* -----------------------------
+     ADMIN / SUPPORT 24–27
+  ----------------------------- */
+  {
+    id: "ADM-24",
+    categoryId: "admin",
+    type: "admin",
+    title: "PNR Record Sheet",
+    code: "DOC-ADM-24",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(PNR)", "(Passenger Name)", "(Services Booked)", "(Booking Status)", "(Date Created)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI SUPPORT</div>
+            <div class="doc-brand-sub">PNR Record Sheet</div>
+          </div>
+          <div class="doc-ref-box">
+            <div><strong>PNR:</strong> (PNR)</div>
+            <div>Date created: (Date Created)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">PNR Record Sheet</div>
+          <div class="doc-subtitle">
+            Internal record of all key details connected to a SKANDI booking.
+          </div>
+        </div>
+
+        <div class="doc-meta-grid">
+          <div>
+            <div class="doc-meta-label">Passenger / Lead Name</div>
+            <div class="doc-meta-value">(Passenger Name)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Services Booked</div>
+            <div class="doc-meta-value">(Services Booked)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Booking Status</div>
+            <div class="doc-meta-value doc-highlight">(Booking Status)</div>
+          </div>
+        </div>
+
+        <div class="doc-footer">
+          Generated automatically from ShuttleSync and used by contact center and destination staff.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "ADM-25",
+    categoryId: "admin",
+    type: "admin",
+    title: "Client Account Summary",
+    code: "DOC-ADM-25",
+    version: "v1.0",
+    auto: true,
+    updated: "2025-01-10",
+    placeholders: ["(Client Name)", "(PNR)", "(Invoices)", "(Payments)", "(Balance)"],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI FINANCE</div>
+            <div class="doc-brand-sub">Client Account Summary</div>
+          </div>
+          <div class="doc-ref-box">
+            <div>Client: (Client Name)</div>
+            <div>Reference PNR: (PNR)</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Client Account Summary</div>
+          <div class="doc-subtitle">
+            Overview of invoices, payments and outstanding balance for a client.
+          </div>
+        </div>
+
+        <div class="doc-meta-grid">
+          <div>
+            <div class="doc-meta-label">Invoices</div>
+            <div class="doc-meta-value">(Invoices)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Payments</div>
+            <div class="doc-meta-value">(Payments)</div>
+          </div>
+          <div>
+            <div class="doc-meta-label">Balance</div>
+            <div class="doc-meta-value doc-highlight">(Balance)</div>
+          </div>
+        </div>
+
+        <div class="doc-footer">
+          This summary may be sent to the client or used internally by finance / support teams.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "ADM-26",
+    categoryId: "admin",
+    type: "admin",
+    title: "Travel Insurance Report",
+    code: "DOC-ADM-26",
+    version: "v1.0",
+    auto: false,
+    updated: "2025-01-10",
+    placeholders: [],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI INSURANCE DESK</div>
+            <div class="doc-brand-sub">Travel Insurance Report</div>
+          </div>
+          <div class="doc-ref-box">
+            <div>Template ID: INS-RPT-01</div>
+            <div>Version: 1.0</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Travel Insurance Report</div>
+          <div class="doc-subtitle">
+            Manual form used by insurance department for case summaries.
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Report content</div>
+          <ul class="doc-list">
+            <li>Client and policy details</li>
+            <li>Incident / claim description</li>
+            <li>Travel dates and services booked</li>
+            <li>Medical / cost overview</li>
+            <li>Decision and payment details</li>
+          </ul>
+        </div>
+
+        <div class="doc-footer">
+          Completed reports are stored together with claim documentation and insurer correspondence.
+        </div>
+      </div>
+    `
+  },
+  {
+    id: "ADM-27",
+    categoryId: "admin",
+    type: "admin",
+    title: "Marketing Brochure PDF",
+    code: "DOC-ADM-27",
+    version: "v1.0",
+    auto: false,
+    updated: "2025-01-10",
+    placeholders: [],
+    body: `
+      <div class="doc-template">
+        <div class="doc-header">
+          <div class="doc-brand">
+            <div class="doc-brand-name">SKANDI MARKETING</div>
+            <div class="doc-brand-sub">Marketing Brochure</div>
+          </div>
+          <div class="doc-ref-box">
+            <div>Asset ID: MKT-BRO-01</div>
+            <div>Version: 1.0</div>
+          </div>
+        </div>
+
+        <div class="doc-title-block">
+          <div class="doc-title">Marketing Brochure</div>
+          <div class="doc-subtitle">
+            Static PDF brochure for campaigns and sales teams.
+          </div>
+        </div>
+
+        <div class="doc-section">
+          <div class="doc-section-title">Usage</div>
+          <p class="doc-text">
+            Used for promotional purposes only; check that pricing and terms are still valid before
+            sending to clients.
+          </p>
+        </div>
+
+        <div class="doc-footer">
+          The current version is always accessible here. Outdated versions should be archived and removed
+          from distribution.
+        </div>
+      </div>
+    `
+  }
+];
+
+/* ============================================================
+   STATE
+============================================================ */
+
+let dnState = {
+  categoryId: "passenger",
+  favoritesOnly: false,
+  search: "",
+  currentDocId: null
+};
+
+const FAVORITES_KEY = "docunet_favorites";
+
+function loadFavorites() {
+  try {
+    const raw = localStorage.getItem(FAVORITES_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed;
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+function saveFavorites(favs) {
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs));
+}
+
+/* ============================================================
+   RENDERING
+============================================================ */
+
+function getFavoritesSet() {
+  return new Set(loadFavorites());
+}
+
+function getDocsForCategory(categoryId) {
+  let docs = DOCUNET_DOCS.filter(d => d.categoryId === categoryId);
+  const favSet = getFavoritesSet();
+
+  if (dnState.favoritesOnly) {
+    docs = docs.filter(d => favSet.has(d.id));
+  }
+
+  const q = dnState.search.trim().toLowerCase();
+  if (q) {
+    docs = docs.filter(d => {
+      const hay = (d.title + " " + d.code + " " + (d.body || "")).toLowerCase();
+      return hay.includes(q);
+    });
+  }
+  return docs;
+}
+
+function renderCategories() {
+  const ul = document.getElementById("dn-category-list");
+  const favSet = getFavoritesSet();
+
+  let html = "";
+  DOCUNET_CATEGORIES.forEach(cat => {
+    const docsInCat = DOCUNET_DOCS.filter(d => d.categoryId === cat.id);
+    const docsForCount = dnState.favoritesOnly
+      ? docsInCat.filter(d => favSet.has(d.id))
+      : docsInCat;
+    const count = docsForCount.length;
+
+    html += `
+      <li class="dn-category-item ${dnState.categoryId === cat.id ? "active" : ""}"
+          data-cat-id="${cat.id}">
+        <div class="dn-category-main">
+          <div class="dn-category-name">${cat.name}</div>
+          <div class="dn-category-sub">${cat.description}</div>
+        </div>
+        <div class="dn-category-count">${count}</div>
+      </li>
+    `;
+  });
+
+  ul.innerHTML = html;
+
+  ul.querySelectorAll(".dn-category-item").forEach(li => {
+    li.addEventListener("click", () => {
+      dnState.categoryId = li.getAttribute("data-cat-id");
+      updateMainHeader();
+      renderCategories();
+      renderDocList();
+    });
+  });
+}
+
+function updateMainHeader() {
+  const cat = DOCUNET_CATEGORIES.find(c => c.id === dnState.categoryId);
+  const titleEl = document.getElementById("dn-main-title");
+  const subEl = document.getElementById("dn-main-sub");
+  const badgeEl = document.getElementById("dn-main-badge");
+  const topSub = document.getElementById("dn-top-sub");
+
+  const docs = getDocsForCategory(dnState.categoryId);
+
+  titleEl.textContent = cat ? cat.name : "DocuNet";
+  subEl.textContent = cat ? cat.description : "";
+  badgeEl.textContent = `${docs.length} document${docs.length === 1 ? "" : "s"}`;
+
+  if (dnState.search.trim()) {
+    topSub.textContent = `Search: “${dnState.search.trim()}” — ${docs.length} match${docs.length === 1 ? "" : "es"}`;
+  } else {
+    topSub.textContent = `${cat ? cat.name : "DocuNet"} · ${cat ? cat.description : ""}`;
+  }
+}
+
+function typeToPillClass(type) {
+  if (type === "customer") return "type-customer";
+  if (type === "internal") return "type-internal";
+  if (type === "partner") return "type-partner";
+  if (type === "admin") return "type-admin";
+  return "";
+}
+
+function typeToLabel(type) {
+  if (type === "customer") return "Customer-facing";
+  if (type === "internal") return "Internal";
+  if (type === "partner") return "Partner / Supplier";
+  if (type === "admin") return "Admin / Support";
+  return "Document";
+}
+
+function renderDocList() {
+  const container = document.getElementById("dn-doc-list");
+  const docs = getDocsForCategory(dnState.categoryId);
+  const favSet = getFavoritesSet();
+
+  if (!docs.length) {
+    container.innerHTML = `
+      <div class="dn-empty">
+        No documents found for this filter. Adjust category, favorites or search.
+      </div>
+    `;
+    return;
+  }
+
+  let html = "";
+  docs.forEach(doc => {
+    const favActive = favSet.has(doc.id);
+    const typeClass = typeToPillClass(doc.type);
+    const typeLabel = typeToLabel(doc.type);
+    const autoLabel = doc.auto ? "Auto-generated" : "Manual / static";
+
+    html += `
+      <div class="dn-doc-row" data-doc-id="${doc.id}">
+        <div class="dn-doc-left">
+          <div class="dn-doc-title">${doc.title}</div>
+          <div class="dn-doc-meta">
+            ${doc.code} · ${doc.version}
+          </div>
+          <div class="dn-doc-type-pills">
+            <span class="dn-pill ${typeClass}">${typeLabel}</span>
+            <span class="dn-pill">${autoLabel}</span>
+          </div>
+        </div>
+        <div class="dn-doc-updated">
+          Updated: ${doc.updated || "—"}
+        </div>
+        <div class="dn-doc-actions">
+          <span class="dn-star ${favActive ? "active" : ""}" data-doc-id="${doc.id}" title="Toggle favorite">
+            ${favActive ? "⭐" : "☆"}
+          </span>
+          <span class="dn-open-icon">↗</span>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+
+  container.querySelectorAll(".dn-doc-row").forEach(row => {
+    const docId = row.getAttribute("data-doc-id");
+    row.addEventListener("click", (ev) => {
+      // Don't open twice when clicking star
+      if (ev.target.classList && ev.target.classList.contains("dn-star")) return;
+      openDoc(docId);
+    });
+  });
+
+  container.querySelectorAll(".dn-star").forEach(star => {
+    star.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      const docId = star.getAttribute("data-doc-id");
+      toggleFavorite(docId);
+    });
+  });
+}
+
+function toggleFavorite(docId) {
+  const favs = loadFavorites();
+  const idx = favs.indexOf(docId);
+  if (idx >= 0) favs.splice(idx, 1);
+  else favs.push(docId);
+  saveFavorites(favs);
+
+  renderCategories();
+  renderDocList();
+
+  if (dnState.currentDocId === docId) {
+    updateModalFavoriteState();
+  }
+}
+
+/* ============================================================
+   MODAL / VIEWER
+============================================================ */
+
+function openDoc(docId) {
+  const doc = DOCUNET_DOCS.find(d => d.id === docId);
+  if (!doc) return;
+
+  dnState.currentDocId = docId;
+
+  const modal = document.getElementById("dn-modal");
+  const titleEl = document.getElementById("dn-modal-title");
+  const metaEl = document.getElementById("dn-modal-meta");
+  const bodyEl = document.getElementById("dn-doc-body");
+
+  titleEl.textContent = doc.title;
+  metaEl.textContent = `${doc.code} · ${doc.version} · ${typeToLabel(doc.type)}`;
+  bodyEl.innerHTML = doc.body || "<p>No template defined.</p>";
+
+  updateModalFavoriteState();
+
+  modal.classList.add("open");
+}
+
+function closeModal() {
+  const modal = document.getElementById("dn-modal");
+  modal.classList.remove("open");
+  dnState.currentDocId = null;
+}
+
+function updateModalFavoriteState() {
+  const docId = dnState.currentDocId;
+  if (!docId) return;
+  const favSet = getFavoritesSet();
+  const isFav = favSet.has(docId);
+  const btn = document.getElementById("dn-modal-fav-btn");
+  const star = document.getElementById("dn-modal-fav-star");
+
+  if (isFav) {
+    btn.classList.add("active");
+    star.textContent = "⭐";
+  } else {
+    btn.classList.remove("active");
+    star.textContent = "☆";
+  }
+}
+
+function printCurrentDocument() {
+  const docId = dnState.currentDocId;
+  if (!docId) return;
+  const doc = DOCUNET_DOCS.find(d => d.id === docId);
+  if (!doc) return;
+
+  const w = window.open("", "_blank");
+  if (!w) return;
+
+  const title = doc.title.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  w.document.write(`
+    <html>
+      <head>
+        <meta charset="UTF-8" />
+        <title>${title} – SKANDI DocuNet</title>
+        <style>
+          body {
+            margin: 0;
+            padding: 24px;
+            font-family: "Montserrat", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #ffffff;
+          }
+          .print-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+          }
+          .doc-template {
+            background: #ffffff !important;
+            color: #000000 !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            border: none !important;
+          }
+          .doc-header, .doc-footer {
+            border-color: #000000 !important;
+          }
+          .doc-meta-grid {
+            border-color: #000000 !important;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="print-wrapper">
+          ${doc.body}
+        </div>
+      </body>
+    </html>
+  `);
+  w.document.close();
+  w.focus();
+  w.print();
+}
+
+function downloadCurrentDocument() {
+  // For now, trigger the same print flow – user can "Save as PDF" in browser.
+  printCurrentDocument();
+}
+
+function emailCurrentDocument() {
+  const docId = dnState.currentDocId;
+  if (!docId) return;
+  const doc = DOCUNET_DOCS.find(d => d.id === docId);
+  if (!doc) return;
+
+  const subject = encodeURIComponent(`SKANDI Document: ${doc.title}`);
+  const body = encodeURIComponent(
+    `Please find the SKANDI document "${doc.title}" attached or available in ShuttleSync DocuNet.\n\nReference: ${doc.code} / ${doc.version}\n\n(Attach PDF from print preview before sending.)`
+  );
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+/* ============================================================
+   INIT / EVENTS
+============================================================ */
+
+function initSearch() {
+  const input = document.getElementById("dn-search");
+  input.addEventListener("input", () => {
+    dnState.search = input.value || "";
+    updateMainHeader();
+    renderDocList();
+  });
+}
+
+function initFavoritesToggle() {
+  const btn = document.getElementById("dn-fav-toggle");
+  const setState = () => {
+    if (dnState.favoritesOnly) {
+      btn.classList.add("active");
+      btn.setAttribute("aria-pressed", "true");
+    } else {
+      btn.classList.remove("active");
+      btn.setAttribute("aria-pressed", "false");
+    }
+  };
+  setState();
+
+  btn.addEventListener("click", () => {
+    dnState.favoritesOnly = !dnState.favoritesOnly;
+    setState();
+    renderCategories();
+    renderDocList();
+  });
+}
+
+function initModalEvents() {
+  const modal = document.getElementById("dn-modal");
+  const closeBtn = document.getElementById("dn-modal-close");
+  const favBtn = document.getElementById("dn-modal-fav-btn");
+  const printBtn = document.getElementById("dn-modal-print");
+  const downloadBtn = document.getElementById("dn-modal-download");
+  const emailBtn = document.getElementById("dn-modal-email");
+
+  closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (ev) => {
+    if (ev.target === modal) closeModal();
+  });
+
+  favBtn.addEventListener("click", () => {
+    if (!dnState.currentDocId) return;
+    toggleFavorite(dnState.currentDocId);
+  });
+
+  printBtn.addEventListener("click", printCurrentDocument);
+  downloadBtn.addEventListener("click", downloadCurrentDocument);
+  emailBtn.addEventListener("click", emailCurrentDocument);
+
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape") {
+      closeModal();
+    }
+  });
+}
+
+function initDocuNet() {
+  renderCategories();
+  updateMainHeader();
+  renderDocList();
+  initSearch();
+  initFavoritesToggle();
+  initModalEvents();
+}
+
+document.addEventListener("DOMContentLoaded", initDocuNet);
+</script>
+</body>
+</html>
