@@ -69,7 +69,7 @@
   </div>
 </div>
 
-<script src="/scripts/shuttlesync-ui.js"></script>
+<script src="/public/scripts/shuttlesync-ui.js"></script>
 
 <script>
   const magic = new Magic("pk_live_YOURREALKEY");
@@ -84,12 +84,12 @@
       const session = {
         email,
         did,
-        redirect: "/apps/dashboard"
+        redirect: "/public/apps/dashboard"
       };
 
       ShuttleSyncAuth.saveSession(session);
 
-      window.location.href = "/apps/dashboard";
+      window.location.href = "/public/apps/dashboard";
     } catch (err) {
       console.error(err);
       alert("Login failed.");
