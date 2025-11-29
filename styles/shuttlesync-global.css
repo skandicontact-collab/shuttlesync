@@ -1,7 +1,15 @@
 /* -------------------------------------------------------
    GLOBAL DESIGN SYSTEM 
 ------------------------------------------------------- */
+:root {
+  --vh: 1vh;
+}
 
+@media (max-width: 900px) {
+  .home-wrapper, body, html {
+    height: calc(var(--vh, 1vh) * 100);
+  }
+}
 /* --- LIGHT THEME (DEFAULT) --- */
 :root {
   --sk-bg: #f2eeee;
@@ -54,7 +62,7 @@ body {
   padding:0;
   background:var(--sk-bg); 
   color:var(--sk-text);
-  font-family:"Montserrat", system-ui, sans-serif;
+  font-family:"Montserrat", sans-serif;
   overflow-x:hidden;
   transition: background-color 0.3s, color 0.3s; 
 }
@@ -182,6 +190,10 @@ html[data-theme='dark'] #ss-topbar {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+input, button, select, textarea {
+  font-size: 16px;
 }
 
 .ss-user {
