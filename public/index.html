@@ -34,7 +34,64 @@
     html[data-theme='dark'] .video-bg video {
       filter: brightness(0.45) saturate(1.1);
     }
+/* ============================================
+   MOBILE RESPONSIVE ENHANCEMENTS
+============================================ */
+@media (max-width: 900px) {
 
+  /* Resize card for smaller screens */
+  .home-card {
+    padding: 28px 24px;
+    max-width: 92%;
+    margin-top: 20px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.35);
+  }
+
+  .home-title {
+    font-size: 22px;
+  }
+
+  .home-subtitle {
+    font-size: 13px;
+    margin-bottom: 22px;
+  }
+
+  .home-btn {
+    padding: 12px 18px;
+    font-size: 15px;
+    border-radius: 6px;
+  }
+
+  .legal-footer {
+    font-size: 10px;
+    margin-top: 30px;
+    max-width: 95%;
+    line-height: 1.35;
+  }
+
+  /* Video brightness correction on mobile */
+  .video-bg video {
+    object-fit: cover;
+    filter: brightness(0.68);
+  }
+  html[data-theme='dark'] .video-bg video {
+    filter: brightness(0.40) saturate(1.2);
+  }
+
+  /* Prevent zoom-in on click for iOS */
+  input, button {
+    font-size: 16px !important;
+  }
+
+/* ====== Extra small screens (iPhone Mini etc.) ====== */
+@media (max-width: 480px) {
+  .home-card {
+    padding: 24px 18px;
+  }
+  .home-title { font-size: 20px; }
+  .home-subtitle { font-size: 12px; }
+}
     /* =============================
        PAGE WRAPPER
     ============================== */
@@ -54,6 +111,7 @@
     ============================== */
     .home-card {
       background: var(--sk-glass);
+      font-family: 'montserrat', sans-serif;
       padding: 40px 50px;
       border-radius: 18px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.25);
@@ -67,6 +125,7 @@
     .home-title {
       font-size: 28px;
       font-weight: 700;
+      font-family: 'montserrat', sans-serif;
       margin-bottom: 10px;
       color: var(--sk-accent);
       text-shadow: 0 0 8px rgba(95,199,207,0.3);
@@ -74,6 +133,7 @@
 
     .home-subtitle {
       font-size: 14px;
+      font-family: 'montserrat', sans-serif;
       margin-bottom: 30px;
       color: var(--sk-text-dim);
     }
@@ -81,6 +141,7 @@
     .home-btn {
       padding: 14px 22px;
       background: var(--sk-blue);
+      font-family: 'montserrat', sans-serif;
       color: #ffffff;
       border: none;
       border-radius: 8px;
@@ -112,6 +173,7 @@
       text-align: center;
       padding: 0 20px;
       animation: fadeIn 0.9s ease;
+      font-family: 'montserrat', sans-serif;
     }
 
     /* ------------------------------
