@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ShuttleSync Employee Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SKANDI / ShuttleSync Dark UI -->
+  <style>
+    :root {
+      --sk-blue: #022e64;
+      --sk-blue-soft: #083a7e;
+      --sk-ink: #051a33;
+      --sk-accent: #5FC7CF;
+      --sk-orange: #fe5700;
+      --sk-bg: #020b1a;
+      --sk-card: #071225;
+      --sk-card-soft: #0a1630;
+      --sk-border: #122445;
+      --sk-text: #f6f7fb;
+      --sk-muted: #a7b4d4;
+      --radius: 16px;
+      --shadow-soft: 0 14px 40px rgba(0,0,0,0.5);
+      --transition: 0.25s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Montserrat", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #13254a 0, #020b1a 55%, #000 100%);
+      color: var(--sk-text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    /* APP WRAPPER */
+    .app-shell {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      grid-template-rows: 72px minmax(0, 1fr);
+      grid-template-areas:
+        "sidebar topbar"
+        "sidebar main";
+      max-width: 1200px;
+      width: 100%;
+      height: 90vh;
+      margin: 24px;
+      border-radius: 24px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #020b1a 0, #030a19 40%, #02040a 100%);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(95,199,207,0.15);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      grid-area: sidebar;
+      background: linear-gradient(180deg, #020b1a 0, #020612 60%, #02040a 100%);
+      border-right: 1px solid var(--sk-border);
+      padding: 18px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0, #5FC7CF 0, #022e64 42%, #020b1a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .brand-text-main {
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+
+    .brand-text-sub {
+      font-size: 11px;
+      color: var(--sk-muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+
+    .nav-section-label {
+      font-size: 11px;
+      color: var(--sk-muted);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      margin: 12px 6px 6px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      color: var(--sk-muted);
+      font-size: 13px;
+      transition: var(--transition);
+    }
+
+    .nav-item:hover {
+      background: rgba(95,199,207,0.1);
+      color: #fff;
+    }
+
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(95,199,207,0.35), rgba(95,199,207,0.08));
+      color: #fff;
+    }
+
+    .nav-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--sk-accent);
+      box-shadow: 0 0 10px rgba(95,199,207,0.9);
+    }
+
+    .sidebar-spacer {
+      flex: 1;
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid var(--sk-border);
+      padding-top: 12px;
+      font-size: 11px;
+      color: var(--sk-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .status-pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      background: rgba(95,199,207,0.12);
+      color: var(--sk-accent);
+    }
+
+    /* TOPBAR */
+    .topbar {
+      grid-area: topbar;
+      border-bottom: 1px solid var(--sk-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      background: radial-gradient(circle at top left, rgba(95,199,207,0.22), transparent 55%);
+    }
+
+    .top-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .top-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--sk-muted);
+    }
+
+    .top-sub {
+      font-size: 12px;
+      color: var(--sk-muted);
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .badge-pill {
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid rgba(95,199,207,0.55);
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(2,14,42,0.8);
+    }
+
+    .notif-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--sk-orange);
+      box-shadow: 0 0 10px rgba(254,87,0,0.8);
+    }
+
+    .avatar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .avatar-img {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #5FC7CF, #022e64);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .avatar-name {
+      font-size: 13px;
+      color: var(--sk-text);
+    }
+
+    .logout-link {
+      font-size: 11px;
+      color: var(--sk-muted);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* MAIN AREA */
+    .main {
+      grid-area: main;
+      padding: 18px;
+      overflow-y: auto;
+      background: radial-gradient(circle at top, rgba(95,199,207,0.07) 0, transparent 55%);
+    }
+
+    .view {
+      display: none;
+      animation: fadeIn .24s ease-out;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .view-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .view-title {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .view-sub {
+      font-size: 13px;
+      color: var(--sk-muted);
+    }
+
+    .view-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #5FC7CF, #009ba8);
+      color: #020814;
+      font-weight: 600;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--sk-border);
+      color: var(--sk-muted);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.03);
+    }
+
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1.1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, rgba(95,199,207,0.12), transparent 60%),
+                  var(--sk-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--sk-border);
+      padding: 14px 16px 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+    }
+
+    .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .card-sub {
+      font-size: 11px;
+      color: var(--sk-muted);
+    }
+
+    .pill {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(95,199,207,0.14);
+      color: var(--sk-accent);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+
+    .big-number {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 3px 0 2px;
+    }
+
+    .muted {
+      color: var(--sk-muted);
+      font-size: 11px;
+    }
+
+    /* QUICK TILES */
+    .quick-tiles {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .tile {
+      position: relative;
+      border-radius: 12px;
+      padding: 10px 10px 12px;
+      background: var(--sk-card-soft);
+      border: 1px solid rgba(255,255,255,0.02);
+      cursor: pointer;
+      transition: var(--transition);
+      overflow: hidden;
+    }
+
+    .tile:hover {
+      transform: translateY(-1px);
+      border-color: rgba(95,199,207,0.6);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    .tile-label {
+      font-size: 11px;
+      color: var(--sk-muted);
+      margin-bottom: 3px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+
+    .tile-main {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .tile-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(2,46,100,0.8);
+      color: var(--sk-accent);
+    }
+
+    /* LISTS */
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: rgba(2,12,32,0.7);
+      border: 1px solid rgba(255,255,255,0.02);
+      font-size: 12px;
+    }
+
+    .list-item-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .list-title {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .list-sub {
+      font-size: 11px;
+      color: var(--sk-muted);
+    }
+
+    .badge-mini {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(95,199,207,0.15);
+      color: var(--sk-accent);
+    }
+
+    .badge-danger {
+      background: rgba(254,87,0,0.2);
+      color: #ffc39f;
+    }
+
+    .badge-soft {
+      background: rgba(255,255,255,0.08);
+      color: var(--sk-muted);
+    }
+
+    /* STACK / ROW */
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .stack-row {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr;
+      gap: 12px;
+    }
+
+    .field-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+      font-size: 12px;
+    }
+
+    .field-label {
+      color: var(--sk-muted);
+      font-size: 11px;
+    }
+
+    .field-value {
+      font-size: 13px;
+    }
+
+    input, textarea, select {
+      font-family: inherit;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: 64px minmax(0,1fr) 62px;
+        grid-template-areas:
+          "topbar"
+          "main"
+          "sidebar";
+        height: 100vh;
+        margin: 0;
+        border-radius: 0;
+      }
+      .sidebar {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        border-right: none;
+        border-top: 1px solid var(--sk-border);
+        padding: 6px 10px;
+        gap: 8px;
+      }
+      .nav-section-label,
+      .sidebar-footer,
+      .brand-text-sub {
+        display: none;
+      }
+      .nav-list {
+        flex-direction: row;
+        gap: 4px;
+        overflow-x: auto;
+      }
+      .nav-item {
+        padding: 6px 8px;
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .brand-text-main {
+        font-size: 11px;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .stack-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- SIDEBAR NAV -->
+  <aside class="sidebar">
+    <div>
+      <div class="brand">
+        <div class="brand-logo">S</div>
+        <div>
+          <div class="brand-text-main">ShuttleSync</div>
+          <div class="brand-text-sub">Employee Portal</div>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-label">Main</div>
+        <ul class="nav-list">
+          <li class="nav-item active" data-view-target="home">
+            <span class="nav-dot"></span> Home
+          </li>
+          <li class="nav-item" data-view-target="profile">
+            <span class="nav-dot"></span> Profile
+          </li>
+          <li class="nav-item" data-view-target="schedule">
+            <span class="nav-dot"></span> My Schedule
+          </li>
+          <li class="nav-item" data-view-target="paytime">
+            <span class="nav-dot"></span> Pay &amp; Time
+          </li>
+          <li class="nav-item" data-view-target="training">
+            <span class="nav-dot"></span> Training / CBT
+          </li>
+          <li class="nav-item" data-view-target="docs">
+            <span class="nav-dot"></span> My Documents
+          </li>
+          <li class="nav-item" data-view-target="benefits">
+            <span class="nav-dot"></span> Benefits
+          </li>
+          <li class="nav-item" data-view-target="helpdesk">
+            <span class="nav-dot"></span> Help Desk
+          </li>
+        </ul>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-label">Info &amp; Tools</div>
+        <ul class="nav-list">
+          <li class="nav-item" data-view-target="docunet">
+            <span class="nav-dot"></span> DocuNet
+          </li>
+          <li class="nav-item" data-view-target="baseinfo">
+            <span class="nav-dot"></span> Base Info
+          </li>
+          <li class="nav-item" data-view-target="news">
+            <span class="nav-dot"></span> News &amp; Social
+          </li>
+          <li class="nav-item" data-view-target="directory">
+            <span class="nav-dot"></span> Directory
+          </li>
+          <li class="nav-item" data-view-target="tools">
+            <span class="nav-dot"></span> Tools &amp; Reporting
+          </li>
+          <li class="nav-item" id="navDestinationTools" data-view-target="destination" style="display:block;">
+            <span class="nav-dot"></span> Destination Tools
+          </li>
+        </ul>
+      </div>
+
+      <div class="nav-section" id="managerNavBlock" style="display:block; margin-top:10px;">
+        <div class="nav-section-label">Leadership</div>
+        <ul class="nav-list">
+          <li class="nav-item" data-view-target="manager">
+            <span class="nav-dot"></span> Manager Dashboard
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="sidebar-footer">
+      <div class="footer-row">
+        <span>System status</span>
+        <span class="status-pill">Online</span>
+      </div>
+      <div class="footer-row">
+        <span style="font-size:10px;">ShuttleSync &copy; SKANDI</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="top-left">
+      <div class="top-title">Employee Portal</div>
+      <div class="top-sub" id="topSubLine">Loading profile…</div>
+    </div>
+    <div class="top-right">
+      <div class="badge-pill">
+        <span class="notif-dot" id="notifDot"></span>
+        <span id="notifLabel">0 alerts</span>
+      </div>
+      <div class="avatar-wrap" id="profileSummary">
+        <div class="avatar-img" id="avatarInitials">SK</div>
+        <div>
+          <div class="avatar-name" id="avatarName">Employee</div>
+          <div class="logout-link" id="logoutBtn">Log out</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="main">
+
+    <!-- HOME VIEW -->
+    <section class="view active" id="view-home">
+      <div class="view-header">
+        <div>
+          <div class="view-title">Welcome back, <span id="homeFirstName">Employee</span></div>
+          <div class="view-sub" id="homeSubLine">Here’s a snapshot of your day.</div>
+        </div>
+        <div class="view-actions">
+          <button class="btn btn-ghost" id="refreshBtn">Refresh</button>
+          <button class="btn btn-primary" data-view-target="schedule">Open Today’s Schedule</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <!-- LEFT COLUMN -->
+        <div class="col">
+          <!-- CARD: Today / Next duty -->
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <div class="card-title">Today’s Duty</div>
+                <div class="card-sub">Your next assignment from ShuttleSync roster</div>
+              </div>
+              <div class="pill" id="dutyTypePill">Off duty</div>
+            </div>
+            <div class="big-number" id="dutyMain">No duty today</div>
+            <div class="muted" id="dutySub">You’re currently off duty. Enjoy your day!</div>
+            <div class="quick-tiles">
+              <div class="tile" data-view-target="schedule">
+                <div class="tile-label">Roster</div>
+                <div class="tile-main">View full schedule</div>
+              </div>
+              <div class="tile" data-view-target="training">
+                <div class="tile-label">Training</div>
+                <div class="tile-main">Resume CBT module</div>
+                <div class="tile-badge" id="trainingProgressBadge">–</div>
+              </div>
+              <div class="tile" data-view-target="helpdesk">
+                <div class="tile-label">Help desk</div>
+                <div class="tile-main">Contact Hotline / IT</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD: News & Social -->
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <div class="card-title">Top News</div>
+                <div class="card-sub">Latest from SKANDI HQ</div>
+              </div>
+              <button class="btn btn-ghost" data-view-target="news" style="font-size:11px;">All news</button>
+            </div>
+            <div class="list" id="topNewsList"></div>
+          </div>
+
+          <!-- CARD: Social / Kudos -->
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <div class="card-title">From the community</div>
+                <div class="card-sub">Kudos, questions &amp; stories</div>
+              </div>
+              <div class="pill">Social</div>
+            </div>
+            <div class="list" id="socialFeed"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="col">
+          <!-- CARD: Pay & Time summary -->
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <div class="card-title">Pay &amp; Time</div>
+                <div class="card-sub">Quick overview of pay and vacation</div>
+              </div>
+              <button class="btn btn-ghost" data-view-target="paytime" style="font-size:11px;">Open</button>
+            </div>
+            <div class="list">
+              <div class="list-item">
+                <div class="list-item-left">
+                  <div class="list-title">Next payslip</div>
+                  <div class="list-sub" id="nextPayslipLabel">–</div>
+                </div>
+                <div class="badge-mini" id="nextPayslipAmount">–</div>
+              </div>
+              <div class="list-item">
+                <div class="list-item-left">
+                  <div class="list-title">Vacation balance</div>
+                  <div class="list-sub" id="vacationBalanceLabel">–</div>
+                </div>
+                <div class="badge-mini" id="vacationBalanceDays">–</div>
+              </div>
+              <div class="list-item">
+                <div class="list-item-left">
+                  <div class="list-title">Open time reports</div>
+                  <div class="list-sub">Awaiting submission/approval</div>
+                </div>
+                <div class="badge-mini badge-danger" id="openTimeReportsBadge">0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD: Compliance / Passport / Training -->
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <div class="card-title">Compliance status</div>
+                <div class="card-sub">Passport &amp; mandatory training</div>
+              </div>
+            </div>
+            <div class="list">
+              <div class="list-item">
+                <div class="list-item-left">
+                  <div class="list-title">Passport</div>
+                  <div class="list-sub" id="passportLabel">–</div>
+                </div>
+                <div class="badge-mini" id="passportBadge">–</div>
+              </div>
+              <div class="list-item">
+                <div class="list-item-left">
+                  <div class="list-title">Training</div>
+                  <div class="list-sub" id="trainingLabel">–</div>
+                </div>
+                <div class="badge-mini" id="trainingBadge">–</div>
+              </div>
+              <div class="list-item">
+                <div class="list-item-left">
+                  <div class="list-title">Safety reporting</div>
+                  <div class="list-sub">Use incident form for deviations</div>
+                </div>
+                <div class="badge-mini badge-soft" data-view-target="tools">Open form</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD: Uniform points / Benefits -->
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <div class="card-title">Uniform &amp; benefits</div>
+                <div class="card-sub">Shop balance &amp; staff travel</div>
+              </div>
+              <button class="btn btn-ghost" data-view-target="benefits" style="font-size:11px;">Benefits portal</button>
+            </div>
+            <div class="big-number" id="uniformPointsMain">0 pts</div>
+            <div class="muted">Uniform shop points available</div>
+            <div class="quick-tiles">
+              <div class="tile">
+                <div class="tile-label">Uniform</div>
+                <div class="tile-main">Open shop</div>
+              </div>
+              <div class="tile">
+                <div class="tile-label">Staff travel</div>
+                <div class="tile-main">View ticket rules</div>
+              </div>
+              <div class="tile">
+                <div class="tile-label">Wellness</div>
+                <div class="tile-main">Claim allowance</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE VIEW -->
+    <section class="view" id="view-profile">
+      <div class="view-header">
+        <div>
+          <div class="view-title">My Profile</div>
+          <div class="view-sub">Personal details, contact info &amp; SK-ID</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Personal info</div>
+              <div class="card-sub">This is pulled from HR / EMPLOYEES table</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div>
+              <div class="field-label">Name</div>
+              <div class="field-value" id="profileName">–</div>
+            </div>
+            <div>
+              <div class="field-label">SK-ID / Employee ID</div>
+              <div class="field-value" id="profileSkid">–</div>
+            </div>
+            <div>
+              <div class="field-label">Job title</div>
+              <div class="field-value" id="profileJob">–</div>
+            </div>
+            <div>
+              <div class="field-label">Department</div>
+              <div class="field-value" id="profileDept">–</div>
+            </div>
+            <div>
+              <div class="field-label">Base</div>
+              <div class="field-value" id="profileBase">–</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Contact</div>
+              <div class="card-sub">Used by managers &amp; SKANDI Hotline</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div>
+              <div class="field-label">Email</div>
+              <div class="field-value" id="profileEmail">–</div>
+            </div>
+            <div>
+              <div class="field-label">Phone</div>
+              <div class="field-value" id="profilePhone">–</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAY & TIME -->
+    <section class="view" id="view-paytime">
+      <div class="view-header">
+        <div>
+          <div class="view-title">Pay &amp; Time</div>
+          <div class="view-sub">Payslips, vacation and time reports</div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="stack-row">
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <div class="card-title">Payslips</div>
+                <div class="card-sub">Download your monthly salary specs</div>
+              </div>
+            </div>
+            <div class="list" id="payslipList"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <div class="card-title">Compensation overview</div>
+                <div class="card-sub">Base salary &amp; benefits</div>
+              </div>
+            </div>
+            <div class="field-row">
+              <div>
+                <div class="field-label">Base salary</div>
+                <div class="field-value" id="compBase">–</div>
+              </div>
+              <div>
+                <div class="field-label">Allowances</div>
+                <div class="field-value" id="compAllowances">–</div>
+              </div>
+              <div>
+                <div class="field-label">Pension / 401k</div>
+                <div class="field-value" id="compPension">–</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stack-row">
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <div class="card-title">Vacation &amp; leave</div>
+                <div class="card-sub">Request time off or see your balance</div>
+              </div>
+              <button class="btn btn-primary" style="font-size:11px;">Request leave</button>
+            </div>
+            <div class="list" id="leaveBalanceList"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <div class="card-title">Time reports</div>
+                <div class="card-sub">Submit / approve time sheets</div>
+              </div>
+            </div>
+            <div class="list" id="timeReportList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRAINING / CBT -->
+    <section class="view" id="view-training">
+      <div class="view-header">
+        <div>
+          <div class="view-title">Training / CBT</div>
+          <div class="view-sub">Mandatory CBT, recurrent training &amp; status</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">My CBT modules</div>
+              <div class="card-sub">Click to open each training session</div>
+            </div>
+          </div>
+          <div class="list" id="cbtList">
+            <!-- Example placeholder modules -->
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Training summary</div>
+              <div class="card-sub">What is valid / upcoming</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div>
+              <div class="field-label">Overall status</div>
+              <div class="field-value" id="trainingOverall">–</div>
+            </div>
+            <div>
+              <div class="field-label">Expiring within 60 days</div>
+              <div class="field-value" id="trainingExpiring">–</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY DOCUMENTS -->
+    <section class="view" id="view-docs">
+      <div class="view-header">
+        <div>
+          <div class="view-title">My Documents</div>
+          <div class="view-sub">Contracts, IDs, certificates and uploads</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header-row">
+          <div>
+            <div class="card-title">Documents on file</div>
+            <div class="card-sub">Stored in EMPLOYEES / DOCUMENTS table</div>
+          </div>
+        </div>
+        <div class="list" id="docList"></div>
+      </div>
+    </section>
+
+    <!-- BENEFITS -->
+    <section class="view" id="view-benefits">
+      <div class="view-header">
+        <div>
+          <div class="view-title">Benefits Portal</div>
+          <div class="view-sub">Wellness, staff travel &amp; insurances</div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Your benefits</div>
+              <div class="card-sub">Based on your contract and base</div>
+            </div>
+          </div>
+          <div class="list" id="benefitList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HELP DESK -->
+    <section class="view" id="view-helpdesk">
+      <div class="view-header">
+        <div>
+          <div class="view-title">Help Desk</div>
+          <div class="view-sub">Hotline, IT and Online Service</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">SKANDI Hotline</div>
+              <div class="card-sub">For urgent guest / operation support</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Phone</div>
+            <div class="field-value" id="hotlinePhone">+XX XXX XXX XXX</div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Email</div>
+            <div class="field-value" id="hotlineEmail">hotline@skandi.group</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">IT &amp; Online Service</div>
+              <div class="card-sub">For ShuttleSync / email / account issues</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Email</div>
+            <div class="field-value" id="itEmail">it@skandi.group</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DOCUNET -->
+    <section class="view" id="view-docunet">
+      <div class="view-header">
+        <div>
+          <div class="view-title">DocuNet</div>
+          <div class="view-sub">Manuals, SOPs, checklists &amp; policies</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header-row">
+          <div>
+            <div class="card-title">Document library</div>
+            <div class="card-sub">Filtered by role, base and department</div>
+          </div>
+        </div>
+        <div class="list" id="docuNetList"></div>
+      </div>
+    </section>
+
+    <!-- BASE INFO -->
+    <section class="view" id="view-baseinfo">
+      <div class="view-header">
+        <div>
+          <div class="view-title">Base Info</div>
+          <div class="view-sub">Local contact details, procedures &amp; maps</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Your base</div>
+              <div class="card-sub">Pulled from BASES table</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div>
+              <div class="field-label">Base</div>
+              <div class="field-value" id="baseName">–</div>
+            </div>
+            <div>
+              <div class="field-label">Country / Region</div>
+              <div class="field-value" id="baseCountry">–</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Local contacts</div>
+              <div class="card-sub">Base manager, duty phone, etc.</div>
+            </div>
+          </div>
+          <div class="list" id="baseContacts"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEWS & SOCIAL -->
+    <section class="view" id="view-news">
+      <div class="view-header">
+        <div>
+          <div class="view-title">News &amp; Social</div>
+          <div class="view-sub">Official updates and community feed</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">News</div>
+              <div class="card-sub">Company announcements &amp; CEO updates</div>
+            </div>
+          </div>
+          <div class="list" id="newsListFull"></div>
+        </div>
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Community</div>
+              <div class="card-sub">Share wins and ask questions</div>
+            </div>
+          </div>
+          <div class="list" id="socialListFull"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIRECTORY -->
+    <section class="view" id="view-directory">
+      <div class="view-header">
+        <div>
+          <div class="view-title">Employee Directory</div>
+          <div class="view-sub">Find colleagues across SKANDI</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header-row">
+          <div>
+            <div class="card-title">Search</div>
+            <div class="card-sub">By name, base, department, role</div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <div class="field-label">Search</div>
+            <input id="directorySearch" placeholder="Type a name, base or department…" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--sk-border); background:#050b18; color:var(--sk-text); font-size:12px;">
+          </div>
+        </div>
+        <div class="list" id="directoryList" style="margin-top:10px;"></div>
+      </div>
+    </section>
+
+    <!-- TOOLS & REPORTING -->
+    <section class="view" id="view-tools">
+      <div class="view-header">
+        <div>
+          <div class="view-title">Tools &amp; Reporting</div>
+          <div class="view-sub">Incident, IT fault &amp; safety reporting</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Safety &amp; incident report</div>
+              <div class="card-sub">Use this for safety deviations or guest incidents</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div>
+              <div class="field-label">Short title</div>
+              <input id="incidentTitle" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--sk-border); background:#050b18; color:var(--sk-text); font-size:12px;">
+            </div>
+            <div>
+              <div class="field-label">Description</div>
+              <textarea id="incidentBody" rows="4" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--sk-border); background:#050b18; color:var(--sk-text); font-size:12px;"></textarea>
+            </div>
+            <button class="btn btn-primary" style="width:max-content;" id="incidentSubmitBtn">Submit report</button>
+            <div class="muted" id="incidentStatus"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">IT / System issue</div>
+              <div class="card-sub">Use for ShuttleSync / email / app problems</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div>
+              <div class="field-label">Issue</div>
+              <input id="itIssue" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--sk-border); background:#050b18; color:var(--sk-text); font-size:12px;">
+            </div>
+            <button class="btn btn-ghost" style="width:max-content;" id="itSubmitBtn">Send to IT</button>
+            <div class="muted" id="itStatus"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESTINATION TOOLS (TORGAD/TORGAS) -->
+    <section class="view" id="view-destination">
+      <div class="view-header">
+        <div>
+          <div class="view-title">Destination Tools</div>
+          <div class="view-sub">For TorGaD / TorGaS destination staff</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Daily program</div>
+              <div class="card-sub">Briefings, excursions &amp; welcome meetings</div>
+            </div>
+          </div>
+          <div class="list" id="destProgram"></div>
+        </div>
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Hotel &amp; partner info</div>
+              <div class="card-sub">Contacts, special notes &amp; guest info</div>
+            </div>
+          </div>
+          <div class="list" id="destHotels"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MANAGER / HQ DASHBOARD -->
+    <section class="view" id="view-manager">
+      <div class="view-header">
+        <div>
+          <div class="view-title">Manager Dashboard</div>
+          <div class="view-sub">Team overview, approvals &amp; onboarding</div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="stack-row">
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <div class="card-title">Team overview</div>
+                <div class="card-sub">Direct reports and today’s status</div>
+              </div>
+            </div>
+            <div class="list" id="teamList"></div>
+          </div>
+          <div class="card">
+            <div class="card-header-row">
+              <div>
+                <div class="card-title">Approvals</div>
+                <div class="card-sub">Leave, time reports &amp; uniform</div>
+              </div>
+            </div>
+            <div class="list" id="approvalList"></div>
+          </div>
+        </div>
+
+        <!-- EMPLOYEE REGISTRATION (ONBOARDING) -->
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Employee registration</div>
+              <div class="card-sub">Create a new SKANDI employee (manager only)</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div>
+              <div class="field-label">First name</div>
+              <input id="onboardFirstName" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--sk-border); background:#050b18; color:var(--sk-text); font-size:12px;">
+            </div>
+            <div>
+              <div class="field-label">Last name</div>
+              <input id="onboardLastName" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--sk-border); background:#050b18; color:var(--sk-text); font-size:12px;">
+            </div>
+            <div>
+              <div class="field-label">Email</div>
+              <input id="onboardEmail" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--sk-border); background:#050b18; color:#fff; font-size:12px;">
+            </div>
+            <div>
+              <div class="field-label">Role</div>
+              <input id="onboardRole" placeholder="e.g. SKANDI Host / TorGaD" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--sk-border); background:#050b18; color:#fff; font-size:12px;">
+            </div>
+            <div>
+              <div class="field-label">Base</div>
+              <input id="onboardBase" placeholder="e.g. Stockholm (21)" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--sk-border); background:#050b18; color:#fff; font-size:12px;">
+            </div>
+            <button class="btn btn-primary" style="width:max-content;" id="onboardSubmitBtn">Create employee</button>
+            <div class="muted" id="onboardStatus"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // --------------- CONFIG (BACK-END HOOKS) ---------------
+  // For production, move Airtable calls to your own backend / Make.com proxy.
+  const AIRTABLE_API_KEY = "YOUR_AIRTABLE_API_KEY";
+  const AIRTABLE_BASE_ID = "YOUR_AIRTABLE_BASE_ID";
+  const EMPLOYEE_TABLE = "EMPLOYEES";
+
+  async function fetchAirtableRecords(table, params = "") {
+    const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(table)}${params}`;
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${AIRTABLE_API_KEY}` }
+    });
+    if (!res.ok) throw new Error("Airtable error");
+    return res.json();
+  }
+
+  // --------------- STATE ----------------
+  let user = null;
+
+  function loadUserFromStorage() {
+    try {
+      const raw = localStorage.getItem("ss_user");
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveUserToStorage(emp) {
+    localStorage.setItem("ss_user", JSON.stringify(emp));
+  }
+
+  function logout() {
+    localStorage.removeItem("ss_user");
+    // change to your actual login page path in Wix
+    window.location.href = "/shuttlesync";
+  }
+
+  // --------------- NAVIGATION ----------------
+  function setActiveView(viewId) {
+    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+    const view = document.getElementById(`view-${viewId}`);
+    if (view) view.classList.add("active");
+
+    document.querySelectorAll(".nav-item").forEach(item => {
+      if (item.dataset.viewTarget === viewId) item.classList.add("active");
+      else item.classList.remove("active");
+    });
+  }
+
+  function setupNav() {
+    document.querySelectorAll("[data-view-target]").forEach(el => {
+      el.addEventListener("click", () => {
+        const target = el.dataset.viewTarget;
+        if (target) setActiveView(target);
+      });
+    });
+
+    // Clicking avatar → profile
+    document.getElementById("profileSummary").addEventListener("click", () => {
+      setActiveView("profile");
+    });
+  }
+
+  // --------------- HOME RENDER ----------------
+  function renderHome() {
+    if (!user) return;
+
+    document.getElementById("avatarName").textContent =
+      `${user.FirstName || ""} ${user.LastName || ""}`.trim() || "Employee";
+
+    document.getElementById("homeFirstName").textContent = user.FirstName || "Employee";
+    document.getElementById("homeSubLine").textContent =
+      `${user.JobTitle || "Team member"} • ${user.Base || "Base"}`;
+    document.getElementById("topSubLine").textContent =
+      `SK-ID ${user.EmployeeID || "—"} • ${user.Department || "Department"}`;
+
+    const initials = ((user.FirstName || "S")[0] + (user.LastName || "K")[0]).toUpperCase();
+    document.getElementById("avatarInitials").textContent = initials;
+
+    document.getElementById("dutyTypePill").textContent = user.NextDutyType || "Off duty";
+    document.getElementById("dutyMain").textContent = user.NextDutyTitle || "No duty today";
+    document.getElementById("dutySub").textContent = user.NextDutyTime || "You’re currently off duty.";
+
+    document.getElementById("uniformPointsMain").textContent =
+      (user.UniformPoints || 0) + " pts";
+
+    document.getElementById("nextPayslipLabel").textContent =
+      user.NextPayslipPeriod || "Next payment date";
+    document.getElementById("nextPayslipAmount").textContent =
+      user.NextPayslipAmount || "—";
+    document.getElementById("vacationBalanceLabel").textContent =
+      "Year " + (user.VacationYear || new Date().getFullYear());
+    document.getElementById("vacationBalanceDays").textContent =
+      (user.VacationDaysLeft || 0) + " days";
+    document.getElementById("openTimeReportsBadge").textContent =
+      user.OpenTimeReports || 0;
+
+    document.getElementById("passportLabel").textContent =
+      user.PassportExpiry ? `Expires ${user.PassportExpiry}` : "No passport on file";
+    document.getElementById("trainingLabel").textContent =
+      user.TrainingStatus || "Not synced";
+
+    const passportBadge = document.getElementById("passportBadge");
+    const trainingBadge = document.getElementById("trainingBadge");
+
+    passportBadge.textContent = user.PassportStatus || "Unknown";
+    trainingBadge.textContent = user.TrainingStatusShort || "OK";
+
+    if (user.PassportStatus === "Expired" || user.PassportStatus === "Expiring") {
+      passportBadge.classList.add("badge-danger");
+    }
+    if (user.TrainingStatusShort && user.TrainingStatusShort !== "OK") {
+      trainingBadge.classList.add("badge-danger");
+    }
+
+    // Example training progress
+    document.getElementById("trainingProgressBadge").textContent =
+      user.TrainingCompletionPercent ? `${user.TrainingCompletionPercent}%` : "View";
+
+    const topNews = [
+      { title: "New SKANDI Select destination announced", category: "Destinations", time: "Today" },
+      { title: "Crew uniform updates from November", category: "HR & Uniform", time: "2 days ago" },
+      { title: "CEO update: Winter program & performance", category: "Corporate", time: "1 week ago" }
+    ];
+    const topNewsList = document.getElementById("topNewsList");
+    topNewsList.innerHTML = "";
+    topNews.forEach(n => {
+      const li = document.createElement("div");
+      li.className = "list-item";
+      li.innerHTML = `
+        <div class="list-item-left">
+          <div class="list-title">${n.title}</div>
+          <div class="list-sub">${n.category} • ${n.time}</div>
+        </div>
+        <div class="badge-mini badge-soft">Read</div>
+      `;
+      topNewsList.appendChild(li);
+    });
+
+    const social = [
+      { title: "TorGaD Orlando hit 98% NPS last week!", sub: "Shared in Destination Ops" },
+      { title: "Welcome our new base manager in Stockholm", sub: "Posted in People & Culture" }
+    ];
+    const socialFeed = document.getElementById("socialFeed");
+    socialFeed.innerHTML = "";
+    social.forEach(s => {
+      const li = document.createElement("div");
+      li.className = "list-item";
+      li.innerHTML = `
+        <div class="list-item-left">
+          <div class="list-title">${s.title}</div>
+          <div class="list-sub">${s.sub}</div>
+        </div>
+        <div class="badge-mini badge-soft">View</div>
+      `;
+      socialFeed.appendChild(li);
+    });
+
+    const alertCount = user.AlertCount || 0;
+    document.getElementById("notifLabel").textContent =
+      `${alertCount} alert${alertCount === 1 ? "" : "s"}`;
+    if (alertCount === 0) {
+      document.getElementById("notifDot").style.background = "#3ac47a";
+      document.getElementById("notifDot").style.boxShadow =
+        "0 0 10px rgba(58,196,122,0.8)";
+    }
+  }
+
+  // --------------- PROFILE RENDER ----------------
+  function renderProfile() {
+    if (!user) return;
+    document.getElementById("profileName").textContent =
+      `${user.FirstName || ""} ${user.LastName || ""}`.trim() || "–";
+    document.getElementById("profileSkid").textContent = user.EmployeeID || "–";
+    document.getElementById("profileJob").textContent = user.JobTitle || "–";
+    document.getElementById("profileDept").textContent = user.Department || "–";
+    document.getElementById("profileBase").textContent = user.Base || "–";
+    document.getElementById("profileEmail").textContent = user.Email || "–";
+    document.getElementById("profilePhone").textContent = user.Phone || "–";
+  }
+
+  // --------------- ROLE VISIBILITY ----------------
+  function applyRoleVisibility() {
+    const tier = user.RoleTier || user.Role_Tier || 1;
+    const managerNav = document.getElementById("managerNavBlock");
+    managerNav.style.display = tier >= 3 ? "block" : "none";
+
+    // Destination tools visibility (TorGaD / TorGaS or explicit flag)
+    if (user.IsDestinationStaff ||
+        (user.JobTitle && /TorGaD|TorGaS/i.test(user.JobTitle))) {
+      document.getElementById("navDestinationTools").style.display = "flex";
+    }
+  }
+
+  // --------------- DIRECTORY / MANAGER MOCK DATA ----------------
+  function renderDirectory() {
+    const list = document.getElementById("directoryList");
+    list.innerHTML = "";
+    const sample = [
+      { name: "Samuel Higberg", role: "GM ShuttleSync", dept: "E-Commerce & Digital", base: "New York" },
+      { name: "Kavan Higberg", role: "Head of Destinations", dept: "Product & Destinations", base: "Boden" },
+      { name: "Anna Svensson", role: "SKANDI Host / TorGaD", dept: "Destination Ops", base: "Chania" }
+    ];
+    sample.forEach(p => {
+      const div = document.createElement("div");
+      div.className = "list-item";
+      div.innerHTML = `
+        <div class="list-item-left">
+          <div class="list-title">${p.name}</div>
+          <div class="list-sub">${p.role} • ${p.dept}</div>
+        </div>
+        <div class="badge-mini badge-soft">${p.base}</div>
+      `;
+      list.appendChild(div);
+    });
+
+    const searchInput = document.getElementById("directorySearch");
+    searchInput.addEventListener("input", () => {
+      const q = searchInput.value.toLowerCase();
+      Array.from(list.children).forEach(child => {
+        child.style.display = child.textContent.toLowerCase().includes(q) ? "flex" : "none";
+      });
+    });
+  }
+
+  function renderManagerView() {
+    const teamList = document.getElementById("teamList");
+    const approvalList = document.getElementById("approvalList");
+    teamList.innerHTML = "";
+    approvalList.innerHTML = "";
+
+    const teamSample = [
+      { name: "Host 1", status: "On duty", next: "Flight SK123 – 07:15" },
+      { name: "Host 2", status: "Off duty", next: "Off" },
+      { name: "Host 3", status: "On standby", next: "Standby – 16:00" }
+    ];
+    teamSample.forEach(m => {
+      const li = document.createElement("div");
+      li.className = "list-item";
+      li.innerHTML = `
+        <div class="list-item-left">
+          <div class="list-title">${m.name}</div>
+          <div class="list-sub">${m.next}</div>
+        </div>
+        <div class="badge-mini badge-soft">${m.status}</div>
+      `;
+      teamList.appendChild(li);
+    });
+
+    const approvals = [
+      { type: "Leave request", who: "Host 1", when: "12–15 Dec" },
+      { type: "Time report", who: "Host 3", when: "Week 47" }
+    ];
+    approvals.forEach(a => {
+      const li = document.createElement("div");
+      li.className = "list-item";
+      li.innerHTML = `
+        <div class="list-item-left">
+          <div class="list-title">${a.type}</div>
+          <div class="list-sub">${a.who} • ${a.when}</div>
+        </div>
+        <div class="badge-mini badge-soft">Open</div>
+      `;
+      approvalList.appendChild(li);
+    });
+  }
+
+  // --------------- TRAINING / CBT MOCK ----------------
+  function renderTraining() {
+    const cbtList = document.getElementById("cbtList");
+    cbtList.innerHTML = "";
+    const modules = [
+      { title: "Initial Safety & Emergency Procedures", status: "Completed", due: "—" },
+      { title: "Annual Recurrent CBT – Safety", status: "In progress", due: "2025-01-15" },
+      { title: "Customer Experience – SKANDI Hosts", status: "Not started", due: "2025-03-01" }
+    ];
+    modules.forEach(m => {
+      const li = document.createElement("div");
+      li.className = "list-item";
+      li.innerHTML = `
+        <div class="list-item-left">
+          <div class="list-title">${m.title}</div>
+          <div class="list-sub">${m.status} • Due ${m.due}</div>
+        </div>
+        <div class="badge-mini badge-soft">Open</div>
+      `;
+      cbtList.appendChild(li);
+    });
+
+    document.getElementById("trainingOverall").textContent =
+      user.TrainingStatus || "All required training valid";
+    document.getElementById("trainingExpiring").textContent =
+      user.TrainingExpiringSoon || "None within 60 days";
+  }
+
+  // --------------- DOCUNET MOCK ----------------
+  function renderDocuNet() {
+    const list = document.getElementById("docuNetList");
+    list.innerHTML = "";
+    const docs = [
+      { title: "SKANDI Operations Manual – Destination", code: "OPS-DES-01", version: "v3.2" },
+      { title: "Uniform & Grooming Standards", code: "UNI-STD-01", version: "v1.5" },
+      { title: "Irregularities & Compensation Guidelines", code: "IRR-COMP-02", version: "v2.0" }
+    ];
+    docs.forEach(d => {
+      const li = document.createElement("div");
+      li.className = "list-item";
+      li.innerHTML = `
+        <div class="list-item-left">
+          <div class="list-title">${d.title}</div>
+          <div class="list-sub">${d.code} • ${d.version}</div>
+        </div>
+        <div class="badge-mini badge-soft">Open PDF</div>
+      `;
+      list.appendChild(li);
+    });
+  }
+
+  // --------------- MY DOCUMENTS MOCK ----------------
+  function renderDocuments() {
+    const list = document.getElementById("docList");
+    list.innerHTML = "";
+    const docs = [
+      { title: "Employment Contract", type: "Contract", date: "2024-05-01" },
+      { title: "ID Badge Approval", type: "HR Doc", date: "2024-06-12" },
+      { title: "Training Certificate – SEP", type: "Certificate", date: "2024-08-20" }
+    ];
+    docs.forEach(d => {
+      const li = document.createElement("div");
+      li.className = "list-item";
+      li.innerHTML = `
+        <div class="list-item-left">
+          <div class="list-title">${d.title}</div>
+          <div class="list-sub">${d.type} • ${d.date}</div>
+        </div>
+        <div class="badge-mini badge-soft">Download</div>
+      `;
+      list.appendChild(li);
+    });
+  }
+
+  // --------------- BENEFITS MOCK ----------------
+  function renderBenefits() {
+    const list = document.getElementById("benefitList");
+    list.innerHTML = "";
+    const benefits = [
+      { title: "Staff Travel", detail: "Discounted flights & hotels for you + family" },
+      { title: "Wellness Allowance", detail: "Annual allowance for health & fitness" },
+      { title: "Insurance Package", detail: "Medical, travel & personal accident" }
+    ];
+    benefits.forEach(b => {
+      const li = document.createElement("div");
+      li.className = "list-item";
+      li.innerHTML = `
+        <div class="list-item-left">
+          <div class="list-title">${b.title}</div>
+          <div class="list-sub">${b.detail}</div>
+        </div>
+        <div class="badge-mini badge-soft">Details</div>
+      `;
+      list.appendChild(li);
+    });
+  }
+
+  // --------------- BASE INFO MOCK ----------------
+  function renderBaseInfo() {
+    document.getElementById("baseName").textContent = user.Base || "New York";
+    document.getElementById("baseCountry").textContent =
+      user.BaseCountry || "United States";
+
+    const contacts = [
+      { title: "Base Manager", value: "Name Surname • +1 (000) 000 0000" },
+      { title: "Duty Phone", value: "+1 (000) 000 0000" },
+      { title: "Local Hotline", value: "+1 (000) 000 0000" }
+    ];
+    const list = document.getElementById("baseContacts");
+    list.innerHTML = "";
+    contacts.forEach(c => {
+      const li = document.createElement("div");
+      li.className = "list-item";
+      li.innerHTML = `
+        <div class="list-item-left">
+          <div class="list-title">${c.title}</div>
+          <div class="list-sub">${c.value}</div>
+        </div>
+      `;
+      list.appendChild(li);
+    });
+  }
+
+  // --------------- DESTINATION TOOLS MOCK ----------------
+  function renderDestinationTools() {
+    const program = document.getElementById("destProgram");
+    const hotels = document.getElementById("destHotels");
+    program.innerHTML = "";
+    hotels.innerHTML = "";
+
+    const programItems = [
+      { title: "Welcome briefing – Hotel A", time: "09:30", notes: "Lobby, Swedish / English" },
+      { title: "Excursion – City tour", time: "14:00", notes: "Bus 3, meet by reception" }
+    ];
+    programItems.forEach(p => {
+      const li = document.createElement("div");
+      li.className = "list-item";
+      li.innerHTML = `
+        <div class="list-item-left">
+          <div class="list-title">${p.title}</div>
+          <div class="list-sub">${p.time} • ${p.notes}</div>
+        </div>
+      `;
+      program.appendChild(li);
+    });
+
+    const hotelItems = [
+      { name: "Hotel A", contact: "24/7 Front desk • +30 123 456", note: "SKANDI pick-up at main entrance" },
+      { name: "Hotel B", contact: "Sales contact • sales@hotelb.com", note: "Allotment 20 rooms weekly" }
+    ];
+    hotelItems.forEach(h => {
+      const li = document.createElement("div");
+      li.className = "list-item";
+      li.innerHTML = `
+        <div class="list-item-left">
+          <div class="list-title">${h.name}</div>
+          <div class="list-sub">${h.contact} • ${h.note}</div>
+        </div>
+      `;
+      hotels.appendChild(li);
+    });
+  }
+
+  // --------------- INCIDENT / IT FORMS ----------------
+  function setupForms() {
+    document.getElementById("incidentSubmitBtn").addEventListener("click", () => {
+      const title = document.getElementById("incidentTitle").value.trim();
+      const body = document.getElementById("incidentBody").value.trim();
+      if (!title || !body) {
+        document.getElementById("incidentStatus").textContent =
+          "Please fill title and description.";
+        return;
+      }
+      // TODO: send to INCIDENT_REPORTS (Make.com webhook / backend)
+      document.getElementById("incidentStatus").textContent =
+        "Report submitted. Thank you.";
+      document.getElementById("incidentTitle").value = "";
+      document.getElementById("incidentBody").value = "";
+    });
+
+    document.getElementById("itSubmitBtn").addEventListener("click", () => {
+      const issue = document.getElementById("itIssue").value.trim();
+      if (!issue) {
+        document.getElementById("itStatus").textContent = "Describe the issue.";
+        return;
+      }
+      // TODO: send to IT_TICKETS
+      document.getElementById("itStatus").textContent = "Issue sent to IT Support.";
+      document.getElementById("itIssue").value = "";
+    });
+
+    document.getElementById("onboardSubmitBtn").addEventListener("click", () => {
+      const first = document.getElementById("onboardFirstName").value.trim();
+      const last = document.getElementById("onboardLastName").value.trim();
+      const email = document.getElementById("onboardEmail").value.trim();
+      const role = document.getElementById("onboardRole").value.trim();
+      const base = document.getElementById("onboardBase").value.trim();
+
+      if (!first || !last || !email || !role || !base) {
+        document.getElementById("onboardStatus").textContent =
+          "Fill all fields before creating the employee.";
+        return;
+      }
+      // TODO: send to EMPLOYEES table via backend / Make scenario to generate SK-ID etc.
+      document.getElementById("onboardStatus").textContent =
+        "Employee registration sent to HR / ShuttleSync.";
+      document.getElementById("onboardFirstName").value = "";
+      document.getElementById("onboardLastName").value = "";
+      document.getElementById("onboardEmail").value = "";
+      document.getElementById("onboardRole").value = "";
+      document.getElementById("onboardBase").value = "";
+    });
+  }
+
+  // --------------- INIT ----------------
+  async function init() {
+    setupNav();
+    setupForms();
+    document.getElementById("logoutBtn").addEventListener("click", logout);
+    document.getElementById("refreshBtn").addEventListener("click", () => location.reload());
+
+    user = loadUserFromStorage();
+
+    // In production, redirect if no session:
+    // if (!user) return logout();
+
+    // For now, seed a sample user if none:
+    if (!user) {
+      user = {
+        FirstName: "Samuel",
+        LastName: "Higberg",
+        EmployeeID: "SH2143",
+        JobTitle: "GM ShuttleSync",
+        Department: "E-Commerce & Digital",
+        Base: "New York",
+        BaseCountry: "United States",
+        RoleTier: 5,
+        IsDestinationStaff: true,
+        UniformPoints: 320,
+        VacationDaysLeft: 18,
+        VacationYear: new Date().getFullYear(),
+        NextPayslipPeriod: "Nov 2025",
+        NextPayslipAmount: "$4,800",
+        OpenTimeReports: 2,
+        PassportExpiry: "2029-06-01",
+        PassportStatus: "OK",
+        TrainingStatus: "All required training valid",
+        TrainingStatusShort: "OK",
+        TrainingCompletionPercent: 80,
+        TrainingExpiringSoon: "1 module (Safety CBT – due 2025-01-15)",
+        AlertCount: 1,
+        Email: "samuel@skandi.group",
+        Phone: "+1 (000) 000 0000"
+      };
+      saveUserToStorage(user);
+    }
+
+    // Example: real Airtable lookup by SK-ID (commented for now)
+    /*
+    const skid = user.EmployeeID;
+    const result = await fetchAirtableRecords(
+      EMPLOYEE_TABLE,
+      `?filterByFormula={EmployeeID}='${skid}'`
+    );
+    if (result.records.length) {
+      user = { ...user, ...result.records[0].fields };
+      saveUserToStorage(user);
+    }
+    */
+
+    renderHome();
+    renderProfile();
+    renderDirectory();
+    renderManagerView();
+    renderTraining();
+    renderDocuNet();
+    renderDocuments();
+    renderBenefits();
+    renderBaseInfo();
+    renderDestinationTools();
+    applyRoleVisibility();
+  }
+
+  init().catch(err => {
+    console.error(err);
+    document.getElementById("topSubLine").textContent =
+      "Error loading data. Please try again.";
+  });
+</script>
+
+</body>
+</html>
