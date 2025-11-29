@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Turnaround Manager — ACUS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<style>
+:root {
+  --bg:#020b1a;
+  --card:#0a1630;
+  --soft:#0f1f3d;
+  --accent:#5FC7CF;
+  --ink:#a7b4d4;
+  --text:#f6f7fb;
+  --border:#122445;
+  --radius:16px;
+}
+
+/* BASE */
+body {
+  margin:0; padding:0;
+  font-family:"Montserrat",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* LAUNCH BUTTON */
+button {
+  padding:14px;
+  border-radius:var(--radius);
+  border:1px solid var(--accent);
+  background:var(--accent);
+  color:#000;
+  font-weight:700;
+  width:100%;
+  margin-bottom:12px;
+}
+button.secondary {
+  background:transparent;
+  color:var(--ink);
+  border-color:var(--ink);
+}
+
+/* SLIDE SHEET */
+#taSheet {
+  position:fixed;
+  left:0; right:0; bottom:0;
+  height:90vh;
+  background:var(--card);
+  transform:translateY(100%);
+  transition:.35s ease;
+  padding:22px;
+  border-radius:24px 24px 0 0;
+  overflow-y:auto;
+  box-shadow:0 -16px 48px rgba(0,0,0,.5);
+}
+#taSheet.open { transform:translateY(0); }
+.handle {
+  width:54px; height:5px;
+  background:var(--ink);
+  border-radius:999px;
+  margin:0 auto 18px;
+}
+
+/* SECTION */
+h2,h3 { margin:10px 0; }
+
+.task {
+  background:var(--soft);
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  margin-bottom:14px;
+}
+.taskHead {
+  font-size:17px;
+  margin-bottom:6px;
+}
+.taskSub {
+  font-size:13px;
+  opacity:.75;
+}
+
+/* STATUS */
+.statusTag {
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:600;
+  margin-top:8px;
+}
+.status-not { background:#444; color:#ccc; }
+.status-progress { background:#ffe57a; color:#000; }
+.status-done { background:#5FC7CF; color:#000; }
+.status-hold { background:#fe5700; color:#000; }
+
+/* INPUTS */
+label {
+  font-size:13px; opacity:.7;
+  margin-top:10px; display:block;
+}
+input, select {
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  background:var(--soft);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  color:var(--text);
+  font-size:15px;
+}
+
+/* TIMELINE BAR */
+.timeline {
+  height:6px;
+  background:#192744;
+  border-radius:999px;
+  margin:10px 0;
+}
+.timelineFill {
+  height:100%;
+  border-radius:999px;
+  background:var(--accent);
+  width:0%;
+  transition:.4s ease;
+}
+
+</style>
+</head>
+
+<body>
+
+<button id="openTA" class="secondary">Turnaround Manager</button>
+
+<div id="taSheet">
+  <div class="handle"></div>
+
+  <h2>Turnaround Manager</h2>
+  <p style="opacity:.7;font-size:13px;margin-bottom:18px;">
+    A-CDM Integrated Turnaround Timeline (IATA AHM 730)
+  </p>
+
+  <!-- TIMELINE -->
+  <h3>Timeline Progress</h3>
+  <div class="timeline"><div id="timelineFill" class="timelineFill"></div></div>
+
+  <!-- TASK LIST -->
+  <div id="taskWrap"></div>
+
+  <!-- Delay Code Injection -->
+  <h3 style="margin-top:26px;">Delay Code</h3>
+  <label>Reason (AHM 730)</label>
+  <select id="delayCode">
+    <option value="">— None —</option>
+    <option value="11">11 — Late Arrival</option>
+    <option value="31">31 — Crew</option>
+    <option value="41">41 — Cabin Cleaning</option>
+    <option value="51">51 — Catering</option>
+    <option value="52">52 — Fueling</option>
+    <option value="54">54 — Loading</option>
+    <option value="55">55 — Deicing</option>
+    <option value="61">61 — ATC Restriction</option>
+    <option value="71">71 — Weather</option>
+    <option value="91">91 — Misc / Other</option>
+  </select>
+
+  <label>Notes</label>
+  <input id="delayNote" placeholder="Additional details" />
+
+  <button id="submitDelay" style="margin-top:20px;">Submit Delay Report</button>
+
+  <button id="closeTA" class="secondary" style="margin-top:20px;">Close</button>
+</div>
+
+<script>
+/* Incoming parent data */
+let FLIGHT_ID = null;
+let AGENT_ID = null;
+
+window.onmessage = (e) => {
+  if (e.data.type === "INIT") {
+    FLIGHT_ID = e.data.flightId;
+    AGENT_ID  = e.data.agentId;
+    loadTasks();
+  }
+};
+
+/* OPEN/CLOSE */
+document.getElementById("openTA").onclick = () =>
+  document.getElementById("taSheet").classList.add("open");
+document.getElementById("closeTA").onclick = () =>
+  document.getElementById("taSheet").classList.remove("open");
+
+/* -----------------------------
+   TURNAROUND STRUCTURE
+------------------------------*/
+let tasks = [];
+
+/* LOAD FROM MAKE.COM */
+async function loadTasks() {
+  try {
+    const r = await fetch("https://hook.us1.make.com/YOUR_TURNAROUND_GET");
+    tasks = await r.json();
+  } catch(err){
+    tasks = [];
+  }
+  renderTasks();
+  updateTimeline();
+}
+
+/* SAVE TASK UPDATE */
+async function saveTask(taskId, newState) {
+  const payload = {
+    flightId: FLIGHT_ID,
+    agentId: AGENT_ID,
+    taskId,
+    status: newState,
+    timestamp: new Date().toISOString()
+  };
+
+  /* Push to Make.com */
+  fetch("https://hook.us1.make.com/YOUR_TURNAROUND_UPDATE", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  });
+
+  /* Push to Airtable */
+  fetch("https://hook.us1.make.com/YOUR_AIRTABLE_UPDATE_TA_TASK", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  });
+}
+
+/* RENDER TASKS */
+function renderTasks() {
+  const wrap = document.getElementById("taskWrap");
+  wrap.innerHTML = "";
+
+  if (!tasks.length) {
+    wrap.innerHTML = `<div style="opacity:.6;font-size:14px;">No turnaround milestones.</div>`;
+    return;
+  }
+
+  tasks.forEach(t => {
+    const st =
+      t.status === "DONE" ? "status-done" :
+      t.status === "IN_PROGRESS" ? "status-progress" :
+      t.status === "HOLD" ? "status-hold" :
+      "status-not";
+
+    wrap.innerHTML += `
+      <div class="task">
+        <div class="taskHead">${t.name}</div>
+        <div class="taskSub">
+          Planned: ${t.plannedTime || "-"}<br>
+          Actual: ${t.actualTime || "-"}
+        </div>
+
+        <div class="statusTag ${st}">
+          ${t.status.replace("_"," ")}
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:8px;">
+          <button style="flex:1;font-size:13px;"
+            onclick="updateTask('${t.id}','IN_PROGRESS')">Start</button>
+          <button style="flex:1;font-size:13px;"
+            onclick="updateTask('${t.id}','DONE')">Done</button>
+          <button style="flex:1;font-size:13px;"
+            class="secondary"
+            onclick="updateTask('${t.id}','HOLD')">Hold</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+/* UPDATE TASK */
+function updateTask(taskId, state) {
+  const idx = tasks.findIndex(t => t.id === taskId);
+  if (idx >= 0) {
+    tasks[idx].status = state;
+    tasks[idx].actualTime = new Date().toISOString();
+  }
+  renderTasks();
+  updateTimeline();
+  saveTask(taskId, state);
+}
+
+/* TIMELINE % COMPLETE */
+function updateTimeline() {
+  if (!tasks.length) return;
+  const total = tasks.length;
+  const done = tasks.filter(t => t.status === "DONE").length;
+  const pct = Math.round((done/total)*100);
+  document.getElementById("timelineFill").style.width = pct+"%";
+}
+
+/* SUBMIT DELAY */
+document.getElementById("submitDelay").onclick = async () => {
+  const code = document.getElementById("delayCode").value;
+  const note = document.getElementById("delayNote").value;
+
+  if (!code) {
+    alert("Select a delay code");
+    return;
+  }
+
+  const payload = {
+    flightId: FLIGHT_ID,
+    agentId: AGENT_ID,
+    delayCode: code,
+    note,
+    timestamp: new Date().toISOString()
+  };
+
+  fetch("https://hook.us1.make.com/YOUR_DELAY_REPORT", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  });
+
+  fetch("https://hook.us1.make.com/YOUR_AIRTABLE_SAVE_DELAY", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  });
+
+  alert("Delay Report Submitted");
+};
+
+</script>
+
+</body>
+</html>
