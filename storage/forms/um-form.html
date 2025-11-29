@@ -1,0 +1,1116 @@
+<!-- ============================================================
+   SKANDI – HANDLING ADVICE FOR UNACCOMPANIED MINOR
+   CUSTOMER-FACING MODULE — HTML + CSS ONLY (MESSAGE 1 OF 2)
+   NOTE: JS LOGIC + PDF ENGINE WILL COME IN MESSAGE 2
+=============================================================== -->
+
+<div id="sk-um-wrapper">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --sk-concrete:#818A8C;
+      --sk-lapland:#FFFFFF;
+      --sk-deep-blue:#022E64;
+      --sk-coral-bay:#5FC7CF;
+      --sk-ink:#051a33;
+      --sk-danger:#9b1c1c;
+      --sk-approved:#107e3e;
+      --sk-ice:#e9eef6;
+    }
+
+    #sk-um-wrapper {
+      padding: 32px 16px;
+      background: var(--sk-concrete);
+      font-family: "Montserrat", sans-serif;
+    }
+
+    #sk-um-card {
+      max-width: 980px;
+      margin: 0 auto;
+      background: var(--sk-lapland);
+      border-radius: 18px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.32);
+      overflow: hidden;
+    }
+
+    /* ---------------- HEADER ---------------- */
+    #sk-um-header {
+      background: var(--sk-concrete);
+      padding: 18px 22px;
+      border-bottom: 1px solid rgba(0,0,0,0.25);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    #sk-um-header img {
+      height: 42px;
+      width: auto;
+    }
+
+    #sk-um-header-title {
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      color: var(--sk-deep-blue);
+    }
+
+    #sk-um-header-sub {
+      font-size: 12px;
+      color: var(--sk-ice);
+      margin-top: 3px;
+    }
+
+    #sk-um-inner {
+      padding: 20px 24px 26px;
+    }
+
+    /* ---------------- SECTIONS ---------------- */
+    .sk-section {
+      padding: 16px 16px 18px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(2,46,100,0.17);
+      border-radius: 14px;
+      background: #f5f6f7;
+    }
+
+    .sk-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--sk-deep-blue);
+      margin-bottom: 10px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sk-badge {
+      font-size: 10px;
+      background: var(--sk-coral-bay);
+      padding: 2px 8px;
+      border-radius: 999px;
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .sk-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 12px 16px;
+    }
+
+    .sk-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 12px 16px;
+    }
+
+    @media(max-width: 768px){
+      .sk-grid-2, .sk-grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .sk-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sk-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--sk-deep-blue);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .req {
+      color: var(--sk-danger);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .sk-input,
+    .sk-select,
+    .sk-textarea {
+      padding: 8px 12px;
+      border: 1px solid rgba(2,46,100,0.25);
+      border-radius: 999px;
+      font-size: 13px;
+      background: #fff;
+      color: var(--sk-deep-blue);
+      outline: none;
+      transition: 0.15s;
+    }
+
+    .sk-input:focus,
+    .sk-select:focus,
+    .sk-textarea:focus {
+      border-color: var(--sk-coral-bay);
+      box-shadow: 0 0 0 2px rgba(95,199,207,0.35);
+    }
+
+    /* PNR short width */
+    .pnr-input {
+      width: 110px;
+    }
+
+    /* DOB short width */
+    .dob-input {
+      width: 160px;
+    }
+
+    /* TEXTAREA */
+    .sk-textarea {
+      border-radius: 14px;
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .sk-hint {
+      color: #60656f;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    /* ---------------- COLLAPSIBLE ---------------- */
+    details.sk-collapse {
+      border: 1px solid rgba(2,46,100,0.2);
+      border-radius: 10px;
+      margin-top: 10px;
+      background: #ffffff;
+      padding: 0;
+    }
+
+    summary.sk-collapse-title {
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--sk-deep-blue);
+      font-size: 13px;
+      list-style: none;
+      border-radius: 10px;
+    }
+
+    summary.sk-collapse-title:hover {
+      background: rgba(95,199,207,0.12);
+    }
+
+    details.sk-collapse[open] summary.sk-collapse-title {
+      background: rgba(95,199,207,0.18);
+      border-bottom: 1px solid rgba(2,46,100,0.15);
+    }
+
+    .sk-collapse-content {
+      padding: 14px 14px 16px;
+    }
+
+    /* ---------------- SIGNATURE ---------------- */
+    #signature-box {
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px dashed rgba(2,46,100,0.35);
+      background: #ffffff;
+    }
+
+    #signature-pad {
+      width: 100%;
+      height: 190px;
+      background: #f3f4f6;
+      border-radius: 8px;
+      border: 1px solid rgba(2,46,100,0.2);
+    }
+
+    #signature-actions {
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #60656f;
+    }
+
+    /* ---------------- BUTTONS ---------------- */
+    .sk-btn {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      font-family: "Montserrat", sans-serif;
+      transition: 0.2s;
+    }
+
+    .sk-btn-primary {
+      background: var(--sk-coral-bay);
+      color: #ffffff;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+    }
+
+    .sk-btn-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .sk-btn-ghost {
+      background: #ffffff;
+      border: 1px solid rgba(2,46,100,0.25);
+      color: var(--sk-deep-blue);
+    }
+
+    .sk-btn-ghost:hover {
+      background: #f3f4f6;
+    }
+
+    /* ---------------- FOOTER ---------------- */
+    #sk-um-footer {
+      margin-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    #sk-um-status {
+      font-size: 12px;
+      color: #60656f;
+      min-height: 18px;
+    }
+    #sk-um-status.error { color: var(--sk-danger); }
+    #sk-um-status.success { color: var(--sk-approved); }
+
+    /* LEGAL NOTE */
+    .sk-legal {
+      font-size: 11px;
+      color: var(--sk-ink);
+      line-height: 1.45;
+      margin-top: 8px;
+    }
+
+  </style>
+
+  <div id="sk-um-card">
+
+    <!-- HEADER -->
+    <div id="sk-um-header">
+      <img src="https://static.wixstatic.com/media/564bce_8dcba66b0851450dabe4ca8000f9d141~mv2.png">
+      <div>
+        <div id="sk-um-header-title">HANDLING ADVICE for Unaccompanied Minor</div>
+        <div id="sk-um-header-sub">Submit online, then print 3 airline-required copies</div>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div id="sk-um-inner">
+
+      <form id="sk-um-form">
+        <!-- =============== SECTION 1 – BOOKING DETAILS =============== -->
+        <div class="sk-section">
+          <div class="sk-section-title">
+            Booking & UM Details
+            <span class="sk-badge">Step 1</span>
+          </div>
+
+          <div class="sk-grid-3">
+            <div class="sk-field">
+              <label class="sk-label">Booking reference / PNR <span class="req">Required</span></label>
+              <input name="pnr" maxlength="6" class="sk-input pnr-input" required>
+            </div>
+
+            <div class="sk-field">
+              <label class="sk-label">UM first name <span class="req">Required</span></label>
+              <input name="um_first_name" class="sk-input" required>
+            </div>
+
+            <div class="sk-field">
+              <label class="sk-label">UM last name <span class="req">Required</span></label>
+              <input name="um_last_name" class="sk-input" required>
+            </div>
+          </div>
+
+          <div class="sk-grid-2" style="margin-top:14px;">
+            <div class="sk-field">
+              <label class="sk-label">Date of birth <span class="req">Required</span></label>
+              <input type="date" name="um_dob" class="sk-input dob-input" required>
+            </div>
+
+            <div class="sk-field">
+              <label class="sk-label">Gender <span class="req">Required</span></label>
+              <select name="um_gender" class="sk-select" required>
+                <option value="">Select</option>
+                <option value="Male">Male (M)</option>
+                <option value="Female">Female (F)</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="sk-field" style="margin-top:14px;">
+            <label class="sk-label">Languages spoken by the minor</label>
+            <select name="um_languages" class="sk-select" multiple>
+              <option value="English">English</option>
+              <option value="Swedish">Swedish</option>
+              <option value="Norwegian">Norwegian</option>
+              <option value="Danish">Danish</option>
+              <option value="Finnish">Finnish</option>
+              <option value="German">German</option>
+              <option value="French">French</option>
+              <option value="Spanish">Spanish</option>
+              <option value="Italian">Italian</option>
+              <option value="Other">Other</option>
+            </select>
+            <div class="sk-hint">Multiple selections possible</div>
+          </div>
+
+        </div> <!-- /SECTION 1 -->
+
+
+        <!-- =============== SECTION 2 – PARENT / GUARDIAN =============== -->
+        <div class="sk-section">
+          <div class="sk-section-title">
+            Parent / Legal Guardian
+            <span class="sk-badge">Step 2</span>
+          </div>
+
+          <div class="sk-grid-2">
+            <div class="sk-field">
+              <label class="sk-label">Full name <span class="req">Required</span></label>
+              <input name="guardian_name" class="sk-input" required>
+            </div>
+            <div class="sk-field">
+              <label class="sk-label">Relationship to child <span class="req">Required</span></label>
+              <input name="guardian_relationship" class="sk-input" required>
+            </div>
+          </div>
+
+          <div class="sk-grid-3" style="margin-top:14px;">
+            <div class="sk-field">
+              <label class="sk-label">Mobile phone <span class="req">Required</span></label>
+              <input name="guardian_mobile" class="sk-input phone-input" required>
+            </div>
+            <div class="sk-field">
+              <label class="sk-label">Email <span class="req">Required</span></label>
+              <input type="email" name="guardian_email" class="sk-input" required>
+            </div>
+          </div>
+
+          <!-- ADDRESS -->
+          <div class="sk-grid-2" style="margin-top:14px;">
+            <div class="sk-field">
+              <label class="sk-label">Street address <span class="req">Required</span></label>
+              <input name="guardian_street" class="sk-input" required>
+            </div>
+            <div class="sk-field">
+              <label class="sk-label">City <span class="req">Required</span></label>
+              <input name="guardian_city" class="sk-input" required>
+            </div>
+          </div>
+
+          <div class="sk-grid-2" style="margin-top:14px;">
+            <div class="sk-field">
+              <label class="sk-label">Postal / ZIP Code <span class="req">Required</span></label>
+              <input name="guardian_zip" class="sk-input" required>
+            </div>
+            <div class="sk-field">
+              <label class="sk-label">Country <span class="req">Required</span></label>
+              <select name="guardian_country" class="sk-select" required>
+                <option value="">Select</option>
+                <option>Sweden</option>
+                <option>Norway</option>
+                <option>Denmark</option>
+                <option>Finland</option>
+                <option>Iceland</option>
+                <option>USA</option>
+                <option>UK</option>
+                <option>Germany</option>
+                <option>France</option>
+                <option>Spain</option>
+                <option>Italy</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+        </div> <!-- /SECTION 2 -->
+
+
+        <!-- =============== SECTION 3 – ESCORTS =============== -->
+        <div class="sk-section">
+          <div class="sk-section-title">
+            Escort Information
+            <span class="sk-badge">Step 3</span>
+          </div>
+
+          <!-- OUTBOUND ESCORT -->
+          <div class="sk-field"><strong>Escort at Departure (Required)</strong></div>
+          <div class="sk-grid-3" style="margin-top:10px;">
+            <div class="sk-field">
+              <label class="sk-label">Name <span class="req">Required</span></label>
+              <input name="escort_out_name" class="sk-input" required>
+            </div>
+
+            <div class="sk-field">
+              <label class="sk-label">Address <span class="req">Required</span></label>
+              <input name="escort_out_address" class="sk-input" required>
+            </div>
+
+            <div class="sk-field">
+              <label class="sk-label">Telephone <span class="req">Required</span></label>
+              <input name="escort_out_phone" class="sk-input phone-input" required>
+            </div>
+          </div>
+
+          <!-- TRANSFER ESCORT -->
+          <div class="sk-field" style="margin-top:18px;"><strong>Escort at Transfer(s) / Stopover(s) (Optional)</strong></div>
+          <div class="sk-grid-3" style="margin-top:10px;">
+            <div class="sk-field">
+              <label class="sk-label">Name</label>
+              <input name="escort_transfer_name" class="sk-input">
+            </div>
+
+            <div class="sk-field">
+              <label class="sk-label">Address</label>
+              <input name="escort_transfer_address" class="sk-input">
+            </div>
+
+            <div class="sk-field">
+              <label class="sk-label">Telephone</label>
+              <input name="escort_transfer_phone" class="sk-input phone-input">
+            </div>
+          </div>
+
+          <!-- ARRIVAL ESCORT -->
+          <div class="sk-field" style="margin-top:18px;"><strong>Escort at Arrival (Required)</strong></div>
+          <div class="sk-grid-3" style="margin-top:10px;">
+            <div class="sk-field">
+              <label class="sk-label">Name <span class="req">Required</span></label>
+              <input name="escort_arrival_name" class="sk-input" required>
+            </div>
+
+            <div class="sk-field">
+              <label class="sk-label">Address <span class="req">Required</span></label>
+              <input name="escort_arrival_address" class="sk-input" required>
+            </div>
+
+            <div class="sk-field">
+              <label class="sk-label">Telephone <span class="req">Required</span></label>
+              <input name="escort_arrival_phone" class="sk-input phone-input" required>
+            </div>
+          </div>
+
+        </div> <!-- /SECTION 3 -->
+
+
+        <!-- =============== SECTION 4 – OUTBOUND + RETURN FLIGHTS =============== -->
+        <div class="sk-section">
+          <div class="sk-section-title">
+            Flight Details
+            <span class="sk-badge">Step 4</span>
+          </div>
+
+          <!-- --- OUTBOUND REQUIRED (OPEN) --- -->
+          <div class="sk-field"><strong>Outbound Flight 1 (Required)</strong></div>
+
+          <div class="sk-grid-3" style="margin-top:10px;">
+            <div class="sk-field">
+              <label class="sk-label">Airline <span class="req">Required</span></label>
+              <select class="sk-select outbound1-airline" required>
+                <option value="">Select</option>
+                <option value="SAS" data-prefix="SK">SAS</option>
+                <option value="Norwegian">Norwegian</option>
+              </select>
+            </div>
+
+            <div class="sk-field">
+              <label class="sk-label">Flight number <span class="req">Required</span></label>
+              <div style="display:flex;gap:6px;">
+                <select class="sk-select outbound1-prefix" required></select>
+                <input maxlength="4" class="sk-input outbound1-number" required placeholder="1234">
+              </div>
+            </div>
+
+            <div class="sk-field">
+              <label class="sk-label">Date of departure <span class="req">Required</span></label>
+              <input type="date" class="sk-input outbound1-date" required>
+            </div>
+          </div>
+
+          <div class="sk-grid-2" style="margin-top:10px;">
+            <div class="sk-field">
+              <label class="sk-label">From (airport) <span class="req">Required</span></label>
+              <input list="airport-list" class="sk-input outbound1-from" required placeholder="Start typing...">
+            </div>
+            <div class="sk-field">
+              <label class="sk-label">To (airport) <span class="req">Required</span></label>
+              <input list="airport-list" class="sk-input outbound1-to" required placeholder="Start typing...">
+            </div>
+          </div>
+
+
+          <!-- --- OUTBOUND 2 (COLLAPSED) --- -->
+          <details class="sk-collapse" style="margin-top:18px;">
+            <summary class="sk-collapse-title">Outbound Flight 2 (Optional)</summary>
+            <div class="sk-collapse-content">
+
+              <div class="sk-grid-3">
+                <div class="sk-field">
+                  <label class="sk-label">Airline</label>
+                  <select class="sk-select outbound2-airline">
+                    <option value="">Select</option>
+                    <option value="SAS" data-prefix="SK">SAS</option>
+                    <option value="Norwegian">Norwegian</option>
+                  </select>
+                </div>
+
+                <div class="sk-field">
+                  <label class="sk-label">Flight number</label>
+                  <div style="display:flex;gap:6px;">
+                    <select class="sk-select outbound2-prefix"></select>
+                    <input maxlength="4" class="sk-input outbound2-number" placeholder="1234">
+                  </div>
+                </div>
+
+                <div class="sk-field">
+                  <label class="sk-label">Date of departure</label>
+                  <input type="date" class="sk-input outbound2-date">
+                </div>
+              </div>
+
+              <div class="sk-grid-2" style="margin-top:10px;">
+                <div class="sk-field">
+                  <label class="sk-label">From (airport)</label>
+                  <input list="airport-list" class="sk-input outbound2-from" placeholder="Start typing...">
+                </div>
+                <div class="sk-field">
+                  <label class="sk-label">To (airport)</label>
+                  <input list="airport-list" class="sk-input outbound2-to" placeholder="Start typing...">
+                </div>
+              </div>
+
+            </div>
+          </details>
+
+
+          <!-- --- OUTBOUND 3 (COLLAPSED) --- -->
+          <details class="sk-collapse" style="margin-top:14px;">
+            <summary class="sk-collapse-title">Outbound Flight 3 (Optional)</summary>
+            <div class="sk-collapse-content">
+
+              <div class="sk-grid-3">
+                <div class="sk-field">
+                  <label class="sk-label">Airline</label>
+                  <select class="sk-select outbound3-airline">
+                    <option value="">Select</option>
+                    <option value="SAS" data-prefix="SK">SAS</option>
+                    <option value="Norwegian">Norwegian</option>
+                  </select>
+                </div>
+
+                <div class="sk-field">
+                  <label class="sk-label">Flight number</label>
+                  <div style="display:flex;gap:6px;">
+                    <select class="sk-select outbound3-prefix"></select>
+                    <input maxlength="4" class="sk-input outbound3-number" placeholder="1234">
+                  </div>
+                </div>
+
+                <div class="sk-field">
+                  <label class="sk-label">Date of departure</label>
+                  <input type="date" class="sk-input outbound3-date">
+                </div>
+              </div>
+
+              <div class="sk-grid-2" style="margin-top:10px;">
+                <div class="sk-field">
+                  <label class="sk-label">From (airport)</label>
+                  <input list="airport-list" class="sk-input outbound3-from" placeholder="Start typing...">
+                </div>
+                <div class="sk-field">
+                  <label class="sk-label">To (airport)</label>
+                  <input list="airport-list" class="sk-input outbound3-to" placeholder="Start typing...">
+                </div>
+              </div>
+
+            </div>
+          </details>
+
+
+          <!-- --- RETURN SECTION (COLLAPSED ENTIRELY) --- -->
+          <details class="sk-collapse" style="margin-top:20px;">
+            <summary class="sk-collapse-title">Return Journey (Optional)</summary>
+            <div class="sk-collapse-content">
+
+              <!-- RETURN SEGMENT 1 -->
+              <details class="sk-collapse">
+                <summary class="sk-collapse-title">Return Flight 1</summary>
+                <div class="sk-collapse-content">
+
+                  <div class="sk-grid-3">
+                    <div class="sk-field">
+                      <label class="sk-label">Airline</label>
+                      <select class="sk-select return1-airline">
+                        <option value="">Select</option>
+                        <option value="SAS" data-prefix="SK">SAS</option>
+                        <option value="Norwegian">Norwegian</option>
+                      </select>
+                    </div>
+
+                    <div class="sk-field">
+                      <label class="sk-label">Flight number</label>
+                      <div style="display:flex;gap:6px;">
+                        <select class="sk-select return1-prefix"></select>
+                        <input maxlength="4" class="sk-input return1-number" placeholder="1234">
+                      </div>
+                    </div>
+
+                    <div class="sk-field">
+                      <label class="sk-label">Date of departure</label>
+                      <input type="date" class="sk-input return1-date">
+                    </div>
+                  </div>
+
+                  <div class="sk-grid-2" style="margin-top:10px;">
+                    <div class="sk-field">
+                      <label class="sk-label">From (airport)</label>
+                      <input list="airport-list" class="sk-input return1-from" placeholder="Start typing...">
+                    </div>
+                    <div class="sk-field">
+                      <label class="sk-label">To (airport)</label>
+                      <input list="airport-list" class="sk-input return1-to" placeholder="Start typing...">
+                    </div>
+                  </div>
+
+                </div>
+              </details>
+
+              <!-- RETURN SEGMENT 2 -->
+              <details class="sk-collapse" style="margin-top:10px;">
+                <summary class="sk-collapse-title">Return Flight 2</summary>
+                <div class="sk-collapse-content">
+
+                  <div class="sk-grid-3">
+                    <div class="sk-field">
+                      <label class="sk-label">Airline</label>
+                      <select class="sk-select return2-airline">
+                        <option value="">Select</option>
+                        <option value="SAS" data-prefix="SK">SAS</option>
+                        <option value="Norwegian">Norwegian</option>
+                      </select>
+                    </div>
+
+                    <div class="sk-field">
+                      <label class="sk-label">Flight number</label>
+                      <div style="display:flex;gap:6px;">
+                        <select class="sk-select return2-prefix"></select>
+                        <input maxlength="4" class="sk-input return2-number" placeholder="1234">
+                      </div>
+                    </div>
+
+                    <div class="sk-field">
+                      <label class="sk-label">Date of departure</label>
+                      <input type="date" class="sk-input return2-date">
+                    </div>
+                  </div>
+
+                  <div class="sk-grid-2" style="margin-top:10px;">
+                    <div class="sk-field">
+                      <label class="sk-label">From (airport)</label>
+                      <input list="airport-list" class="sk-input return2-from" placeholder="Start typing...">
+                    </div>
+                    <div class="sk-field">
+                      <label class="sk-label">To (airport)</label>
+                      <input list="airport-list" class="sk-input return2-to" placeholder="Start typing...">
+                    </div>
+                  </div>
+
+                </div>
+              </details>
+
+              <!-- RETURN SEGMENT 3 -->
+              <details class="sk-collapse" style="margin-top:10px;">
+                <summary class="sk-collapse-title">Return Flight 3</summary>
+                <div class="sk-collapse-content">
+
+                  <div class="sk-grid-3">
+                    <div class="sk-field">
+                      <label class="sk-label">Airline</label>
+                      <select class="sk-select return3-airline">
+                        <option value="">Select</option>
+                        <option value="SAS" data-prefix="SK">SAS</option>
+                        <option value="Norwegian">Norwegian</option>
+                      </select>
+                    </div>
+
+                    <div class="sk-field">
+                      <label class="sk-label">Flight number</label>
+                      <div style="display:flex;gap:6px;">
+                        <select class="sk-select return3-prefix"></select>
+                        <input maxlength="4" class="sk-input return3-number" placeholder="1234">
+                      </div>
+                    </div>
+
+                    <div class="sk-field">
+                      <label class="sk-label">Date of departure</label>
+                      <input type="date" class="sk-input return3-date">
+                    </div>
+                  </div>
+
+                  <div class="sk-grid-2" style="margin-top:10px;">
+                    <div class="sk-field">
+                      <label class="sk-label">From (airport)</label>
+                      <input list="airport-list" class="sk-input return3-from" placeholder="Start typing...">
+                    </div>
+                    <div class="sk-field">
+                      <label class="sk-label">To (airport)</label>
+                      <input list="airport-list" class="sk-input return3-to" placeholder="Start typing...">
+                    </div>
+                  </div>
+
+                </div>
+              </details>
+
+            </div>
+          </details>
+
+        </div> <!-- /SECTION 4 -->
+
+
+        <!-- =============== SECTION 5 – SIGNATURE =============== -->
+        <div class="sk-section">
+          <div class="sk-section-title">
+            Parent / Guardian Signature
+            <span class="sk-badge">Step 5</span>
+          </div>
+
+          <!-- CONFIRMATIONS -->
+          <div class="sk-field">
+            <label class="sk-checkbox-row">
+              <input type="checkbox" name="consent1" required>
+              I confirm that I am authorised to arrange travel and all information is correct.
+            </label>
+
+            <label class="sk-checkbox-row" style="margin-top:10px;">
+              <input type="checkbox" name="consent2" required>
+              I understand the UM rules, handover requirements, and receiving procedures.
+            </label>
+
+            <label class="sk-checkbox-row" style="margin-top:10px;">
+              <input type="checkbox" name="consent3" required>
+              I consent to SKANDI sharing this information with airlines and handling partners.
+            </label>
+          </div>
+
+          <div class="sk-grid-2" style="margin-top:14px;">
+            <div class="sk-field">
+              <label class="sk-label">Place of signing <span class="req">Required</span></label>
+              <input name="sign_place" class="sk-input" required>
+            </div>
+            <div class="sk-field">
+              <label class="sk-label">Name of signing parent <span class="req">Required</span></label>
+              <input name="sign_name" class="sk-input" required>
+            </div>
+          </div>
+
+          <div class="sk-field" style="margin-top:14px;">
+            <label class="sk-label">Signature <span class="req">Required</span></label>
+            <div id="signature-box">
+              <canvas id="signature-pad"></canvas>
+              <div id="signature-actions">
+                <span>Use finger or mouse inside the box to sign</span>
+                <button type="button" id="clear-signature" class="sk-btn sk-btn-ghost">Clear</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="sk-legal">
+            <strong>Legal note:</strong><br>
+            I confirm that the minor will be accompanied to the airport on departure and met at transfer points and arrival by the persons stated. If not met, I authorize carriers to take whatever action they consider necessary and will reimburse related costs.
+          </div>
+        </div>
+
+
+        <!-- FOOTER -->
+        <div id="sk-um-footer">
+          <button type="button" id="export-pdf" class="sk-btn sk-btn-ghost">Export as Fillable PDF</button>
+          <button type="submit" class="sk-btn sk-btn-primary">Submit and Print 3 Copies</button>
+          <div id="sk-um-status"></div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- AIRPORT LIST -->
+  <datalist id="airport-list">
+    <option value="Stockholm Arlanda (ARN / ESSA)">
+    <option value="Luleå Airport (LLA / ESPA)">
+  </datalist>
+</div>
+/* ===============================================================
+   SKANDI – HANDLING ADVICE FOR UNACCOMPANIED MINOR
+   FULL JAVASCRIPT MODULE — FLIGHT LOGIC + FORM LOGIC + PDF ENGINE
+   Message 2 of 2
+================================================================ */
+
+/* ---------------------------------------------
+   GLOBAL HELPERS
+---------------------------------------------- */
+
+// Normalize phone numbers into +XX format
+function normalizePhone(input) {
+  if (!input) return "";
+  let x = input.replace(/[^\d+]/g, "");
+  if (x.startsWith("00")) x = "+" + x.slice(2);
+  if (!x.startsWith("+") && x.length >= 9) x = "+" + x;
+  return x;
+}
+
+// Returns today's date (for forms)
+function todayISO() {
+  const d = new Date();
+  return d.toISOString().split("T")[0];
+}
+
+/* ---------------------------------------------
+   SIGNATURE PAD
+---------------------------------------------- */
+
+let sigCanvas = document.getElementById("signature-pad");
+let sigCtx = sigCanvas.getContext("2d");
+
+function resizeSignatureCanvas() {
+  sigCanvas.width = sigCanvas.offsetWidth;
+  sigCanvas.height = sigCanvas.offsetHeight;
+}
+resizeSignatureCanvas();
+
+let drawing = false;
+sigCanvas.addEventListener("mousedown", startDraw);
+sigCanvas.addEventListener("touchstart", startDraw);
+sigCanvas.addEventListener("mousemove", draw);
+sigCanvas.addEventListener("touchmove", draw);
+sigCanvas.addEventListener("mouseup", endDraw);
+sigCanvas.addEventListener("mouseleave", endDraw);
+sigCanvas.addEventListener("touchend", endDraw);
+
+function startDraw(e) {
+  drawing = true;
+  sigCtx.beginPath();
+  sigCtx.moveTo(getX(e), getY(e));
+}
+
+function draw(e) {
+  if (!drawing) return;
+  sigCtx.lineTo(getX(e), getY(e));
+  sigCtx.strokeStyle = "#022E64";
+  sigCtx.lineWidth = 2;
+  sigCtx.stroke();
+}
+
+function endDraw() {
+  drawing = false;
+}
+
+function getX(e) {
+  return e.touches ? e.touches[0].clientX - sigCanvas.getBoundingClientRect().left : e.clientX - sigCanvas.getBoundingClientRect().left;
+}
+function getY(e) {
+  return e.touches ? e.touches[0].clientY - sigCanvas.getBoundingClientRect().top : e.clientY - sigCanvas.getBoundingClientRect().top;
+}
+
+// Clear signature
+document.getElementById("clear-signature").addEventListener("click", () => {
+  sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);
+});
+
+
+/* ---------------------------------------------
+   AIRLINE PREFIX LOGIC
+---------------------------------------------- */
+
+function setupAirlineSelector(group) {
+  const airline = document.querySelector(`.${group}-airline`);
+  const prefix = document.querySelector(`.${group}-prefix`);
+
+  airline.addEventListener("change", () => {
+    prefix.innerHTML = "";
+    if (airline.value === "SAS") {
+      prefix.innerHTML = `<option value="SK">SK</option>`;
+    }
+    else if (airline.value === "Norwegian") {
+      prefix.innerHTML = `
+        <option value="DY">DY</option>
+        <option value="D8">D8</option>
+      `;
+    }
+  });
+}
+
+// Outbound required
+setupAirlineSelector("outbound1");
+
+// Outbound optional
+setupAirlineSelector("outbound2");
+setupAirlineSelector("outbound3");
+
+// Return segments
+setupAirlineSelector("return1");
+setupAirlineSelector("return2");
+setupAirlineSelector("return3");
+
+
+/* ---------------------------------------------
+   SUBMIT TO MAKE + AUTO PRINT 3 COPIES
+---------------------------------------------- */
+const form = document.getElementById("sk-um-form");
+const statusBox = document.getElementById("sk-um-status");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  statusBox.textContent = "Submitting...";
+  statusBox.className = "";
+
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+
+  // Normalize phone fields
+  data.escort_out_phone = normalizePhone(data.escort_out_phone);
+  data.escort_transfer_phone = normalizePhone(data.escort_transfer_phone);
+  data.escort_arrival_phone = normalizePhone(data.escort_arrival_phone);
+  data.guardian_mobile = normalizePhone(data.guardian_mobile);
+
+  // Capture signature as Base64 PNG
+  data.signature = sigCanvas.toDataURL("image/png");
+
+  try {
+    await fetch("https://hook.integromat.com/YOUR_WEBHOOK_URL", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {"Content-Type":"application/json"}
+    });
+
+    statusBox.textContent = "Submitted ✓ Printing 3 copies...";
+    statusBox.className = "success";
+
+    // Trigger browser print
+    window.print();
+
+  } catch(err) {
+    statusBox.textContent = "Submission failed. Please try again.";
+    statusBox.className = "error";
+  }
+});
+
+
+/* ---------------------------------------------
+   FILLABLE PDF GENERATOR (A4, 3 PAGES)
+---------------------------------------------- */
+
+document.getElementById("export-pdf").addEventListener("click", generatePDF);
+
+// Embedded SKANDI logo (base64 PNG)
+const SKANDI_LOGO_BASE64 = `
+iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAYAAA...
+...PUT YOUR FULL BASE64 LOGO HERE...
+`;
+
+async function generatePDF() {
+  const { PDFDocument, rgb, StandardFonts } = PDFLib;
+
+  const pdf = await PDFDocument.create();
+  const pages = [];
+
+  // Decode logo
+  const pngLogo = await pdf.embedPng(SKANDI_LOGO_BASE64);
+
+  // Helper: Create one page
+  function addPage(copyTitle) {
+    const page = pdf.addPage([595.28, 841.89]); // A4
+    const { width } = page.getSize();
+
+    // Draw logo
+    page.drawImage(pngLogo, {
+      x: 40,
+      y: 780,
+      width: 140,
+      height: (140 * (pngLogo.height/pngLogo.width))
+    });
+
+    // Header
+    page.drawText("HANDLING ADVICE for Unaccompanied Minor", {
+      x: 40,
+      y: 750,
+      size: 14,
+      color: rgb(0.01,0.17,0.39)
+    });
+
+    // Copy label
+    page.drawText(copyTitle, {
+      x: 40,
+      y: 730,
+      size: 10,
+      color: rgb(0.01,0.17,0.39)
+    });
+
+    return page;
+  }
+
+  // Create all 3 copies
+  pages.push(addPage("ORIGINAL: 1st carrier on outbound journey"));
+  pages.push(addPage("1st COPY: 1st carrier on outbound journey"));
+  pages.push(addPage("2nd COPY: Insert in UM travel wallet"));
+
+  // Extract form data
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+
+  /* Build PDF fields (simplified for display)
+     NOTE: You can add more fields or enhance layout anytime */
+
+  let y = 700;
+
+  function drawField(page, label, value) {
+    page.drawText(`${label}: ${value || ""}`, {
+      x: 40,
+      y: y,
+      size: 10,
+      color: rgb(0,0,0)
+    });
+    y -= 14;
+  }
+
+  // Apply fields to each page
+  for (const p of pages) {
+    y = 700;
+    drawField(p, "PNR", data.pnr);
+    drawField(p, "UM name", data.um_first_name + " " + data.um_last_name);
+    drawField(p, "DOB", data.um_dob);
+    drawField(p, "Gender", data.um_gender);
+    drawField(p, "Languages", data.um_languages);
+
+    drawField(p, "Guardian", data.guardian_name);
+    drawField(p, "Mobile", data.guardian_mobile);
+    drawField(p, "Email", data.guardian_email);
+    drawField(p, "Address", `${data.guardian_street}, ${data.guardian_city}, ${data.guardian_zip}, ${data.guardian_country}`);
+
+    drawField(p, "Escort Outbound", `${data.escort_out_name} (${data.escort_out_phone})`);
+    drawField(p, "Escort Arrival", `${data.escort_arrival_name} (${data.escort_arrival_phone})`);
+  }
+
+  // Download PDF
+  const pdfBytes = await pdf.save();
+  const blob = new Blob([pdfBytes], {type:"application/pdf"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "SKANDI_UM_Form.pdf";
+  a.click();
+  URL.revokeObjectURL(url);
+}
