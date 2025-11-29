@@ -14,76 +14,67 @@ Required session schema in localStorage, every login scenario must send back:
   "role": "Destination"
 }
 -----------------------------------------------------------------------------------------
-Here is your updated HTML including those changes
-🔥 Only the top section changed — the rest of your page stays identical.
 
-(example html)
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ACUS Desktop — Baggage Status</title>
-
-⚠️<link rel="stylesheet" href="../auth/header.css"/>
-<script src="../auth/sessionManager.js"></script>
-<script src="../auth/header.js" defer></script>⚠️
-
-<style>
-/* — your styles unchanged — */
-
-Then inside body:
-<body>
-
-<!-- GLOBAL SHUTTLESYNC HEADER -->
-<div id="ss-header" 
-     data-title="Baggage Status"
-     data-sub="Desktop • BHS • AHL • Belt Monitor">
-</div>
 
 Everything else below stays exactly as-is.
 ------------------------------------------------------------
 
-✔ /destination/home/				✔ /destination/airport/
-		checkInOut.html							paxList.html
-		internalMail.html						flightList.html
-		groupTalk.html							hotelDistribution.html
-		reporting.html							transferList.html
-		settings.html								delayMessaging.html
-		logout.html									misconnectAlerts.html
-		customerChat.html						gateMonitor.html
-																baggageStatus.html
+✔ /destination/home/				
+		empCheckInOut.html						
+		internalMail.html						
+		groupTalk.html							
+		reporting.html							
+		settings.html [(Airport Incident Management)]							
+		logout.html	
+		weather.html (todays forcast)
 
-✔ /destination/paxCI/				✔ /destination/transfers/
-		welcomeMeetings.html				busAssignments.html
-		hotelCheckInList.html				timetables.html
-		qrScan.html									driverSync.html
-		notesFlags.html							paxCounts.html
+✔ /destination/paxCI/				
+		welcomeMeetings.html [(Ground Operations -> Meeting/Briefing Tools)]
+		hotelCheckInList.html [(Arrival Control / Allotment Transfer)]
+		qrScan.html	[(DCS Quick Passenger Search)]				
+		notesFlags.html	[(DCS Passenger Annotations (P/Msgs)]	
+
+✔ /destination/transfers/
+		busAssignments.html [(Ground Transportation Dispatch)]
+		timetables.html [(AODB Ground Transport Schedules)]
+		driverSync.html [(Crew/Staff Mobile Dispatch Interface)]
+		paxCounts.html [(DCS Boarding/Load Sheet Data)]
+
+✔ /destination/airport/
+		paxList.html [(DCS Passenger Manifest)]
+		flightList.html [FLIGHT LIST (AODB Flight List)]
+		hotelDistribution.html [(Arrival Service / Ground Handling Allocations)]
+		transferList.html [(DCS Connections & Transfer Desk Tools)]
+		delayMessaging.html [(SITA/ACUS Delay Code Panel (IATA 15xx codes))]					
+		misconnectAlerts.html (DCS Minimum Connect Time Engine)
+		gateMonitor.html 
+		baggageStatus.html [(BHS (Bagage Handling System) / AHL Module)
 
 ✔ /destination/tours/
-productList.html
-paymentScanner.html
-bookings.html
-commissionOverview.html
-eTickets.html
+		productList.html [(Tour Operator Inventory)]
+		paymentScanner.html (with nfc reader)
+		qrScan.html	(same module as under paxCI)
+		bookings.html [(GDS/CRS Booking Add-Ons)] 
+		commissionOverview.html [(Sales Reporting)]
+		eTickets.html [(EMD / Voucher Services)]
 
 ✔ /destination/guestService/
-hotlineChat.html
-issueReports.html
-lostFound.html
-accessibility.html
-emergencies.html
+		hotlineChat.html (24/7 support for customers with a booking during their stay through "SKANDI App" to contact HotLine. Customer Service tool) [(ACUS Supervisor Messaging)]
+		issueReports.html [(Service Recovery (IROP TOOLS))]
+		lostFound.html [(WorldTracer / AHL)]
+		accessibility.html [(Special Service Requests (SSR)]
+		emergencies.html [(Emergency Ops (EOC))]
 
 ✔ /destination/hotelRelations/
-hotelDirectory.html
-roomingList.html
-complaintsLog.html
-meetingMinutes.html
+		hotelDirectory.html [(Contracted Hotels Database)]
+		roomingList.html [(Tour Operator Allotment Management)]
+		complaintsLog.html [(CRM Customer Resolution)]
+		meetingMinutes.html [(Station Management Notes)]
 
-✔ /destination/managerPanel/
-(Visible only to supervisors/managers)
-staffRotations.html
-toursInventory.html
-dutySchedule.html
-salesReporting.html
-broadcastMessages.html
+✔ /destination/managerPanel/ (only accessable by managers with tier 4 or 5 in airtable and Ops)
+		(Visible only to supervisors/managers)
+		staffRotations.html [(Roster/Crew Scheduling)
+		toursInventory.html [(Product Inventory (CRM/TO backend)]
+		dutySchedule.html [(Shift Planning)]
+		salesReporting.html [(Retail/Ancillary Sales Reports)]
+		broadcastMessages.html [(Station Wide Messaging / Shift Briefings)]
