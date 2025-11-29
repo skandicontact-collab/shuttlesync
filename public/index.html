@@ -5,14 +5,39 @@
   <title>ShuttleSync — SKANDI Group</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Montserrat -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- Global ShuttleSync Styles -->
-  <link rel="stylesheet" href="/styles/shuttlesync-global.css">
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="/styles/shuttlesync-global.css" />
 
   <style>
-    /* PAGE BACKGROUND */
+    /* =============================
+       FULLSCREEN VIDEO BACKGROUND
+    ============================== */
+    .video-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .video-bg video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.78);
+    }
+
+    html[data-theme='dark'] .video-bg video {
+      filter: brightness(0.45) saturate(1.1);
+    }
+
+    /* =============================
+       PAGE WRAPPER
+    ============================== */
     .home-wrapper {
       width: 100vw;
       height: 100vh;
@@ -22,14 +47,11 @@
       justify-content: center;
       text-align: center;
       padding: 20px;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-
-      /* PLACEHOLDER — replace with your actual background video later */
-      background-mp4: url('assets/mp4/background.mp4');
     }
 
+    /* =============================
+       LOGIN CARD
+    ============================== */
     .home-card {
       background: var(--sk-glass);
       padding: 40px 50px;
@@ -37,7 +59,7 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.25);
       backdrop-filter: blur(14px);
       border: 1px solid var(--sk-border-soft);
-      max-width: 420px;
+      max-width: 440px;
       width: 100%;
       animation: fadeIn 0.6s ease;
     }
@@ -47,7 +69,7 @@
       font-weight: 700;
       margin-bottom: 10px;
       color: var(--sk-accent);
-      text-shadow: 0 0 8px rgba(95,199,207,0.4);
+      text-shadow: 0 0 8px rgba(95,199,207,0.3);
     }
 
     .home-subtitle {
@@ -69,6 +91,7 @@
       transition: 0.3s;
       box-shadow: 0 4px 14px rgba(95,199,207,0.5);
     }
+
     .home-btn:hover {
       background: var(--sk-accent);
       color: var(--sk-blue);
@@ -76,27 +99,60 @@
       box-shadow: 0 0 25px var(--sk-accent);
     }
 
-    /* FOOTER */
+    /* =============================
+       LEGAL FOOTER
+    ============================== */
     .legal-footer {
       margin-top: 60px;
       font-size: 11px;
-      opacity: 0.7;
+      opacity: 0.75;
       color: var(--sk-text-dim);
-      max-width: 680px;
+      max-width: 720px;
       line-height: 1.5;
       text-align: center;
       padding: 0 20px;
+      animation: fadeIn 0.9s ease;
     }
 
+    /* ------------------------------
+       ANIMATIONS
+    --------------------------------*/
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: translateY(0); }
     }
   </style>
-
 </head>
-<body>
 
+<body>
+<script>
+  (function() {
+    try {
+      const raw = localStorage.getItem("skSession");
+      if (!raw) return;
+
+      const session = JSON.parse(raw);
+      if (!session) return;
+
+      // Optional validation
+      if (session.email && session.redirect) {
+        window.location.replace(session.redirect);
+      } else {
+        window.location.replace("/apps/dashboard");
+      }
+    } catch (e) {
+      console.warn("Session redirect skipped:", e);
+    }
+  })();
+</script>
+  <!-- VIDEO BACKGROUND -->
+  <div class="video-bg">
+    <video autoplay muted loop playsinline>
+      <source src="/assets/mp4/background.mp4" type="video/mp4" />
+    </video>
+  </div>
+
+  <!-- CONTENT -->
   <div class="home-wrapper">
 
     <div class="home-card">
@@ -109,13 +165,13 @@
     </div>
 
     <div class="legal-footer">
-      This is an internal system belonging to SKANDI Group AB (Sweden) and
-      SKANDI Group LLC (United States).  
-      Unauthorized access is strictly prohibited.  
-      All activity may be logged and monitored in accordance with Swedish Data 
-      Protection Law (Dataskyddsförordningen), the U.S. Computer Fraud and Abuse Act (CFAA),
-      and SKANDI Group internal IT policies.  
-      By accessing this portal, employees agree to confidentiality, data protection, and acceptable-use requirements.
+      ShuttleSync is an internal system belonging to SKANDI Group AB (Sweden)
+      and SKANDI Group LLC (United States). Unauthorized access is strictly
+      prohibited. All usage may be logged and monitored in accordance with the
+      Swedish Data Protection Act (Dataskyddsförordningen), GDPR, the US
+      Computer Fraud and Abuse Act (CFAA), and SKANDI internal IT security
+      policies. By accessing this portal, you confirm your authorization and
+      agree to confidentiality and acceptable use guidelines.
     </div>
 
   </div>
