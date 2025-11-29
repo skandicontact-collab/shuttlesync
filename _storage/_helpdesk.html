@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ShuttleSync — HelpDesk Module</title>
+
+<style>
+/* ============================================================
+   SHUTTLESYNC DARK-SPACE NEON THEME (WIX SAFE)
+============================================================ */
+:root{
+  --sk-bg:#020617;
+  --sk-bg-soft:#071225;
+  --sk-blue:#022e64;
+  --sk-accent:#5FC7CF;
+  --sk-accent-soft:rgba(95,199,207,0.25);
+  --sk-text:#E6F3FF;
+  --sk-muted:#9ab;
+  --radius:16px;
+}
+
+/* RESET */
+*{box-sizing:border-box;font-family:"Montserrat",sans-serif;margin:0;padding:0;}
+body{
+  background:radial-gradient(circle at top, #0a1a35, #020617 55%, #000 100%);
+  color:var(--sk-text);
+  padding:22px;
+}
+
+/* WRAPPER */
+#helpdesk-wrapper{
+  background:rgba(5,17,32,0.75);
+  border:1px solid rgba(95,199,207,0.2);
+  backdrop-filter:blur(18px);
+  padding:26px;
+  border-radius:22px;
+  box-shadow:0 0 28px rgba(0,0,0,0.7),0 0 18px rgba(95,199,207,0.2);
+}
+
+/* TITLES */
+.sk-title{
+  font-size:24px;
+  font-weight:700;
+  margin-bottom:16px;
+  text-shadow:0 0 12px rgba(95,199,207,0.4);
+}
+
+/* SUBTABS */
+#helpdesk-tabs{
+  display:flex;
+  gap:14px;
+  margin-bottom:20px;
+}
+
+.hd-tab{
+  padding:10px 18px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(95,199,207,0.15);
+  cursor:pointer;
+  font-size:14px;
+  transition:0.25s;
+}
+
+.hd-tab:hover{
+  background:rgba(95,199,207,0.15);
+}
+
+.hd-tab.active{
+  background:var(--sk-accent);
+  color:#00131e;
+  box-shadow:0 0 12px rgba(95,199,207,0.8);
+}
+
+/* FORMS */
+label{
+  font-size:12px;
+  color:var(--sk-muted);
+  letter-spacing:0.05em;
+  margin-top:14px;
+  display:block;
+  text-transform:uppercase;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  border-radius:14px;
+  border:1px solid rgba(95,199,207,0.25);
+  background:rgba(255,255,255,0.05);
+  color:var(--sk-text);
+}
+
+textarea{height:120px;resize:vertical;}
+
+button{
+  width:100%;
+  padding:14px;
+  margin-top:18px;
+  border-radius:14px;
+  font-weight:700;
+  cursor:pointer;
+  background:var(--sk-accent);
+  border:none;
+  color:#00151c;
+  box-shadow:0 0 16px rgba(95,199,207,0.5);
+}
+
+button:hover{
+  background:#88f4ff;
+}
+
+/* TICKET LIST */
+.ticket-card{
+  padding:16px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(95,199,207,0.18);
+  margin-bottom:16px;
+}
+
+.ticket-card strong{font-size:15px;}
+
+.ticket-status{
+  font-size:12px;
+  padding:4px 10px;
+  border-radius:999px;
+  display:inline-block;
+  margin-top:6px;
+}
+
+.status-open{background:#ff3b3b40;border:1px solid #ff3b3b;}
+.status-pending{background:#f7b73140;border:1px solid #f7b731;}
+.status-closed{background:#20bf6b40;border:1px solid #20bf6b;}
+
+/* THREAD */
+#thread-box{
+  margin-top:20px;
+  padding:14px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(95,199,207,0.2);
+}
+
+.thread-msg{
+  margin-bottom:12px;
+  padding:12px;
+  background:rgba(95,199,207,0.09);
+  border-radius:16px;
+  font-size:14px;
+}
+
+.thread-me{
+  background:rgba(95,199,207,0.22);
+  border-left:3px solid var(--sk-accent);
+}
+
+/* HIDDEN */
+.hidden{display:none;}
+</style>
+</head>
+
+<body>
+<div id="helpdesk-wrapper">
+
+  <div class="sk-title">HelpDesk • IT • HR Support</div>
+
+  <!-- TABS -->
+  <div id="helpdesk-tabs">
+    <div class="hd-tab active" data-tab="new">New Ticket</div>
+    <div class="hd-tab" data-tab="mytickets">My Tickets</div>
+    <div class="hd-tab" data-tab="thread">Ticket Thread</div>
+  </div>
+
+  <!-- NEW TICKET -->
+  <div id="tab-new">
+    <label>Category</label>
+    <select id="hd-category">
+      <option>IT Support</option>
+      <option>HR Support</option>
+      <option>Operational Support</option>
+      <option>Destination Support</option>
+      <option>System & Tools</option>
+    </select>
+
+    <label>Priority</label>
+    <select id="hd-priority">
+      <option>Normal</option>
+      <option>High</option>
+      <option>Critical</option>
+    </select>
+
+    <label>Subject</label>
+    <input id="hd-subject" placeholder="Short summary">
+
+    <label>Description</label>
+    <textarea id="hd-description" placeholder="Describe the issue..."></textarea>
+
+    <label>Attachment (optional)</label>
+    <input type="file" id="hd-file">
+
+    <button onclick="submitTicket()">Submit Ticket</button>
+  </div>
+
+  <!-- MY TICKETS -->
+  <div id="tab-mytickets" class="hidden">
+    <div id="mytickets-list"></div>
+  </div>
+
+  <!-- THREAD -->
+  <div id="tab-thread" class="hidden">
+    <div id="thread-header" style="font-size:18px;font-weight:600;margin-bottom:12px;"></div>
+
+    <div id="thread-box"></div>
+
+    <textarea id="reply-msg" placeholder="Reply..."></textarea>
+    <button onclick="sendReply()">Send</button>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   BASIC CONFIG (YOU CHANGE THIS)
+============================================================ */
+const AIRTABLE_ENDPOINT = "YOUR_MAKE_WEBHOOK_URL";
+let EMPLOYEE_ID = "";
+let CURRENT_TICKET_ID = "";
+
+/* LOAD EMPLOYEE ID FROM WIX */
+window.addEventListener("message", (e)=>{
+  if(e.data?.skid){
+    EMPLOYEE_ID = e.data.skid;
+  }
+});
+
+/* TAB SWITCHING */
+document.querySelectorAll(".hd-tab").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".hd-tab").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+
+    let tab = btn.dataset.tab;
+    document.getElementById("tab-new").classList.add("hidden");
+    document.getElementById("tab-mytickets").classList.add("hidden");
+    document.getElementById("tab-thread").classList.add("hidden");
+
+    document.getElementById("tab-"+tab).classList.remove("hidden");
+
+    if(tab==="mytickets") loadTickets();
+  });
+});
+
+/* SUBMIT TICKET */
+async function submitTicket(){
+  let fileInput = document.getElementById("hd-file");
+  let file = fileInput.files[0];
+
+  let formData = new FormData();
+  formData.append("skid", EMPLOYEE_ID);
+  formData.append("category", document.getElementById("hd-category").value);
+  formData.append("priority", document.getElementById("hd-priority").value);
+  formData.append("subject", document.getElementById("hd-subject").value);
+  formData.append("description", document.getElementById("hd-description").value);
+  if(file) formData.append("file", file);
+
+  await fetch(AIRTABLE_ENDPOINT + "/newTicket", {
+    method:"POST",
+    body:formData
+  });
+
+  alert("Ticket created!");
+}
+
+/* LOAD TICKETS */
+async function loadTickets(){
+  const r = await fetch(AIRTABLE_ENDPOINT + "/getTickets?skid="+EMPLOYEE_ID);
+  const list = await r.json();
+
+  let html="";
+  list.forEach(t=>{
+    html += `
+      <div class="ticket-card" onclick="openThread('${t.id}','${t.subject}')">
+        <strong>${t.subject}</strong><br>
+        <span class="ticket-status status-${t.status.toLowerCase()}">${t.status}</span><br>
+        <span style="font-size:12px;color:var(--sk-muted);">${t.category}</span>
+      </div>
+    `;
+  });
+
+  document.getElementById("mytickets-list").innerHTML = html;
+}
+
+/* OPEN THREAD */
+async function openThread(id, subject){
+  CURRENT_TICKET_ID = id;
+  document.querySelector("[data-tab='thread']").click();
+  document.getElementById("thread-header").innerHTML = subject;
+
+  const r = await fetch(AIRTABLE_ENDPOINT + "/getThread?id="+id);
+  const msgs = await r.json();
+
+  let html="";
+  msgs.forEach(m=>{
+    html += `<div class="thread-msg ${m.from === EMPLOYEE_ID ? "thread-me" : ""}">
+      <strong>${m.from}</strong><br>${m.msg}
+    </div>`;
+  });
+
+  document.getElementById("thread-box").innerHTML = html;
+}
+
+/* SEND REPLY */
+async function sendReply(){
+  let msg = document.getElementById("reply-msg").value;
+  if(!msg.trim()) return;
+
+  await fetch(AIRTABLE_ENDPOINT + "/reply", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      id:CURRENT_TICKET_ID,
+      from:EMPLOYEE_ID,
+      msg
+    })
+  });
+
+  document.getElementById("reply-msg").value = "";
+  openThread(CURRENT_TICKET_ID, document.getElementById("thread-header").innerHTML);
+}
+</script>
+
+</body>
+</html>
