@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html>
+  <body>
+<!-- ============================================
+   SKANDI UNIFORM CENTER — FULL FRONTEND EMBED
+   Slide-in Cart • Filters • 3-Currency Checkout
+   Backend: https://skandi-uniform-backend.onrender.com
+   ============================================ -->
+
+<div id="sk-uniform-app">
+
+<style>
+/* ---------------------------------------------
+   CORE STYLE RESET
+---------------------------------------------- */
+#sk-uniform-app, #sk-uniform-app * {
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ---------------------------------------------
+   TOP BAR NAVIGATION
+---------------------------------------------- */
+#sk-topbar {
+  width: 100%;
+  background: #022e64;
+  color: #fff;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#sk-top-left {
+  display: flex;
+  gap: 36px;
+  font-size: 16px;
+}
+
+.sk-nav-link {
+  cursor: pointer;
+  opacity: .85;
+  font-weight: 500;
+  transition: .2s;
+}
+
+.sk-nav-link:hover,
+.sk-nav-link.sk-active {
+  opacity: 1;
+}
+
+#sk-top-right {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+#sk-points {
+  font-weight: 600;
+  background: #fff;
+  color: #022e64;
+  padding: 6px 14px;
+  border-radius: 6px;
+}
+
+#sk-cart-icon {
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* ---------------------------------------------
+   LAYOUT
+---------------------------------------------- */
+#sk-page {
+  display: flex;
+  height: auto;
+  min-height: 700px;
+}
+
+#sk-sidebar {
+  width: 240px;
+  background: #f5f7fb;
+  padding: 24px;
+  border-right: 1px solid #dde2ea;
+}
+
+#sk-content {
+  flex: 1;
+  padding: 32px;
+}
+
+/* ---------------------------------------------
+   SHOP — PRODUCT GRID
+---------------------------------------------- */
+#sk-products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+  gap: 20px;
+}
+
+.sk-item-card {
+  background: #fff;
+  border: 1px solid #dee3ec;
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.sk-item-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+}
+
+.sk-item-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #e7edf5;
+}
+
+.sk-item-name {
+  font-size: 15px;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.sk-item-points {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #022e64;
+  font-weight: 600;
+}
+
+/* ---------------------------------------------
+   SLIDE-IN CART DRAWER
+---------------------------------------------- */
+#sk-cart-drawer {
+  position: fixed;
+  top: 0; right: -420px;
+  width: 420px;
+  height: 100%;
+  background: #fff;
+  box-shadow: -4px 0 12px rgba(0,0,0,.12);
+  transition: .4s;
+  padding: 24px;
+  z-index: 9999;
+  overflow-y: auto;
+}
+
+#sk-cart-drawer.open {
+  right: 0;
+}
+
+#sk-cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#sk-checkout-btn {
+  width: 100%;
+  margin-top: 22px;
+  background: #022e64;
+  color: #fff;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* ---------------------------------------------
+   CHECKOUT MODAL
+---------------------------------------------- */
+#sk-checkout-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,.45);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+#sk-checkout-box {
+  width: 560px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px;
+}
+
+/* ---------------------------------------------
+   PAGE TITLES
+---------------------------------------------- */
+.sk-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.sk-placeholder {
+  color: #667;
+  line-height: 1.6;
+}
+
+/* ---------------------------------------------
+   UNIFORM REGULATION / CARE
+---------------------------------------------- */
+.sk-reg-box {
+  background: #fafafa;
+  border: 1px solid #dee3ec;
+  padding: 20px;
+  border-radius: 8px;
+}
+</style>
+
+
+<!-- ============================================================
+     STRUCTURE
+=============================================================== -->
+
+<div id="sk-topbar">
+  <div id="sk-top-left">
+    <div class="sk-nav-link sk-active" data-tab="shop">Shop</div>
+    <div class="sk-nav-link" data-tab="orders">My Orders</div>
+    <div class="sk-nav-link" data-tab="contact">Contact Uniform Center</div>
+    <div class="sk-nav-link" data-tab="regulation">Uniform Regulation</div>
+    <div class="sk-nav-link" data-tab="care">Uniform Care</div>
+  </div>
+
+  <div id="sk-top-right">
+    <div id="sk-points">SK-P: <span id="skp-balance">—</span></div>
+    <div id="sk-cart-icon">🛒</div>
+  </div>
+</div>
+
+
+<div id="sk-page">
+
+  <!-- FILTER SIDEBAR -->
+  <div id="sk-sidebar">
+    <div class="sk-title" style="font-size:18px;">Filters</div>
+
+    <div>
+      <label>Category</label><br>
+      <select id="filter-category">
+        <option value="">All</option>
+        <option>Pants & Shorts</option>
+        <option>Dresses & Skirts</option>
+        <option>Jackets</option>
+        <option>Shirts</option>
+        <option>Polo Shirts</option>
+        <option>Accessories</option>
+        <option>Knitwear</option>
+        <option>Luggage</option>
+        <option>Outerwear</option>
+      </select>
+    </div>
+
+    <div style="margin-top:16px;">
+      <label>Size</label><br>
+      <select id="filter-size">
+        <option value="">All</option>
+        <option>XS</option><option>S</option><option>M</option>
+        <option>L</option><option>XL</option><option>XXL</option>
+      </select>
+    </div>
+
+    <div style="margin-top:16px;">
+      <label>Color</label><br>
+      <select id="filter-color">
+        <option value="">All</option>
+        <option>Blue</option><option>White</option><option>Black</option>
+        <option>Grey</option><option>Navy</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- MAIN PAGE CONTENT -->
+  <div id="sk-content">
+      <div id="sk-dynamic"></div>
+  </div>
+
+</div>
+
+
+<!-- ============================================================
+     CART DRAWER
+=============================================================== -->
+<div id="sk-cart-drawer">
+  <div id="sk-cart-header">
+    <h3>Your Cart</h3>
+    <span style="cursor:pointer;" id="sk-cart-close">✕</span>
+  </div>
+  <div id="sk-cart-items"></div>
+  <div id="sk-cart-total" style="margin-top:16px;font-weight:600;"></div>
+  <div id="sk-checkout-btn">Checkout</div>
+</div>
+
+
+<!-- ============================================================
+     CHECKOUT MODAL
+=============================================================== -->
+<div id="sk-checkout-modal">
+  <div id="sk-checkout-box">
+    <h2>Checkout</h2>
+
+    <div id="sk-checkout-summary"></div>
+
+    <div style="margin-top:18px;font-weight:600;">
+      Payment Options:
+    </div>
+
+    <div>
+      <label><input type="radio" name="sk-paymode" value="points" checked> Pay with SK-P</label><br>
+      <label><input type="radio" name="sk-paymode" value="salary"> Deduct from Salary</label><br>
+      <label><input type="radio" name="sk-paymode" value="partial"> Partial (SK-P + Salary)</label>
+    </div>
+
+    <div id="sk-currency-select" style="display:none;margin-top:14px;">
+      <strong>Choose salary deduction currency:</strong><br>
+      <label><input type="radio" name="sk-currency" value="SEK" checked> SEK</label><br>
+      <label><input type="radio" name="sk-currency" value="USD"> USD</label><br>
+      <label><input type="radio" name="sk-currency" value="EUR"> EUR</label>
+    </div>
+
+    <div id="sk-salary-summary" style="margin-top:14px;"></div>
+
+    <div style="margin-top:20px;">
+      <button id="sk-submit-order" style="width:100%;background:#022e64;color:white;padding:12px;border-radius:8px;font-size:16px;cursor:pointer;font-weight:600;">Submit Order</button>
+    </div>
+
+  </div>
+</div>
+
+
+
+<!-- ============================================================
+     JAVASCRIPT — ALL LOGIC, ALL BACKEND CALLS
+=============================================================== -->
+<script>
+const API = "https://skandi-uniform-backend.onrender.com";
+
+let USER_EMAIL = "";
+let EMPLOYEE = null;
+let ITEMS = [];
+let CART = [];
+
+/* ===========================================
+   INIT — GET WIX USER EMAIL
+=========================================== */
+(async function init(){
+  if (window?.wixUsers) {
+      USER_EMAIL = await wixUsers.currentUser.getEmail();
+  } else {
+      USER_EMAIL = prompt("Enter test email:");
+  }
+  await loadEmployee();
+  await loadItems();
+  renderShop();
+})();
+
+/* ===========================================
+   LOAD EMPLOYEE
+=========================================== */
+async function loadEmployee(){
+  const res = await fetch(`${API}/employee?email=${USER_EMAIL}`);
+  EMPLOYEE = await res.json();
+  document.getElementById("skp-balance").innerText = EMPLOYEE.skp;
+}
+
+/* ===========================================
+   LOAD ITEMS
+=========================================== */
+async function loadItems(){
+  const res = await fetch(`${API}/items`);
+  ITEMS = await res.json();
+}
+
+/* ===========================================
+   NAVIGATION
+=========================================== */
+document.querySelectorAll(".sk-nav-link").forEach(el=>{
+  el.addEventListener("click",()=>switchPage(el));
+});
+
+function switchPage(el){
+  document.querySelectorAll(".sk-nav-link").forEach(e=>e.classList.remove("sk-active"));
+  el.classList.add("sk-active");
+  const tab = el.dataset.tab;
+
+  if(tab==="shop") renderShop();
+  if(tab==="orders") renderOrders();
+  if(tab==="contact") renderContact();
+  if(tab==="regulation") renderRegulation();
+  if(tab==="care") renderCare();
+}
+
+/* ===========================================
+   SHOP PAGE
+=========================================== */
+function renderShop(){
+  let html = `<div class='sk-title'>Shop Uniform</div>
+              <div id='sk-products'></div>`;
+  document.getElementById("sk-dynamic").innerHTML = html;
+
+  applyFiltersAndRender();
+
+  document.getElementById("filter-category").onchange = applyFiltersAndRender;
+  document.getElementById("filter-size").onchange = applyFiltersAndRender;
+  document.getElementById("filter-color").onchange = applyFiltersAndRender;
+}
+
+function applyFiltersAndRender(){
+  let cats = document.getElementById("filter-category").value;
+  let size = document.getElementById("filter-size").value;
+  let col  = document.getElementById("filter-color").value;
+
+  let filtered = ITEMS.filter(i=>{
+    return (cats===""||i.Category===cats)
+        && (size===""||i.SizeRange.includes(size))
+        && (col==="" || i.Color===col);
+  });
+
+  let out = "";
+  filtered.forEach(i=>{
+    out += `
+      <div class="sk-item-card" onclick="addToCart('${i.id}')">
+        <img class="sk-item-img" src="${i.Image||''}">
+        <div class="sk-item-name">${i.Name}</div>
+        <div class="sk-item-points">${i.Points} SK-P</div>
+      </div>`;
+  });
+
+  document.getElementById("sk-products").innerHTML = out;
+}
+
+/* ===========================================
+   CART
+=========================================== */
+document.getElementById("sk-cart-icon").onclick = ()=>toggleCart(true);
+document.getElementById("sk-cart-close").onclick = ()=>toggleCart(false);
+
+function toggleCart(show){
+  document.getElementById("sk-cart-drawer").classList.toggle("open",show);
+  renderCart();
+}
+
+function addToCart(id){
+  let item = ITEMS.find(x=>x.id===id);
+  CART.push({...item, qty:1});
+  toggleCart(true);
+}
+
+function renderCart(){
+  let wrap = document.getElementById("sk-cart-items");
+  if(CART.length===0){
+    wrap.innerHTML = "<p>Your cart is empty.</p>";
+    document.getElementById("sk-cart-total").innerHTML="";
+    return;
+  }
+
+  let out="";
+  let total=0;
+  CART.forEach((i,idx)=>{
+    total += i.Points*i.qty;
+    out += `
+      <div style="margin-bottom:16px;">
+        <div><strong>${i.Name}</strong></div>
+        <div>${i.Points} SK-P × ${i.qty}</div>
+      </div>`;
+  });
+
+  document.getElementById("sk-cart-total").innerHTML = 
+    `<div>Total: <strong>${total} SK-P</strong></div>`;
+}
+
+/* ===========================================
+   CHECKOUT
+=========================================== */
+document.getElementById("sk-checkout-btn").onclick =
+  ()=>document.getElementById("sk-checkout-modal").style.display="flex";
+
+document.getElementById("sk-submit-order").onclick = submitOrder;
+
+document.querySelectorAll("input[name='sk-paymode']")
+  .forEach(r=>r.addEventListener("change",updatePaymentMode));
+
+function updatePaymentMode(){
+  let mode = document.querySelector("input[name='sk-paymode']:checked").value;
+  document.getElementById("sk-currency-select").style.display =
+    (mode==="salary"||mode==="partial") ? "block" : "none";
+  updateSalarySummary();
+}
+
+function updateSalarySummary(){
+  let mode = document.querySelector("input[name='sk-paymode']:checked").value;
+
+  let skpTotal = CART.reduce((s,i)=>s+i.Points*i.qty,0);
+  let balance = EMPLOYEE.skp;
+
+  let currency = document.querySelector("input[name='sk-currency']:checked")?.value || "SEK";
+
+  let missing = Math.max(0,skpTotal-balance);
+
+  let summary="";
+
+  if(mode==="partial" && missing>0){
+    summary = `
+      Missing: ${missing} SK-P  
+      → ${missing*10} SEK / ${missing*1} USD / ${missing*1.1} EUR`;
+  }
+
+  if(mode==="salary"){
+    summary = `
+      Salary deduction:  
+      ${skpTotal*10} SEK / ${skpTotal*1} USD / ${skpTotal*1.1} EUR`;
+  }
+
+  document.getElementById("sk-salary-summary").innerHTML = summary;
+}
+
+/* ===========================================
+   SUBMIT ORDER
+=========================================== */
+async function submitOrder(){
+  let mode = document.querySelector("input[name='sk-paymode']:checked").value;
+  let currency = document.querySelector("input[name='sk-currency']:checked")?.value || "";
+
+  let payload = {
+    email: USER_EMAIL,
+    items: CART,
+    paymode: mode,
+    currency: currency
+  };
+
+  await fetch(`${API}/orders`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  });
+
+  alert("Order submitted!");
+  CART=[];
+  toggleCart(false);
+  document.getElementById("sk-checkout-modal").style.display="none";
+}
+
+
+/* ===========================================
+   MY ORDERS
+=========================================== */
+async function renderOrders(){
+  const res = await fetch(`${API}/orders?email=${USER_EMAIL}`);
+  const orders = await res.json();
+
+  let out = `<div class='sk-title'>My Orders</div>`;
+  orders.forEach(o=>{
+    out += `
+      <div style="padding:12px;border:1px solid #ddd;margin-bottom:10px;border-radius:6px;">
+        <div><strong>Order:</strong> ${o.id}</div>
+        <div><strong>Status:</strong> ${o.status}</div>
+        <div><strong>Items:</strong> ${o.items.map(i=>i.Name+" × "+i.qty).join(", ")}</div>
+      </div>`;
+  });
+
+  document.getElementById("sk-dynamic").innerHTML = out;
+}
+
+
+/* ===========================================
+   CONTACT
+=========================================== */
+function renderContact(){
+  document.getElementById("sk-dynamic").innerHTML = `
+    <div class='sk-title'>Contact Uniform Center</div>
+    <div class="sk-placeholder">Click below to open the form.</div>
+    <br>
+    <a href="PASTE_FORM_URL_HERE" target="_blank">
+      <button style="padding:10px 18px;background:#022e64;color:#fff;border-radius:6px;font-weight:600;">Open Form</button>
+    </a>`;
+}
+
+/* ===========================================
+   UNIFORM REGULATION
+=========================================== */
+function renderRegulation(){
+  document.getElementById("sk-dynamic").innerHTML = `
+    <div class='sk-title'>Uniform Regulation</div>
+    <div class="sk-reg-box">
+      PASTE YOUR UNIFORM REGULATION TEXT HERE
+    </div>
+    <br>
+    <a href="PASTE_PDF_URL_HERE" download>
+      <button style="padding:10px 18px;background:#022e64;color:#fff;border-radius:6px;font-weight:600;">Download PDF</button>
+    </a>
+  `;
+}
+
+/* ===========================================
+   UNIFORM CARE
+=========================================== */
+function renderCare(){
+  document.getElementById("sk-dynamic").innerHTML = `
+    <div class='sk-title'>Uniform Care Instructions</div>
+    <div class="sk-reg-box">
+      PASTE YOUR CARE INSTRUCTIONS HERE
+    </div>
+    <br>
+    <a href="PASTE_CARE_PDF_URL_HERE" download>
+      <button style="padding:10px 18px;background:#022e64;color:#fff;border-radius:6px;font-weight:600;">Download Care PDF</button>
+    </a>
+  `;
+}
+
+</script>
+
+</div>
+  </body>
+</html>
