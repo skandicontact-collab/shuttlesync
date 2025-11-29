@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>SKANDI — Destination Ops</title>
+<meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover"/>
+
+<!-- QR + Passport Scanner -->
+<script src="https://unpkg.com/html5-qrcode@2.3.10/minified/html5-qrcode.min.js"></script>
+
+<style>
+/* ============================================================
+   SKANDI DARK-GLASS UI
+============================================================ */
+:root {
+  --sk-blue:#022e64;
+  --sk-accent:#5FC7CF;
+  --sk-ink:#051a33;
+  --sk-bg:#020b1a;
+  --sk-card:#071225;
+  --sk-card-soft:#0a1630;
+  --sk-border:#122445;
+  --sk-text:#f3f5fb;
+  --sk-muted:#8fa3c8;
+  --radius:18px;
+  --shadow:0 18px 60px rgba(0,0,0,0.55);
+}
+*{box-sizing:border-box;font-family:'Montserrat',sans-serif;}
+body{
+  margin:0;
+  background:radial-gradient(circle at top,#112344 0,#020b1a 60%,#000 100%);
+  color:var(--sk-text);
+}
+
+/* ============================================================
+   GRID LAYOUT
+============================================================ */
+#app{
+  display:grid;
+  grid-template-columns:260px 1fr;
+  grid-template-rows:70px auto;
+  grid-template-areas:
+    "sidebar topbar"
+    "sidebar main";
+  height:100vh;
+  overflow:hidden;
+}
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+#sidebar{
+  grid-area:sidebar;
+  background:rgba(5,15,30,0.65);
+  backdrop-filter:blur(14px);
+  padding:28px 20px;
+  border-right:1px solid var(--sk-border);
+}
+#logo{
+  font-size:26px;
+  font-weight:700;
+  letter-spacing:1px;
+  margin-bottom:32px;
+  color:var(--sk-accent);
+}
+.nav{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.nav-item{
+  padding:12px 14px;
+  border-radius:var(--radius);
+  cursor:pointer;
+  background:rgba(255,255,255,0.03);
+  transition:0.25s;
+  border:1px solid transparent;
+}
+.nav-item:hover{
+  border-color:var(--sk-accent);
+  background:rgba(95,199,207,0.08);
+}
+
+/* ============================================================
+   TOP BAR
+============================================================ */
+#topbar{
+  grid-area:topbar;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 24px;
+  background:rgba(0,0,0,0.25);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--sk-border);
+}
+#profile{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+#profile-img{
+  width:40px;height:40px;
+  border-radius:50%;
+  background:var(--sk-accent);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:#000;
+}
+
+/* ============================================================
+   MAIN AREA
+============================================================ */
+#main{
+  grid-area:main;
+  padding:30px;
+  overflow-y:auto;
+}
+
+/* Cards */
+.card{
+  background:var(--sk-card);
+  border:1px solid var(--sk-border);
+  border-radius:var(--radius);
+  padding:20px;
+  margin-bottom:24px;
+  box-shadow:var(--shadow);
+}
+
+/* Scanner */
+#scanner{
+  width:100%;
+  height:380px;
+  border-radius:var(--radius);
+  overflow:hidden;
+  margin-top:14px;
+  background:#000;
+}
+
+/* Lists */
+.list-row{
+  padding:14px;
+  border-bottom:1px solid var(--sk-border);
+  display:flex;justify-content:space-between;
+}
+
+/* Alerts */
+.alert-warn{color:#ffb34f;}
+.alert-crit{color:#ff4f4f;}
+.alert-ok{color:#34d399;}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div id="logo">DEST OPS</div>
+    <div class="nav">
+      <div class="nav-item" onclick="showPage('checkin')">Check-in & Boarding</div>
+      <div class="nav-item" onclick="showPage('scannerPage')">Passport / BP Scanner</div>
+      <div class="nav-item" onclick="showPage('tickets')">Ticket Printing</div>
+      <div class="nav-item" onclick="showPage('payments')">NFC Payments</div>
+      <div class="nav-item" onclick="showPage('aodb')">AODB Live Data</div>
+      <div class="nav-item" onclick="showPage('alerts')">Alerts & Notifications</div>
+      <div class="nav-item" onclick="showPage('permissions')">Permissions</div>
+    </div>
+  </div>
+
+  <!-- TOPBAR -->
+  <div id="topbar">
+    <div id="status">SKANDI Destination Ops</div>
+    <div id="profile">
+      <div id="profile-img">SK</div>
+      <div>
+        <div id="pName">Samuel Higberg</div>
+        <div style="font-size:12px;color:var(--sk-muted);">TorGaS Supervisor</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+
+    <!-- ================================
+         CHECK-IN MODULE
+    ===================================-->
+    <div class="page" id="checkin">
+      <h2>Multi-Airline Check-in</h2>
+      <div class="card">
+        <label>PNR / Ticket Number</label>
+        <input id="pnrInput" style="width:100%;padding:10px;margin:10px 0;border-radius:10px;border:1px solid var(--sk-border);background:var(--sk-card-soft);color:var(--sk-text);">
+        <button onclick="lookupPNR()" style="padding:12px 22px;border-radius:10px;border:0;background:var(--sk-accent);color:#000;font-weight:700;cursor:pointer;">
+          Search
+        </button>
+      </div>
+
+      <div id="pnrResult"></div>
+    </div>
+
+    <!-- ================================
+         SCANNER MODULE
+    ===================================-->
+    <div class="page" id="scannerPage" style="display:none;">
+      <h2>Passport / Boarding Pass Scanner</h2>
+      <div id="scanner"></div>
+      <div id="scanResult" style="margin-top:20px;font-size:18px;"></div>
+    </div>
+
+    <!-- ================================
+         TICKETS
+    ===================================-->
+    <div class="page" id="tickets" style="display:none;">
+      <h2>Wireless Ticket Printing</h2>
+      <div class="card">
+        <label>Send BP to SKANDI Ticket Machine</label>
+        <input id="bpData" placeholder="Boarding pass data…" style="width:100%;padding:10px;margin:10px 0;border-radius:10px;border:1px solid var(--sk-border);background:var(--sk-card-soft);color:var(--sk-text);">
+        <button onclick="printTicket()" style="padding:12px 22px;border-radius:10px;border:0;background:var(--sk-accent);color:#000;font-weight:700;cursor:pointer;">
+          Print
+        </button>
+      </div>
+      <div id="printStatus"></div>
+    </div>
+
+    <!-- ================================
+         PAYMENTS
+    ===================================-->
+    <div class="page" id="payments" style="display:none;">
+      <h2>NFC Payments</h2>
+      <div class="card">
+        <label>Amount</label>
+        <input id="payAmount" type="number" style="width:100%;padding:10px;margin:10px 0;border-radius:10px;border:1px solid var(--sk-border);background:var(--sk-card-soft);color:var(--sk-text);">
+        <button onclick="simulateNFC()" style="padding:12px 22px;border-radius:10px;border:0;background:var(--sk-accent);color:#000;font-weight:700;cursor:pointer;">
+          Tap to Pay
+        </button>
+      </div>
+      <div id="payStatus"></div>
+    </div>
+
+    <!-- ================================
+         AODB
+    ===================================-->
+    <div class="page" id="aodb" style="display:none;">
+      <h2>AODB – Live Airport Data</h2>
+      <div class="card" id="aodbList">Loading…</div>
+    </div>
+
+    <!-- ================================
+         ALERTS
+    ===================================-->
+    <div class="page" id="alerts" style="display:none;">
+      <h2>System Alerts</h2>
+      <div class="card" id="alertContainer">Loading…</div>
+    </div>
+
+    <!-- ================================
+         PERMISSIONS
+    ===================================-->
+    <div class="page" id="permissions" style="display:none;">
+      <h2>Permissions Management</h2>
+      <div class="card" id="permList">Loading…</div>
+    </div>
+
+  </div> <!-- MAIN END -->
+</div>
+
+
+<script>
+/* ============================================================
+   PAGE SWITCHING
+============================================================ */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  document.getElementById(id).style.display='block';
+}
+
+/* ============================================================
+   PNR LOOKUP (Airtable)
+   BASE_ID is placeholder as requested
+============================================================ */
+async function lookupPNR(){
+  const pnr=document.getElementById('pnrInput').value.trim();
+  if(!pnr) return;
+
+  document.getElementById('pnrResult').innerHTML="Searching…";
+
+  const url=`https://api.airtable.com/v0/BASE_ID/Bookings?filterByFormula={PNR}='${pnr}'`;
+
+  try{
+    const r=await fetch(url,{
+      headers:{Authorization:"Bearer YOUR_API_KEY"}
+    });
+    const j=await r.json();
+
+    if(!j.records || j.records.length===0){
+      document.getElementById('pnrResult').innerHTML=`<div class="card">PNR not found.</div>`;
+      return;
+    }
+
+    const d=j.records[0].fields;
+    document.getElementById('pnrResult').innerHTML=`
+      <div class="card">
+        <h3>${d["Passenger Name"]}</h3>
+        <div>Flight: ${d.Flight}</div>
+        <div>Destination: ${d.Destination}</div>
+        <div>Status: ${d.Status}</div>
+      </div>
+    `;
+  }catch(e){
+    document.getElementById('pnrResult').innerHTML=`<div class="card">Error loading PNR.</div>`;
+  }
+}
+
+/* ============================================================
+   SCANNER
+============================================================ */
+let scanner=new Html5Qrcode("scanner");
+scanner.start(
+  {facingMode:"environment"},
+  {fps:10,qrbox:{width:250,height:250}},
+  decoded =>{
+    document.getElementById('scanResult').innerHTML=`Scanned: ${decoded}`;
+  }
+);
+
+/* ============================================================
+   TICKET PRINT
+============================================================ */
+function printTicket(){
+  const d=document.getElementById('bpData').value.trim();
+  if(!d) return;
+
+  document.getElementById('printStatus').innerHTML="Sending to printer…";
+
+  // Simulated print webhook
+  fetch("https://hook.us2.make.com/8gexssqhvek73vux4i9xxlm9l06t1a5e",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({bp:d})
+  }).then(()=>{
+    document.getElementById('printStatus').innerHTML=`<span class="alert-ok">Printed ✔</span>`;
+  });
+}
+
+/* ============================================================
+   NFC PAYMENT SIMULATION
+============================================================ */
+function simulateNFC(){
+  const amt=document.getElementById('payAmount').value;
+  if(!amt) return;
+  document.getElementById('payStatus').innerHTML="Waiting for card tap...";
+  setTimeout(()=>{
+    document.getElementById('payStatus').innerHTML=`<span class="alert-ok">Payment of ${amt} SEK approved ✔</span>`;
+  },1200);
+}
+
+/* ============================================================
+   AODB
+============================================================ */
+function loadAODB(){
+  document.getElementById('aodbList').innerHTML=`
+    <div class=list-row><div>SK123 → ARN</div><div>On time</div></div>
+    <div class=list-row><div>SK430 → CPH</div><div>Delayed</div></div>
+    <div class=list-row><div>SK998 → LLA</div><div>Boarding</div></div>
+  `;
+}
+loadAODB();
+
+/* ============================================================
+   ALERTS
+============================================================ */
+function loadAlerts(){
+  document.getElementById('alertContainer').innerHTML=`
+    <div class=list-row><div>Gate change SK430</div><div class="alert-warn">WARN</div></div>
+    <div class=list-row><div>Bag drop offline</div><div class="alert-crit">CRITICAL</div></div>
+    <div class=list-row><div>Staff synced</div><div class="alert-ok">OK</div></div>
+  `;
+}
+loadAlerts();
+
+/* ============================================================
+   PERMISSIONS
+============================================================ */
+function loadPerms(){
+  document.getElementById('permList').innerHTML=`
+    <div class=list-row><div>TorGaS Supervisor</div><div>Full Destination Ops</div></div>
+    <div class=list-row><div>TorGaD Guide</div><div>Limited Ops</div></div>
+    <div class=list-row><div>Airport Agent</div><div>Check-In + Boarding</div></div>
+  `;
+}
+loadPerms();
+</script>
+
+</body>
+</html>
