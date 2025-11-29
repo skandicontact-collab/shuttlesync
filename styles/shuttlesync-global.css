@@ -1,16 +1,12 @@
-/* -------------------------------------------------------
-   GLOBAL DESIGN SYSTEM 
-------------------------------------------------------- */
-:root {
-  --vh: 1vh;
-}
+/* =====================================================
+   SHUTTLESYNC GLOBAL DESIGN SYSTEM (OPTIMIZED)
+   Desktop → Mobile overrides
+   Light Theme → Dark Theme tokens
+===================================================== */
 
-@media (max-width: 900px) {
-  .home-wrapper, body, html {
-    height: calc(var(--vh, 1vh) * 100);
-  }
-}
-/* --- LIGHT THEME (DEFAULT) --- */
+/* ------------------------------
+   ROOT DESIGN TOKENS — LIGHT MODE
+------------------------------ */
 :root {
   --sk-bg: #f2eeee;
   --sk-blue: #022E64;
@@ -29,10 +25,16 @@
   --sk-glass: rgba(255,255,255,0.85);
   --sk-border-soft: rgba(95, 199, 207, 0.5);
 
-  --sk-logo-image: url('https://github.com/skandicontact-collab/shuttlesync/blob/d1fee0d22203709b0bd251bbedd373c8a93b4e7a/assets/logos/ShuttleSync-Inverted-Menu-Background.png');
+  --sk-logo-image: url('https://static.wixstatic.com/media/564bce_e3752ae80a944be284917a4f43066d92~mv2.png');
+
+  /* For iOS mobile height fix */
+  --vh: 1vh;
 }
-/* --- DARK THEME --- */
-html[data-theme='dark']{
+
+/* ------------------------------
+   ROOT DESIGN TOKENS — DARK MODE
+------------------------------ */
+html[data-theme='dark'] {
   --sk-blue:#022e64; 
   --sk-accent:#5FC7CF;
   --sk-accent-soft:#8df2ff;
@@ -43,10 +45,8 @@ html[data-theme='dark']{
   --sk-border:#122445;
   --sk-text:#eef3ff;
   --sk-muted:#8ea2c9;
-  --sk-text-dim: #a3b4d9; 
-  --radius-md:12px;
-
-  --sk-bg-primary: #0d1526; 
+  --sk-text-dim: #a3b4d9;
+  --sk-bg-primary:#0d1526; 
   --sk-card-back-1: rgba(18,31,52,0.97);
   --sk-card-back-2: rgba(10,20,35,0.97);
   --sk-glass: rgba(9,17,34,0.82);
@@ -57,28 +57,37 @@ html[data-theme='dark']{
   --sk-logo-image: url('https://static.wixstatic.com/media/564bce_61d749bee89941b1b05af62844700faa~mv2.png');
 }
 
-body {
+/* ------------------------------
+   GLOBAL ELEMENT RULES
+------------------------------ */
+html, body {
   margin:0;
   padding:0;
   background:var(--sk-bg); 
   color:var(--sk-text);
-  font-family:"Montserrat", sans-serif;
+  font-family:"Montserrat", system-ui, sans-serif;
   overflow-x:hidden;
-  transition: background-color 0.3s, color 0.3s; 
+  height: calc(var(--vh, 1vh) * 100);
+  transition: background-color 0.3s, color 0.3s;
 }
 
-/* Loader */
+button, input, textarea {
+  font-family: inherit;
+  font-size: 16px; /* Prevent iOS zoom */
+}
+
+/* ------------------------------
+   GLOBAL LOADER
+------------------------------ */
 #ss-loader {
-  position:fixed;
-  inset:0;
+  position:fixed; inset:0;
   background:var(--sk-bg);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:flex; align-items:center; justify-content:center;
   z-index:999999;
   transition:opacity .3s;
 }
 #ss-loader.hide { opacity:0; pointer-events:none; }
+
 #ss-loader .spinner {
   width:40px; height:40px;
   border:4px solid var(--sk-border);
@@ -88,17 +97,15 @@ body {
 }
 @keyframes spin { to { transform:rotate(360deg);} }
 
-/* -------------------------------------------------------
+
+/* =====================================================
    TOP BAR
-------------------------------------------------------- */
+===================================================== */
 #ss-topbar {
-  position:fixed;
-  top:0; left:0;
+  position:fixed; top:0; left:0;
   width:100%;
   height:64px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+  display:flex; align-items:center; justify-content:space-between;
   padding:0 24px; 
   z-index:9999;
   background: var(--sk-bf);
@@ -107,20 +114,12 @@ body {
   box-shadow:0 4px 10px var(--sk-accent);
   backdrop-filter: blur(18px);
 }
+
 html[data-theme='dark'] #ss-topbar {
-   background: linear-gradient(135deg, rgba(2, 46, 100, 0.85), rgba(4, 21, 45, 0.95));
-}
-
-.topbar-left {
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.topbar-right {
-  display:flex;
-  align-items:center;
-  gap:10px;
+  background: linear-gradient(135deg,
+    rgba(2, 46, 100, 0.85),
+    rgba(4, 21, 45, 0.95)
+  );
 }
 
 .topbar-btn {
@@ -129,10 +128,10 @@ html[data-theme='dark'] #ss-topbar {
   box-shadow:0 0 10px var(--sk-accent);
   border-radius:12px;
   color:var(--sk-accent); 
-  font-size:18px; 
+  font-size:20px;
   cursor:pointer;
-  padding:4px 8px; 
-  transition: color 0.4s ease, background-color 0.4s ease, transform 0.2s ease;
+  padding:6px 10px;
+  transition: color .3s, background-color .3s, transform .2s;
 }
 .topbar-btn:hover {
   background:var(--sk-blue);
@@ -142,41 +141,34 @@ html[data-theme='dark'] #ss-topbar {
 }
 
 .ss-title {
-  font-weight:600;
-  font-size:16px;
-  letter-spacing:0.05em;
+  font-weight:600; font-size:16px; letter-spacing:.05em;
   padding-bottom:4px;
   border-bottom:2px solid var(--sk-accent);
 }
 
-/* -------------------------------------------------------
+
+/* =====================================================
    SIDEBAR
-------------------------------------------------------- */
+===================================================== */
 #ss-sidebar {
-  position:fixed;
-  top:64px; 
-  left:0;
-  width:280px; 
+  position:fixed; top:64px; left:0;
+  width:280px;
   height:calc(100vh - 64px);
-  background: var(--sk-glass); 
+  background: var(--sk-glass);
   border-right:1px solid var(--sk-border-soft);
-  padding:24px; 
-  display:flex;
-  flex-direction:column;
-  gap:30px; 
-  transform:translateX(0);
+  padding:24px;
+  display:flex; flex-direction:column;
+  gap:30px;
   transition:transform .25s;
   z-index:9998;
   backdrop-filter: blur(14px);
 }
 #ss-sidebar.collapsed {
-  transform:translateX(-280px); 
+  transform:translateX(-280px);
 }
 
 .body-logo-placeholder {
-  width:100%;
-  max-width:230px;
-  height:80px;
+  width:100%; max-width:230px; height:80px;
   margin-bottom:30px;
   border-bottom:2px solid var(--sk-accent);
   background-image: var(--sk-logo-image);
@@ -184,40 +176,30 @@ html[data-theme='dark'] #ss-topbar {
   background-repeat:no-repeat;
   filter: drop-shadow(0 0 20px var(--sk-accent));
 }
-.fade-in {
-  animation: fadeIn 0.4s ease forwards;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 
-input, button, select, textarea {
-  font-size: 16px;
-}
 
+/* SIDEBAR USER */
 .ss-user {
-  display:flex;
-  gap:12px; 
-  align-items:center;
+  display:flex; gap:12px; align-items:center;
   padding-bottom:12px;
   border-bottom:1px solid var(--sk-border-soft);
 }
 .ss-user img {
-  width:46px;height:46px;
+  width:46px; height:46px;
   border-radius:50%;
   border:2px solid var(--sk-accent);
 }
-.ss-user-info .name { font-size:15px;font-weight:600; }
-.ss-user-info .role { font-size:12px;color:var(--sk-text-dim); }
+.ss-user-info .name { font-size:15px; font-weight:600; }
+.ss-user-info .role { font-size:12px; color:var(--sk-text-dim); }
 .ss-status {
-  width:10px;height:10px;
+  width:10px; height:10px;
   background:#22c55e;
   border-radius:50%;
   margin-left:auto;
 }
 
-/* NAV BUTTONS */
+
+/* SIDEBAR NAV */
 #ss-nav button {
   width:100%;
   padding:12px;
@@ -230,7 +212,7 @@ input, button, select, textarea {
   margin-bottom:13px;
   box-shadow:0 3px 7px var(--sk-accent);
   cursor:pointer;
-  transition:0.3s;
+  transition:.3s;
 }
 #ss-nav button:hover {
   background:var(--sk-glass);
@@ -239,15 +221,16 @@ input, button, select, textarea {
   box-shadow:0 2px 30px var(--sk-accent);
 }
 
-/* FOOTER */
+
+/* SIDEBAR FOOTER */
 .ss-footer {
   margin-top:auto;
   padding-top:20px;
   border-top:1px solid var(--sk-border-soft);
-  display:flex;
-  flex-direction:column;
+  display:flex; flex-direction:column;
   gap:10px;
 }
+
 .ss-footer button {
   padding:10px 12px;
   background:var(--sk-bg);
@@ -261,20 +244,24 @@ input, button, select, textarea {
   transform:translateY(-1px) scale(1.05);
 }
 
-/* -------------------------------------------------------
+
+/* =====================================================
    PAGE CONTENT
-------------------------------------------------------- */
+===================================================== */
 #ss-content {
   margin-top:64px;
   margin-left:280px;
   padding:32px;
   transition:margin-left .3s;
 }
-body.sidebar-collapsed #ss-content { margin-left:0; }
+body.sidebar-collapsed #ss-content {
+  margin-left:0;
+}
 
-/* -------------------------------------------------------
-   MODULE UI
-------------------------------------------------------- */
+
+/* =====================================================
+   MODULE CARDS
+===================================================== */
 .module-section {
   background:var(--sk-card);
   border:1px solid var(--sk-border-soft);
@@ -284,17 +271,21 @@ body.sidebar-collapsed #ss-content { margin-left:0; }
   backdrop-filter:blur(10px);
 }
 .module-title {
-  font-size:24px;
-  font-weight:700;
+  font-size:24px; font-weight:700;
   margin-bottom:24px;
   color:var(--sk-accent);
 }
 
-.table { width:100%; border-collapse:collapse; }
+
+/* =====================================================
+   TABLE STYLE
+===================================================== */
+.table {
+  width:100%; border-collapse:collapse;
+}
 .table th {
   text-align:left;
-  font-size:13px;
-  font-weight:600;
+  font-size:13px; font-weight:600;
   color:var(--sk-text-dim);
   border-bottom:1px solid var(--sk-border-soft);
   padding:10px 0;
@@ -305,7 +296,10 @@ body.sidebar-collapsed #ss-content { margin-left:0; }
   font-size:14px;
 }
 
-/* Buttons */
+
+/* =====================================================
+   BUTTON COMPONENT
+===================================================== */
 .btn {
   padding:10px 18px;
   background:var(--sk-bg);
@@ -314,10 +308,56 @@ body.sidebar-collapsed #ss-content { margin-left:0; }
   font-weight:600;
   cursor:pointer;
   box-shadow:0 3px 7px var(--sk-accent);
+  transition:.3s;
 }
 .btn:hover {
   background:var(--sk-glass);
   color:var(--sk-accent);
   transform:translateY(-1px) scale(1.05);
   box-shadow:0 2px 30px var(--sk-accent);
+}
+
+
+/* =====================================================
+   MOBILE OVERRIDES
+===================================================== */
+@media (max-width: 900px) {
+
+  #ss-topbar {
+    height:56px;
+    padding:0 16px;
+  }
+
+  .topbar-btn {
+    font-size:20px;
+    padding:6px 10px;
+  }
+
+  #ss-sidebar {
+    transform: translateX(-280px);
+    width:0;
+    padding:0;
+    opacity:0;
+  }
+
+  body.sidebar-collapsed #ss-content {
+    margin-left:0;
+  }
+
+  #ss-content {
+    padding:20px 16px;
+    margin-left:0;
+  }
+
+  .module-section {
+    padding:24px 20px;
+    border-radius:14px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .module-section {
+    padding:20px 14px;
+  }
 }
