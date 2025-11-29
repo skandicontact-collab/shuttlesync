@@ -1,99 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <title>ShuttleSync Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- FONT -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/public/styles/shuttlesync-global.css">
-  <link rel="stylesheet" href="/public/styles/login.css">
+  <!-- GLOBAL + LOGIN STYLES -->
+  <link rel="stylesheet" href="/styles/shuttlesync-global.css">
+  <link rel="stylesheet" href="/styles/login.css">
 
+  <!-- MAGIC SDK -->
   <script src="https://cdn.jsdelivr.net/npm/magic-sdk/dist/magic.js"></script>
 
-  <style>
-    #login-wrap {
-      margin-top: 90px;
-      max-width: 380px;
-      padding: 30px;
-      border-radius: 14px;
-      background: var(--sk-glass);
-      backdrop-filter: blur(14px);
-      border: 1px solid var(--sk-border-soft);
-      box-shadow: 0 0 20px var(--sk-accent);
+  <script>
+    // iOS 100vh fix
+    function updateVh(){
+      document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
     }
-
-    input {
-      width: 100%;
-      padding: 14px;
-      margin-bottom: 16px;
-      border-radius: 8px;
-      border: 1px solid var(--sk-border-soft);
-      background: var(--sk-card);
-      color: var(--sk-text);
-    }
-
-    #login-btn {
-      width: 100%;
-      padding: 14px;
-      border-radius: 8px;
-      background: var(--sk-accent);
-      border: none;
-      font-weight: 600;
-      font-size: 16px;
-      cursor: pointer;
-      box-shadow: 0 0 18px var(--sk-accent);
-      transition: 0.25s;
-    }
-    #login-btn:hover {
-      background: var(--sk-blue);
-      color: #fff;
-      transform: scale(1.03);
-    }
-  </style>
+    window.addEventListener('resize', updateVh);
+    updateVh();
+  </script>
 </head>
 
 <body>
 
-<div style="display:flex; justify-content:center;">
-  <div id="login-wrap">
-    <h2 style="text-align:center; margin-bottom:20px; color:var(--sk-accent);">
-      ShuttleSync Login
-    </h2>
-
-    <input id="emailInput" type="email" placeholder="you@skandigroup.com">
-
-    <button id="login-btn">Send Magic Link</button>
-  </div>
+<div id="ss-loader">
+  <div class="spinner"></div>
 </div>
 
-<script src="/public/scripts/shuttlesync-ui.js"></script>
+<div id="ss-content" style="margin-left:0; display:flex; justify-content:center;">
+  
+  <div class="login-card fade-in">
+
+    <div class="login-header">
+      <h2 class="login-title">ShuttleSync Login</h2>
+      <p class="login-subtitle">Internal SKANDI employee access</p>
+    </div>
+
+    <form class="login-form" onsubmit="return false;">
+      <label for="emailInput">SKANDI Email</label>
+      <input id="emailInput" type="email" placeholder="your.name@skandigroup.com" />
+
+      <button class="btn login-btn" id="login-btn">Send Magic Link</button>
+    </form>
+
+    <div id="login-status" class="login-status"></div>
+
+    <div class="login-footer-note">
+      <span>© ShuttleSync by SKANDI</span>
+      <span>Internal Use Only</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- GLOBAL UI JS -->
+<script src="/scripts/shuttlesync-ui.js"></script>
 
 <script>
-  const magic = new Magic("pk_live_YOURREALKEY");
+  const magic = new Magic("pk_live_YOUR_REAL_KEY");
 
   document.getElementById("login-btn").onclick = async () => {
-    const email = document.getElementById("emailInput").value.trim();
-    if (!email) return alert("Enter your SKANDI email.");
+    const emailEl = document.getElementById("emailInput");
+    const status = document.getElementById("login-status");
+    const email = emailEl.value.trim();
+
+    if (!email){
+      status.textContent = "Enter your SKANDI email.";
+      status.className = "login-status error";
+      return;
+    }
+
+    status.textContent = "Sending link…";
+    status.className = "login-status";
 
     try {
       const did = await magic.auth.loginWithMagicLink({ email });
 
+      // Save session
       const session = {
         email,
         did,
-        redirect: "/public/apps/dashboard"
+        timestamp: Date.now(),
+        redirect: "/apps/dashboard"
       };
 
       ShuttleSyncAuth.saveSession(session);
 
-      window.location.href = "/public/apps/dashboard";
+      status.textContent = "Success! Redirecting…";
+      status.className = "login-status success";
+
+      setTimeout(() => {
+        window.location.href = "/apps/dashboard";
+      }, 500);
+
     } catch (err) {
       console.error(err);
-      alert("Login failed.");
+      status.textContent = "Login failed.";
+      status.className = "login-status error";
     }
   };
 </script>
