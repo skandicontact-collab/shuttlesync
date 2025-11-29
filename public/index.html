@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Global CSS -->
-  <link rel="stylesheet" href="/styles/shuttlesync-global.css">
+  <link rel="stylesheet" href="/public/styles/shuttlesync-global.css">
 
   <style>
     /* Homepage-specific styles */
@@ -92,7 +92,7 @@
       const session = JSON.parse(raw);
       if (!session) return;
 
-      window.location.replace("/apps/dashboard");
+      window.location.replace("/public/apps/dashboard");
     } catch (e) {
       console.warn("Session redirect skipped:", e);
     }
@@ -107,7 +107,7 @@
   <div id="hero-content">
     <div id="hero-title">ShuttleSync Employee Portal</div>
 
-    <button id="enter-btn" onclick="location.href='/apps/login'">
+    <button id="enter-btn" onclick="location.href='/public/apps/login'">
       Go to Log-In →
     </button>
   </div>
