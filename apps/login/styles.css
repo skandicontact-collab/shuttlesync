@@ -2,7 +2,10 @@
    MOBILE RESPONSIVE ENHANCEMENTS — LOGIN APP
 ============================================ */
 @media (max-width: 900px) {
-
+  
+html, body {
+  height: calc(var(--vh, 1vh) * 100);
+}
   /* Collapse sidebar fully */
   #ss-sidebar {
     transform: translateX(-280px);
