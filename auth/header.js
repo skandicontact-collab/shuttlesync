@@ -1,28 +1,13 @@
-/*
-    ShuttleSync — Global UI Framework
-    - Universal Header + Sidebar
-    - Auto theme (dark / light)
-    - Responsive layout engine
-    - Auto-close sidebar
-    - Role-based navigation
-    - Page container mount
-    - Loader + skeleton support
-*/
-
-const VERIFY_URL = "YOUR_MAKE_VERIFY_WEBHOOK";
+const VERIFY_URL = "/verify-session";
 
 // Load session
 const ss = JSON.parse(localStorage.getItem("skSession") || "{}");
 
-// ---------------------------
-// Inject Global Layout
-// ---------------------------
+// Inject UI
 document.body.insertAdjacentHTML("afterbegin", `
-    <div id="ss-loader"><div class="spinner"></div></div>
-
     <header id="ss-topbar">
         <button id="ss-menu-btn" class="topbar-btn">☰</button>
-        <div class="ss-title"></div>
+        <div class="ss-title">${document.title}</div>
         <button id="ss-theme-toggle" class="topbar-btn">🌓</button>
     </header>
 
@@ -30,12 +15,11 @@ document.body.insertAdjacentHTML("afterbegin", `
         <div class="ss-logo">ShuttleSync</div>
 
         <div class="ss-user">
-            <img src="${ss.avatar || 'https://ui-avatars.com/api/?name=' + (ss.fullName||'User')}" />
+            <img src="${ss.avatar || `https://ui-avatars.com/api/?name=${ss.fullName || 'User'}`}" />
             <div class="ss-user-info">
                 <div class="name">${ss.fullName || "Unknown"}</div>
                 <div class="role">${ss.role || "—"}</div>
             </div>
-            <div id="ss-status" class="ss-status"></div>
         </div>
 
         <nav id="ss-nav"></nav>
@@ -45,16 +29,10 @@ document.body.insertAdjacentHTML("afterbegin", `
             <button id="ss-theme-toggle-2">🌓 Theme</button>
         </footer>
     </aside>
-
-    <main id="ss-content">
-        <div id="ss-page-container"></div>
-    </main>
 `);
 
 
-// ---------------------------
-// Role-Based Navigation
-// ---------------------------
+// Role menus
 const MENUS = {
     Destination: [
         ["Home", "/destination/home/checkInOut.html"],
@@ -63,7 +41,7 @@ const MENUS = {
         ["Transfers", "/destination/transfers/busAssignments.html"],
         ["Tours", "/destination/tours/productList.html"],
         ["Guest Service", "/destination/guestService/hotlineChat.html"],
-        ["Baggage Status", "/destination/home/baggageStatus.html"]
+        ["Baggage Status", "/destination/airport/bagageStatus.html"]
     ],
     Operations: [
         ["Crew Planning", "/ops/crewPlanning.html"],
@@ -83,9 +61,7 @@ const MENUS = {
 };
 
 const nav = document.getElementById("ss-nav");
-const menuList = MENUS[ss.role] || [];
-
-menuList.forEach(([label, link]) => {
+(MENUS[ss.role] || []).forEach(([label, link]) => {
     const btn = document.createElement("button");
     btn.className = "ss-nav-btn";
     btn.textContent = label;
@@ -93,35 +69,16 @@ menuList.forEach(([label, link]) => {
     nav.appendChild(btn);
 });
 
-// ---------------------------
-// Sidebar Toggle
-// ---------------------------
-const sidebar = document.getElementById("ss-sidebar");
 
+// Sidebar toggle
+const sidebar = document.getElementById("ss-sidebar");
 document.getElementById("ss-menu-btn").onclick = () => {
     sidebar.classList.toggle("collapsed");
     document.body.classList.toggle("sidebar-open");
 };
 
-// Auto-close when clicking outside
-document.addEventListener("click", (e) => {
-    if (!sidebar.contains(e.target) && !e.target.closest("#ss-menu-btn")) {
-        sidebar.classList.add("collapsed");
-        document.body.classList.remove("sidebar-open");
-    }
-});
 
-// ---------------------------
-// Logout
-// ---------------------------
-document.getElementById("ss-logout").onclick = () => {
-    localStorage.removeItem("skSession");
-    window.location.href = "/shuttlesync";
-};
-
-// ---------------------------
-// Theme Engine
-// ---------------------------
+// Theme engine
 function applyTheme() {
     const theme = localStorage.getItem("ss-theme") || "dark";
     document.documentElement.dataset.theme = theme;
@@ -137,11 +94,17 @@ function toggleTheme() {
 document.getElementById("ss-theme-toggle").onclick = toggleTheme;
 document.getElementById("ss-theme-toggle-2").onclick = toggleTheme;
 
-// ---------------------------
-// Session Validation
-// ---------------------------
+
+// Logout
+document.getElementById("ss-logout").onclick = () => {
+    localStorage.removeItem("skSession");
+    window.location.href = "/shuttlesync";
+};
+
+
+// Session validation
 async function validate() {
-    if (!ss.sessionToken) return fail();
+    if (!ss.sessionToken) return;
     try {
         const res = await fetch(VERIFY_URL, {
             method: "POST",
@@ -149,22 +112,11 @@ async function validate() {
             body: JSON.stringify({ token: ss.sessionToken })
         });
         const data = await res.json();
-        data.valid ? ok() : fail();
+        document.querySelector(".ss-user").style.borderLeft =
+            data.valid ? "4px solid #27d47c" : "4px solid #e84545";
     } catch {
-        fail();
+        document.querySelector(".ss-user").style.borderLeft = "4px solid #e84545";
     }
 }
-function ok() { document.getElementById("ss-status").style.background = "#27d47c"; }
-function fail() { document.getElementById("ss-status").style.background = "#e84545"; }
-
 validate();
 setInterval(validate, 30000);
-
-// ---------------------------
-// Loader
-// ---------------------------
-window.addEventListener("DOMContentLoaded", () => {
-    setTimeout(() => {
-        document.getElementById("ss-loader").classList.add("hide");
-    }, 300);
-});
