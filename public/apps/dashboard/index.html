@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <title>ShuttleSync Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- GLOBAL -->
+  <link rel="stylesheet" href="/styles/shuttlesync-global.css">
+
+</head>
+
+<body>
+
+<div id="ss-loader">
+  <div class="spinner"></div>
+</div>
+
+<!-- TOP BAR -->
+<div id="ss-topbar">
+  <div class="ss-title">ShuttleSync Dashboard</div>
+
+  <button id="ss-theme-toggle" class="topbar-btn">☀️/🌙</button>
+</div>
+
+<!-- SIDEBAR -->
+<div id="ss-sidebar">
+  
+  <div class="body-logo-placeholder"></div>
+
+  <div class="ss-user">
+    <img id="ssUserAvatar" src="https://ui-avatars.com/api/?name=SK" />
+    <div class="ss-user-info">
+      <div class="name" id="ssUserName">Employee</div>
+      <div class="role">SKANDI Staff</div>
+    </div>
+    <div class="ss-status"></div>
+  </div>
+
+  <div id="ss-nav">
+    <button onclick="window.location.href='/apps/dashboard'">Dashboard</button>
+    <button onclick="window.location.href='/apps/intra'">Intra</button>
+    <button onclick="window.location.href='/apps/ops'">Operations</button>
+    <button onclick="window.location.href='/apps/uniform-center'">Uniform Center</button>
+    <button onclick="window.location.href='/apps/torgad'">TorGad</button>
+    <button onclick="window.location.href='/apps/mail'">Mail</button>
+    <button onclick="window.location.href='/apps/profile'">Profile</button>
+  </div>
+
+  <div class="ss-footer">
+    <button onclick="ShuttleSyncAuth.clearSession(); window.location.href='/apps/login';">Log Out</button>
+  </div>
+
+</div>
+
+<!-- CONTENT -->
+<div id="ss-content">
+
+  <div class="module-section fade-in">
+    <h2 class="module-title">Welcome to ShuttleSync</h2>
+
+    <p style="font-size:15px;">
+      This is your internal SKANDI dashboard.  
+      Select a module from the left to begin.
+    </p>
+  </div>
+
+</div>
+
+<!-- GLOBAL JS -->
+<script src="/scripts/shuttlesync-ui.js"></script>
+
+<!-- SESSION LOGIC -->
+<script>
+  const session = ShuttleSyncAuth.getSession();
+  if (!session || !session.email){
+    window.location.href = "/apps/login";
+  } else {
+    document.getElementById("ssUserName").textContent = session.email;
+  }
+</script>
+
+</body>
+</html>
