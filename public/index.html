@@ -236,6 +236,14 @@
     </div>
 
   </div>
-
+  
+<script>
+  // Fix 100vh on mobile
+  function setVh() {
+    document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+  }
+  setVh();
+  window.addEventListener('resize', setVh);
+</script>
 </body>
 </html>
