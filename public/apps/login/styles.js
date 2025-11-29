@@ -1,0 +1,176 @@
+/* ============================================
+   MOBILE RESPONSIVE ENHANCEMENTS — LOGIN APP
+============================================ */
+@media (max-width: 900px) {
+  
+html, body {
+  height: calc(var(--vh, 1vh) * 100);
+}
+  /* Collapse sidebar fully */
+  #ss-sidebar {
+    transform: translateX(-280px);
+    width: 0;
+    padding: 0;
+    opacity: 0;
+  }
+
+  body.sidebar-collapsed #ss-content {
+    margin-left: 0;
+  }
+
+  /* Login card scaled for mobile */
+  .login-card {
+    max-width: 92%;
+    margin: 40px auto;
+    padding: 24px 20px !important;
+    border-radius: 14px;
+  }
+
+  .login-title {
+    font-size: 22px;
+  }
+
+  .login-subtitle {
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+
+  /* Inputs and buttons must not trigger zoom on iOS */
+  input, button {
+    font-size: 16px !important;
+  }
+
+  .login-form input[type="email"] {
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+
+  .login-btn {
+    padding: 14px 18px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+
+  /* Status text spacing */
+  .login-status {
+    font-size: 12px;
+    margin-top: 10px;
+  }
+
+  /* Footer tweak */
+  .login-footer-note {
+    font-size: 10px;
+    margin-top: 20px;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .login-card {
+    margin-top: 80px;
+    padding: 20px 16px !important;
+  }
+  .login-title { font-size: 20px; }
+  .login-subtitle { font-size: 12px; }
+}
+/* Center the login card nicely in the content area on large screens */
+.login-card {
+  max-width: 420px;
+  margin: 40px auto;
+}
+
+.login-header {
+  margin-bottom: 24px;
+}
+
+.login-title {
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--sk-text-title);
+}
+
+.login-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: var(--sk-text-dim);
+}
+
+/* Form */
+.login-form {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.login-form label {
+  font-size:13px;
+  font-weight:600;
+  color:var(--sk-text-dim);
+}
+
+.login-form input[type="email"] {
+  padding:10px 12px;
+  border-radius:8px;
+  border:1px solid var(--sk-border-soft);
+  font-size:14px;
+  outline:none;
+  background:var(--sk-bg-primary);
+  color:var(--sk-text);
+  transition:border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.login-form input[type="email"]:focus {
+  border-color:var(--sk-accent);
+  box-shadow:0 0 0 1px var(--sk-accent-soft);
+  background:#fff;
+}
+
+.login-btn {
+  margin-top:8px;
+  width:100%;
+  justify-content:center;
+}
+
+/* Status text */
+.login-status {
+  min-height: 20px;
+  font-size: 12px;
+  margin-top: 6px;
+  color: var(--sk-text-dim);
+}
+.login-status.error {
+  color:#b91c1c;
+}
+.login-status.success {
+  color:#107e3e;
+}
+
+/* Footer note */
+.login-footer-note {
+  margin-top: 28px;
+  font-size: 11px;
+  opacity:0.7;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-top:1px solid var(--sk-border-soft);
+  padding-top:10px;
+}
+
+/* Responsive: hide sidebar on narrow screens */
+@media (max-width: 900px) {
+  #ss-sidebar {
+    transform: translateX(-280px);
+  }
+  body.sidebar-collapsed #ss-content {
+    margin-left:0;
+  }
+  #ss-content {
+    margin-left:0;
+    padding:24px 16px;
+  }
+  .login-card {
+    margin-top: 80px;
+  }
+}
