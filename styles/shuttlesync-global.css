@@ -21,9 +21,8 @@
   --sk-glass: rgba(255,255,255,0.85);
   --sk-border-soft: rgba(95, 199, 207, 0.5);
 
-  --sk-logo-image: url('https://static.wixstatic.com/media/564bce_e3752ae80a944be284917a4f43066d92~mv2.png');
+  --sk-logo-image: url('https://github.com/skandicontact-collab/shuttlesync/blob/3675a44acbb9e46fc336c6936737db522a2641f3/assets/logos/ShuttleSync-Menu-Background.png');
 }
-
 /* --- DARK THEME --- */
 html[data-theme='dark']{
   --sk-blue:#022e64; 
