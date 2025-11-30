@@ -1,3 +1,49 @@
+ ┌─────────────────────────┐
+ │        Wix Studio       │
+ │  (UI + iFrame Loader)   │
+ │                         │
+ │  - Login Page           │
+ │  - Dashboard            │
+ │  - ShuttleSync Modules  │
+ └─────────────┬──────────┘
+               │ loads HTML/JS via iframe
+               ▼
+ ┌─────────────────────────┐
+ │        GitHub           │
+ │  Static Files Only      │
+ │  - HTML                 │
+ │  - CSS                  │
+ │  - JS                   │
+ └─────────────┬──────────┘
+               │ fetch(), POST to
+               ▼
+ ┌─────────────────────────┐
+ │       Make.com          │
+ │  All backend logic      │
+ │  - Auth validation      │
+ │  - Connect Magic        │
+ │  - Connect Airtable     │
+ │  - Connect Amadeus      │
+ │  - Return data to Wix   │
+ └─────────────┬──────────┘
+               │
+               ▼
+ ┌─────────────────────────┐
+ │        Airtable         │
+ │   Employee, Booking DB  │
+ └─────────────────────────┘
+
+ ┌─────────────────────────┐
+ │      Magic Auth         │
+ │Passwordless Authentication
+ └─────────────────────────┘
+
+ ┌─────────────────────────┐
+ │       Amadeus API       │
+ │  Flights + Hotels       │
+ └─────────────────────────┘
+
+
 Usage inside ANY ShuttleSync HTML page, At the top of your HTML (just inside <body>):
 <div id="ss-header"></div>
 <div style="height:64px"></div> <!-- pushes content below header -->
