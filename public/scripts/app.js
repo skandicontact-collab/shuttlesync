@@ -5,7 +5,7 @@
 
   if (!form || !emailInput || !statusEl) return;
 
-  const DASHBOARD_URL = "/public/apps/dashboard";
+  const DASHBOARD_URL = "/apps/dashboard";
 
   function setStatus(message, type = "") {
     statusEl.textContent = message || "";
